@@ -1,8 +1,11 @@
 
-import { Sparkles, Zap, ExternalLink, Twitter } from "lucide-react";
+import { Sparkles, Zap, ExternalLink, Twitter, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 const HeroSection = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="relative z-10 container mx-auto px-4 pt-20 pb-16 text-center">
       <div className="animate-fade-in">
@@ -38,6 +41,15 @@ const HeroSection = () => {
             <Sparkles className="mr-2" />
             Cast Your Spell - Buy $MIM
             <ExternalLink className="ml-2 w-4 h-4" />
+          </Button>
+          
+          <Button 
+            size="lg"
+            className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white font-bold py-4 px-8 rounded-full transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-green-500/25"
+            onClick={() => navigate('/yield-farming')}
+          >
+            <TrendingUp className="mr-2" />
+            Explore Yield Farming
           </Button>
           
           <Button 
