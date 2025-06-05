@@ -2,8 +2,17 @@
 import { Image, Twitter, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { useState } from "react";
+import MemeModal from "./MemeModal";
 
 const MemeGallery = () => {
+  const [selectedMeme, setSelectedMeme] = useState<{
+    src: string;
+    alt: string;
+    title: string;
+  } | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const memes = [
     {
       src: "/lovable-uploads/849d406f-73f2-4990-b515-77693d496e1e.png",
@@ -37,6 +46,16 @@ const MemeGallery = () => {
     }
   ];
 
+  const handleMemeClick = (meme: typeof memes[0]) => {
+    setSelectedMeme(meme);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedMeme(null);
+  };
+
   return (
     <section className="relative z-10 container mx-auto px-4 pb-16">
       <div className="text-center mb-12">
@@ -52,13 +71,18 @@ const MemeGallery = () => {
         {memes.map((meme, index) => (
           <Card key={index} className="bg-black/20 backdrop-blur-md border-purple-500/30 hover:border-yellow-400/50 transition-all duration-300 transform hover:scale-105 hover:rotate-1">
             <CardContent className="p-4">
-              <div className="relative overflow-hidden rounded-lg mb-3 group">
+              <div 
+                className="relative overflow-hidden rounded-lg mb-3 group cursor-pointer"
+                onClick={() => handleMemeClick(meme)}
+              >
                 <img 
                   src={meme.src} 
                   alt={meme.alt}
                   className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                  <div className="text-white text-lg font-bold">Click to expand</div>
+                </div>
               </div>
               <h4 className="text-lg font-bold text-yellow-400 text-center">{meme.title}</h4>
             </CardContent>
@@ -79,6 +103,12 @@ const MemeGallery = () => {
           <ExternalLink className="ml-2 w-4 h-4" />
         </Button>
       </div>
+
+      <MemeModal 
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        meme={selectedMeme}
+      />
     </section>
   );
 };
