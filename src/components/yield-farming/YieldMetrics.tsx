@@ -27,15 +27,6 @@ const YieldMetrics = ({ selectedProtocol }: YieldMetricsProps) => {
             { name: "USDC.e/USDT.e", apy: "8.9%", tvl: "$67.8M", risk: "Low", impermanentLoss: "0-1%" }
           ]
         };
-      case "platypus":
-        return {
-          name: "Platypus Finance",
-          pools: [
-            { name: "USDC Pool", apy: "15.6%", tvl: "$32.1M", risk: "Low", impermanentLoss: "Minimal" },
-            { name: "USDT Pool", apy: "14.2%", tvl: "$28.9M", risk: "Low", impermanentLoss: "Minimal" },
-            { name: "DAI Pool", apy: "13.8%", tvl: "$15.4M", risk: "Low", impermanentLoss: "Minimal" }
-          ]
-        };
       default:
         return {
           name: "All Protocols",

@@ -39,21 +39,6 @@ const ProtocolOverview = ({ selectedProtocol, onProtocolSelect }: ProtocolOvervi
         router: "0xB35033d71cF5E13cAB5eB8618260F94363Dff9Cf",
         token: "0x6e84a6216eA6dACC71eE8E6b0a5B7322EEbC0fDd"
       }
-    },
-    {
-      id: "platypus",
-      name: "Platypus Finance",
-      logo: "🦆",
-      description: "Single-sided stablecoin liquidity protocol with high capital efficiency and low slippage",
-      tvl: "$100M+",
-      apy: "8-25%",
-      features: ["Single-Sided Liquidity", "Stablecoin Focus", "Low Slippage", "Asset Liability Model"],
-      website: "https://platypus.finance",
-      contracts: {
-        masterPlatypus: "0x68c5f4374228BEEdFa078e77b5ed93C28a2f713E",
-        token: "0x22d4002028f537599bE9f666d1c4Fa138522f9c8",
-        pools: "Multiple pool contracts"
-      }
     }
   ];
 
@@ -68,7 +53,7 @@ const ProtocolOverview = ({ selectedProtocol, onProtocolSelect }: ProtocolOvervi
         <p className="text-xl text-purple-300">Explore the top DeFi protocols on Avalanche</p>
       </div>
       
-      <div className="grid lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+      <div className="grid lg:grid-cols-2 gap-6 max-w-5xl mx-auto">
         {protocols.map((protocol) => (
           <Card 
             key={protocol.id}

@@ -33,19 +33,6 @@ const FarmingOpportunities = () => {
       url: "https://traderjoexyz.com"
     },
     {
-      protocol: "Platypus Finance",
-      pool: "USDC Single-Sided Pool",
-      apy: "15.6%",
-      tvl: "$32.1M",
-      risk: "Low",
-      category: "Single-Sided",
-      description: "Deposit single stablecoin assets without impermanent loss risk",
-      rewards: ["Trading Fees", "PTP Tokens", "Stable Yields"],
-      minDeposit: "100 USDC",
-      lockPeriod: "None",
-      url: "https://platypus.finance"
-    },
-    {
       protocol: "Benqi Finance",
       pool: "sAVAX Staking",
       apy: "8.5%",

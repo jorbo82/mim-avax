@@ -4,6 +4,7 @@ import HeroSection from "@/components/HeroSection";
 import StatsSection from "@/components/StatsSection";
 import MemeGallery from "@/components/MemeGallery";
 import FeaturesSection from "@/components/FeaturesSection";
+import RoadmapSection from "@/components/RoadmapSection";
 import CallToAction from "@/components/CallToAction";
 import Footer from "@/components/Footer";
 
@@ -15,6 +16,7 @@ const Index = () => {
       <StatsSection />
       <MemeGallery />
       <FeaturesSection />
+      <RoadmapSection />
       <CallToAction />
       <Footer />
     </div>
