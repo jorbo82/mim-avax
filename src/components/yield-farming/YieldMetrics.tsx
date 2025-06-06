@@ -51,31 +51,31 @@ const YieldMetrics = ({ selectedProtocol }: YieldMetricsProps) => {
   };
 
   return (
-    <section className="relative z-10 container mx-auto px-4 pb-16">
-      <div className="text-center mb-12">
-        <h3 className="text-4xl font-bold mb-4 text-yellow-400 flex items-center justify-center gap-3">
+    <section className="relative z-10 container mx-auto px-4 py-20">
+      <div className="text-center mb-16">
+        <h3 className="text-4xl font-bold mb-6 text-yellow-400 flex items-center justify-center gap-3 leading-tight">
           <TrendingUp className="w-8 h-8" />
           Yield Metrics - {protocolData.name}
           <DollarSign className="w-8 h-8" />
         </h3>
-        <p className="text-xl text-purple-300">Real-time APY and risk analysis for top farming pools</p>
+        <p className="text-xl text-purple-300 leading-relaxed">Real-time APY and risk analysis for top farming pools</p>
       </div>
       
-      <div className="grid gap-6 max-w-6xl mx-auto">
+      <div className="grid gap-8 max-w-6xl mx-auto">
         {protocolData.pools.map((pool, index) => (
           <Card key={index} className="bg-black/20 backdrop-blur-md border-purple-500/30 hover:border-yellow-400/30 transition-all duration-300">
-            <CardHeader>
-              <CardTitle className="text-yellow-400 text-xl flex items-center justify-between">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-yellow-400 text-xl flex items-center justify-between leading-tight">
                 <span>{pool.name}</span>
-                <span className={`px-3 py-1 rounded-full text-sm ${getRiskColor(pool.risk)}`}>
+                <span className={`px-3 py-2 rounded-full text-sm ${getRiskColor(pool.risk)}`}>
                   {pool.risk} Risk
                 </span>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid md:grid-cols-4 gap-6">
+              <div className="grid md:grid-cols-4 gap-6 mb-6">
                 <div className="text-center">
-                  <div className="flex items-center justify-center gap-2 mb-2">
+                  <div className="flex items-center justify-center gap-2 mb-3">
                     <TrendingUp className="w-5 h-5 text-green-400" />
                     <span className="text-sm text-purple-300">APY</span>
                   </div>
@@ -83,7 +83,7 @@ const YieldMetrics = ({ selectedProtocol }: YieldMetricsProps) => {
                 </div>
                 
                 <div className="text-center">
-                  <div className="flex items-center justify-center gap-2 mb-2">
+                  <div className="flex items-center justify-center gap-2 mb-3">
                     <DollarSign className="w-5 h-5 text-blue-400" />
                     <span className="text-sm text-purple-300">TVL</span>
                   </div>
@@ -91,7 +91,7 @@ const YieldMetrics = ({ selectedProtocol }: YieldMetricsProps) => {
                 </div>
                 
                 <div className="text-center">
-                  <div className="flex items-center justify-center gap-2 mb-2">
+                  <div className="flex items-center justify-center gap-2 mb-3">
                     <AlertTriangle className="w-5 h-5 text-yellow-400" />
                     <span className="text-sm text-purple-300">IL Risk</span>
                   </div>
@@ -99,7 +99,7 @@ const YieldMetrics = ({ selectedProtocol }: YieldMetricsProps) => {
                 </div>
                 
                 <div className="text-center">
-                  <div className="flex items-center justify-center gap-2 mb-2">
+                  <div className="flex items-center justify-center gap-2 mb-3">
                     <Clock className="w-5 h-5 text-purple-400" />
                     <span className="text-sm text-purple-300">Lock Period</span>
                   </div>
@@ -107,8 +107,8 @@ const YieldMetrics = ({ selectedProtocol }: YieldMetricsProps) => {
                 </div>
               </div>
               
-              <div className="mt-6 p-4 bg-purple-500/10 rounded-lg border border-purple-500/20">
-                <div className="text-sm text-purple-200">
+              <div className="p-4 bg-purple-500/10 rounded-lg border border-purple-500/20">
+                <div className="text-sm text-purple-200 leading-relaxed">
                   <strong>Pool Strategy:</strong> {pool.name.includes("USDC") && pool.name.includes("USDT") ? 
                     "Low-risk stablecoin farming with minimal impermanent loss. Perfect for conservative yield farmers." :
                     pool.name.includes("AVAX") ? 

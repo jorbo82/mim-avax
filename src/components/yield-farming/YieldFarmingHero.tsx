@@ -7,7 +7,7 @@ const YieldFarmingHero = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="relative z-10 container mx-auto px-4 pt-20 pb-16 text-center">
+    <section className="relative z-10 container mx-auto px-4 pt-20 pb-20 text-center">
       <div className="animate-fade-in">
         <Button
           variant="ghost"
@@ -18,11 +18,11 @@ const YieldFarmingHero = () => {
           Back to Home
         </Button>
 
-        <div className="mb-8 relative">
-          <div className="flex justify-center items-center gap-4 mb-6">
+        <div className="mb-12 relative">
+          <div className="flex justify-center items-center gap-4 mb-8">
             <TrendingUp className="w-16 h-16 text-yellow-400 animate-pulse" />
             <div className="text-center">
-              <h1 className="text-5xl md:text-7xl font-bold mb-2 bg-gradient-to-r from-yellow-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">
+              <h1 className="text-5xl md:text-7xl font-bold mb-4 bg-gradient-to-r from-yellow-400 via-purple-400 to-blue-400 bg-clip-text text-transparent leading-tight">
                 Yield Farming
               </h1>
               <div className="text-2xl md:text-3xl font-bold text-yellow-300">
@@ -33,12 +33,12 @@ const YieldFarmingHero = () => {
           </div>
         </div>
         
-        <p className="text-xl md:text-2xl mb-8 max-w-4xl mx-auto leading-relaxed text-purple-200">
+        <p className="text-xl md:text-2xl mb-12 max-w-4xl mx-auto leading-relaxed text-purple-200">
           Discover the most magical yield farming opportunities on Avalanche! From Pharaoh Exchange to Trader Joe, 
           explore high-APY pools and maximize your DeFi wizardry! 🧙‍♂️✨
         </p>
         
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
           <Button 
             size="lg" 
             className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-bold py-4 px-8 rounded-full transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-green-500/25"
