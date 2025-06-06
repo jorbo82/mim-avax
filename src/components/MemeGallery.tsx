@@ -63,6 +63,16 @@ const MemeGallery = () => {
       src: "/lovable-uploads/fc68946c-623c-4d29-9c9e-1f5c348d87fc.png",
       alt: "Building a DeFi Aggregator Wizard",
       title: "Building DeFi Magic"
+    },
+    {
+      src: "/lovable-uploads/da42fa5e-a2da-45fc-a782-15ee26974ade.png",
+      alt: "Trading Wizard with Charts",
+      title: "Chart Magic Wizard"
+    },
+    {
+      src: "/lovable-uploads/4ef9ea17-4aaa-40dd-92b7-5e72a1f5313b.png",
+      alt: "Good Morning Magic Internet Money",
+      title: "GMIM - Good Morning!"
     }
   ];
 
