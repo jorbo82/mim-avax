@@ -43,6 +43,26 @@ const MemeGallery = () => {
       src: "/lovable-uploads/4aa465de-e873-44f8-80ff-6bfbf3663c14.png",
       alt: "Y'all Got Any More Magic Internet Money",
       title: "More Magic Please!"
+    },
+    {
+      src: "/lovable-uploads/e91f040a-44f2-4c34-b171-3cfd47998775.png",
+      alt: "MIM is the Way Wizard",
+      title: "MIM is the Way!"
+    },
+    {
+      src: "/lovable-uploads/0767f171-a7a9-4a8f-871b-5643b0ae10a1.png",
+      alt: "GMIM Golden Magic Wizard",
+      title: "GMIM Golden Magic"
+    },
+    {
+      src: "/lovable-uploads/09c6b040-c8cd-4e77-8b57-9863364ec316.png",
+      alt: "Pixel Wizard Money Magic",
+      title: "Pixel Magic Master"
+    },
+    {
+      src: "/lovable-uploads/fc68946c-623c-4d29-9c9e-1f5c348d87fc.png",
+      alt: "Building a DeFi Aggregator Wizard",
+      title: "Building DeFi Magic"
     }
   ];
 
