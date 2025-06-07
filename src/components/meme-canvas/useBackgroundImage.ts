@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import { Canvas as FabricCanvas, FabricImage, FabricText } from "fabric";
 
@@ -50,9 +51,11 @@ export const useBackgroundImage = (
         console.error('Error loading background image:', error);
       });
     } else {
-      // Handle blank canvas mode - set white background and keep all objects
+      // Handle blank canvas mode - ensure white background is always set
       const objects = canvas.getObjects().filter(obj => obj.selectable !== false);
       canvas.clear();
+      
+      // Set white background color for the canvas
       canvas.backgroundColor = '#ffffff';
       
       // Re-add all objects that are not background images
