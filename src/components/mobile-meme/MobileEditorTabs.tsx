@@ -54,7 +54,7 @@ const MobileEditorTabs = ({
 }: MobileEditorTabsProps) => {
   return (
     <div className="border-t border-purple-500/30 bg-purple-900/30 shrink-0">
-      <Tabs defaultValue="canvas" className="w-full">
+      <Tabs defaultValue="assets" className="w-full">
         <TabsList className="grid w-full grid-cols-4 bg-transparent border-0 h-12">
           <TabsTrigger 
             value="canvas" 

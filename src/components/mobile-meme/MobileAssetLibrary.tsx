@@ -16,7 +16,7 @@ interface MobileAssetLibraryProps {
 }
 
 const MobileAssetLibrary = ({ assets, onAssetSelect }: MobileAssetLibraryProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true); // Default to open/expanded
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>

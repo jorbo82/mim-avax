@@ -58,7 +58,7 @@ export const useBackgroundImage = (
       canvas.clear();
       canvas.backgroundColor = '#ffffff';
       
-      // Force immediate render of white background
+      // Force immediate render of white background multiple times
       canvas.renderAll();
       
       // Re-add all objects that are not background images
@@ -66,16 +66,24 @@ export const useBackgroundImage = (
         canvas.add(obj);
       });
 
-      // Final render to ensure everything is visible
+      // Multiple renders to ensure white background visibility
+      canvas.backgroundColor = '#ffffff';
       canvas.renderAll();
       
-      // Additional render after a small delay to ensure visibility
+      // Additional renders with delays to ensure visibility
       setTimeout(() => {
         if (canvas) {
           canvas.backgroundColor = '#ffffff';
           canvas.renderAll();
         }
       }, 10);
+
+      setTimeout(() => {
+        if (canvas) {
+          canvas.backgroundColor = '#ffffff';
+          canvas.renderAll();
+        }
+      }, 50);
     }
   }, [backgroundImage, fabricCanvasRef, wizardImageRef, topTextRef, bottomTextRef]);
 };

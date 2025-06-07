@@ -42,7 +42,7 @@ export const useCanvasSetup = () => {
     canvas.targetFindTolerance = 10; // Larger touch targets
     canvas.perPixelTargetFind = true;
 
-    // Ensure white background is immediately visible
+    // Force white background immediately and ensure it stays
     canvas.backgroundColor = '#ffffff';
     canvas.renderAll();
 
@@ -69,6 +69,8 @@ export const useCanvasSetup = () => {
           width: newCanvasWidth,
           height: newCanvasHeight
         });
+        // Ensure white background is maintained after resize
+        canvas.backgroundColor = '#ffffff';
         canvas.renderAll();
       }
     };
@@ -76,13 +78,20 @@ export const useCanvasSetup = () => {
     window.addEventListener('resize', handleResize);
     window.addEventListener('orientationchange', handleResize);
 
-    // Add a small delay to ensure canvas is fully initialized
+    // Ensure white background is set multiple times to guarantee visibility
     setTimeout(() => {
       if (canvas) {
         canvas.backgroundColor = '#ffffff';
         canvas.renderAll();
       }
-    }, 50);
+    }, 10);
+
+    setTimeout(() => {
+      if (canvas) {
+        canvas.backgroundColor = '#ffffff';
+        canvas.renderAll();
+      }
+    }, 100);
 
     return () => {
       window.removeEventListener('resize', handleResize);
