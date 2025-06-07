@@ -21,7 +21,7 @@ const CanvasControls = ({
 
   return (
     <div className="space-y-4">
-      {/* Canvas Options */}
+      {/* Canvas Setup */}
       <div>
         <label className="block text-sm font-medium text-purple-300 mb-2">
           Canvas Setup
@@ -57,7 +57,7 @@ const CanvasControls = ({
         )}
       </div>
 
-      {/* Background Meme Selector */}
+      {/* Background Meme Selector - Now Collapsible */}
       <BackgroundSelector onBackgroundSelect={onBackgroundSelect} />
     </div>
   );

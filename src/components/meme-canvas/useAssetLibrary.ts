@@ -4,6 +4,46 @@ import { Canvas as FabricCanvas, FabricImage } from "fabric";
 
 const ASSET_LIBRARY = [
   {
+    id: 'mim-wizard-head',
+    name: 'MIM Wizard Head',
+    url: '/lovable-uploads/b3055ff0-376f-42dd-a541-83e57ea167eb.png'
+  },
+  {
+    id: 'red-cape-wrestler',
+    name: 'Red Cape Wrestler',
+    url: '/lovable-uploads/07c77816-0782-438d-83d8-65eae6a60c4b.png'
+  },
+  {
+    id: 'burgundy-suit-man',
+    name: 'Burgundy Suit Man',
+    url: '/lovable-uploads/f3962b87-87e8-4433-9ce9-6958041b57cc.png'
+  },
+  {
+    id: 'plaid-shirt-man',
+    name: 'Plaid Shirt Man',
+    url: '/lovable-uploads/4f15d90a-fe53-450f-ae5c-5bba9e7501f6.png'
+  },
+  {
+    id: 'business-suit-hands',
+    name: 'Business Suit Hands',
+    url: '/lovable-uploads/fbe510e5-b7a0-4295-8909-9141634b2398.png'
+  },
+  {
+    id: 'yoda-wise',
+    name: 'Wise Yoda',
+    url: '/lovable-uploads/08a94be2-cbf9-456c-ab16-a7a907308145.png'
+  },
+  {
+    id: 'leonardo-dicaprio-toast',
+    name: 'Leonardo Toast',
+    url: '/lovable-uploads/1f93a159-f2dc-41b1-846c-a5536787979d.png'
+  },
+  {
+    id: 'snoop-dogg-cool',
+    name: 'Snoop Cool',
+    url: '/lovable-uploads/3b4ae095-2460-46bc-bdf2-16bb509742a2.png'
+  },
+  {
     id: 'chuck-norris-action',
     name: 'Chuck Norris Action',
     url: '/lovable-uploads/4180231f-60f8-4690-995f-92ddfd1fcc8d.png'
