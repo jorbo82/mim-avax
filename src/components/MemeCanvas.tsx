@@ -11,7 +11,16 @@ const MemeCanvas = forwardRef<MemeCanvasRef, MemeCanvasProps>(
   ({ backgroundImage, topText, bottomText }, ref) => {
     const { canvasRef, fabricCanvasRef, wizardImageRef } = useCanvasSetup();
     const { topTextRef, bottomTextRef } = useTextHandling(fabricCanvasRef, topText, bottomText);
-    const { downloadMeme, rotateWizard, flipWizardHorizontal, flipWizardVertical } = useMemeActions(
+    const { 
+      downloadMeme, 
+      rotateWizard, 
+      flipWizardHorizontal, 
+      flipWizardVertical,
+      rotateSelectedObject,
+      flipSelectedObjectHorizontal,
+      flipSelectedObjectVertical,
+      deleteSelectedObject
+    } = useMemeActions(
       fabricCanvasRef,
       wizardImageRef
     );
@@ -24,6 +33,10 @@ const MemeCanvas = forwardRef<MemeCanvasRef, MemeCanvasProps>(
       rotateWizard,
       flipWizardHorizontal,
       flipWizardVertical,
+      rotateSelectedObject,
+      flipSelectedObjectHorizontal,
+      flipSelectedObjectVertical,
+      deleteSelectedObject,
       assets,
       addAssetToCanvas
     }));

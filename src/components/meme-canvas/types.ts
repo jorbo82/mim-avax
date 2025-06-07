@@ -10,6 +10,10 @@ export interface MemeCanvasRef {
   rotateWizard: () => void;
   flipWizardHorizontal: () => void;
   flipWizardVertical: () => void;
+  rotateSelectedObject: () => void;
+  flipSelectedObjectHorizontal: () => void;
+  flipSelectedObjectVertical: () => void;
+  deleteSelectedObject: () => void;
   assets: Array<{
     id: string;
     name: string;

@@ -1,5 +1,4 @@
-
-import { Canvas as FabricCanvas, FabricImage } from "fabric";
+import { Canvas as FabricCanvas, FabricImage, FabricObject } from "fabric";
 
 export const useMemeActions = (
   fabricCanvasRef: React.RefObject<FabricCanvas | null>,
@@ -19,32 +18,57 @@ export const useMemeActions = (
     }
   };
 
-  const rotateWizard = () => {
-    if (wizardImageRef.current) {
-      const currentAngle = wizardImageRef.current.angle || 0;
-      wizardImageRef.current.rotate(currentAngle + 15);
+  const getSelectedObject = (): FabricObject | null => {
+    if (!fabricCanvasRef.current) return null;
+    return fabricCanvasRef.current.getActiveObject();
+  };
+
+  const rotateSelectedObject = () => {
+    const activeObject = getSelectedObject();
+    if (activeObject) {
+      const currentAngle = activeObject.angle || 0;
+      activeObject.rotate(currentAngle + 15);
       fabricCanvasRef.current?.renderAll();
     }
   };
 
-  const flipWizardHorizontal = () => {
-    if (wizardImageRef.current) {
-      wizardImageRef.current.set('flipX', !wizardImageRef.current.flipX);
+  const flipSelectedObjectHorizontal = () => {
+    const activeObject = getSelectedObject();
+    if (activeObject) {
+      activeObject.set('flipX', !activeObject.flipX);
       fabricCanvasRef.current?.renderAll();
     }
   };
 
-  const flipWizardVertical = () => {
-    if (wizardImageRef.current) {
-      wizardImageRef.current.set('flipY', !wizardImageRef.current.flipY);
+  const flipSelectedObjectVertical = () => {
+    const activeObject = getSelectedObject();
+    if (activeObject) {
+      activeObject.set('flipY', !activeObject.flipY);
       fabricCanvasRef.current?.renderAll();
     }
   };
+
+  const deleteSelectedObject = () => {
+    const activeObject = getSelectedObject();
+    if (activeObject && fabricCanvasRef.current) {
+      fabricCanvasRef.current.remove(activeObject);
+      fabricCanvasRef.current.renderAll();
+    }
+  };
+
+  // Keep backward compatibility with old function names
+  const rotateWizard = rotateSelectedObject;
+  const flipWizardHorizontal = flipSelectedObjectHorizontal;
+  const flipWizardVertical = flipSelectedObjectVertical;
 
   return {
     downloadMeme,
     rotateWizard,
     flipWizardHorizontal,
-    flipWizardVertical
+    flipWizardVertical,
+    rotateSelectedObject,
+    flipSelectedObjectHorizontal,
+    flipSelectedObjectVertical,
+    deleteSelectedObject
   };
 };

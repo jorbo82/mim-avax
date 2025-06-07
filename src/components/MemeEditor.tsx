@@ -1,8 +1,9 @@
 
 import { useState, useRef } from "react";
-import { X, Upload, Download, RotateCw, FlipHorizontal, FlipVertical } from "lucide-react";
+import { X, Upload, Download, RotateCw, FlipHorizontal, FlipVertical, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import MemeCanvas from "./MemeCanvas";
 import AssetLibrary from "./meme-canvas/AssetLibrary";
 
@@ -36,19 +37,25 @@ const MemeEditor = ({ onClose }: MemeEditorProps) => {
 
   const handleRotate = () => {
     if (canvasRef.current) {
-      canvasRef.current.rotateWizard();
+      canvasRef.current.rotateSelectedObject();
     }
   };
 
   const handleFlipHorizontal = () => {
     if (canvasRef.current) {
-      canvasRef.current.flipWizardHorizontal();
+      canvasRef.current.flipSelectedObjectHorizontal();
     }
   };
 
   const handleFlipVertical = () => {
     if (canvasRef.current) {
-      canvasRef.current.flipWizardVertical();
+      canvasRef.current.flipSelectedObjectVertical();
+    }
+  };
+
+  const handleDelete = () => {
+    if (canvasRef.current) {
+      canvasRef.current.deleteSelectedObject();
     }
   };
 
@@ -59,131 +66,171 @@ const MemeEditor = ({ onClose }: MemeEditorProps) => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col">
-      {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-purple-500/30">
-        <h2 className="text-2xl font-bold text-yellow-400 flex items-center gap-2">
-          🧙‍♂️ MIM-ME Generator
-        </h2>
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={onClose}
-          className="border-purple-400 text-purple-300 hover:bg-purple-400 hover:text-white"
-        >
-          <X className="w-4 h-4" />
-        </Button>
-      </div>
+    <TooltipProvider>
+      <div className="w-full h-full flex flex-col">
+        {/* Header */}
+        <div className="flex items-center justify-between p-4 border-b border-purple-500/30">
+          <h2 className="text-2xl font-bold text-yellow-400 flex items-center gap-2">
+            🧙‍♂️ MIM-ME Generator
+          </h2>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={onClose}
+            className="border-purple-400 text-purple-300 hover:bg-purple-400 hover:text-white"
+          >
+            <X className="w-4 h-4" />
+          </Button>
+        </div>
 
-      <div className="flex-1 flex flex-col lg:flex-row">
-        {/* Controls Panel */}
-        <div className="w-full lg:w-80 p-4 border-r border-purple-500/30 bg-purple-900/20 overflow-y-auto">
-          <div className="space-y-4">
-            {/* Upload Image */}
-            <div>
-              <label className="block text-sm font-medium text-purple-300 mb-2">
-                Upload Background Image
-              </label>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="hidden"
-              />
-              <Button
-                onClick={() => fileInputRef.current?.click()}
-                className="w-full bg-blue-600 hover:bg-blue-700"
-              >
-                <Upload className="mr-2 w-4 h-4" />
-                Choose Image
-              </Button>
-            </div>
-
-            {/* Asset Library */}
-            <AssetLibrary 
-              assets={canvasRef.current?.assets || []}
-              onAssetSelect={handleAssetSelect}
-            />
-
-            {/* Text Inputs */}
-            <div>
-              <label className="block text-sm font-medium text-purple-300 mb-2">
-                Top Text
-              </label>
-              <Input
-                value={topText}
-                onChange={(e) => setTopText(e.target.value)}
-                placeholder="Enter top text..."
-                className="bg-purple-800/50 border-purple-500/50 text-white placeholder-purple-300"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-purple-300 mb-2">
-                Bottom Text
-              </label>
-              <Input
-                value={bottomText}
-                onChange={(e) => setBottomText(e.target.value)}
-                placeholder="Enter bottom text..."
-                className="bg-purple-800/50 border-purple-500/50 text-white placeholder-purple-300"
-              />
-            </div>
-
-            {/* Wizard Controls */}
-            <div>
-              <label className="block text-sm font-medium text-purple-300 mb-2">
-                Selected Object Controls
-              </label>
-              <div className="grid grid-cols-3 gap-2">
+        <div className="flex-1 flex flex-col lg:flex-row">
+          {/* Controls Panel */}
+          <div className="w-full lg:w-80 p-4 border-r border-purple-500/30 bg-purple-900/20 overflow-y-auto">
+            <div className="space-y-4">
+              {/* Upload Image */}
+              <div>
+                <label className="block text-sm font-medium text-purple-300 mb-2">
+                  Upload Background Image
+                </label>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
                 <Button
-                  onClick={handleRotate}
-                  size="sm"
-                  className="bg-green-600 hover:bg-green-700"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-full bg-blue-600 hover:bg-blue-700"
                 >
-                  <RotateCw className="w-4 h-4" />
-                </Button>
-                <Button
-                  onClick={handleFlipHorizontal}
-                  size="sm"
-                  className="bg-orange-600 hover:bg-orange-700"
-                >
-                  <FlipHorizontal className="w-4 h-4" />
-                </Button>
-                <Button
-                  onClick={handleFlipVertical}
-                  size="sm"
-                  className="bg-pink-600 hover:bg-pink-700"
-                >
-                  <FlipVertical className="w-4 h-4" />
+                  <Upload className="mr-2 w-4 h-4" />
+                  Choose Image
                 </Button>
               </div>
-            </div>
 
-            {/* Download */}
-            <Button
-              onClick={handleDownload}
-              className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
-              disabled={!backgroundImage}
-            >
-              <Download className="mr-2 w-4 h-4" />
-              Download Meme
-            </Button>
+              {/* Asset Library */}
+              <AssetLibrary 
+                assets={canvasRef.current?.assets || []}
+                onAssetSelect={handleAssetSelect}
+              />
+
+              {/* Text Inputs */}
+              <div>
+                <label className="block text-sm font-medium text-purple-300 mb-2">
+                  Top Text
+                </label>
+                <Input
+                  value={topText}
+                  onChange={(e) => setTopText(e.target.value)}
+                  placeholder="Enter top text..."
+                  className="bg-purple-800/50 border-purple-500/50 text-white placeholder-purple-300"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-purple-300 mb-2">
+                  Bottom Text
+                </label>
+                <Input
+                  value={bottomText}
+                  onChange={(e) => setBottomText(e.target.value)}
+                  placeholder="Enter bottom text..."
+                  className="bg-purple-800/50 border-purple-500/50 text-white placeholder-purple-300"
+                />
+              </div>
+
+              {/* Object Controls */}
+              <div>
+                <label className="block text-sm font-medium text-purple-300 mb-2">
+                  Selected Object Controls
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        onClick={handleRotate}
+                        size="sm"
+                        className="bg-green-600 hover:bg-green-700"
+                      >
+                        <RotateCw className="w-4 h-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Rotate selected object 15°</p>
+                    </TooltipContent>
+                  </Tooltip>
+
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        onClick={handleFlipHorizontal}
+                        size="sm"
+                        className="bg-orange-600 hover:bg-orange-700"
+                      >
+                        <FlipHorizontal className="w-4 h-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Flip selected object horizontally</p>
+                    </TooltipContent>
+                  </Tooltip>
+
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        onClick={handleFlipVertical}
+                        size="sm"
+                        className="bg-pink-600 hover:bg-pink-700"
+                      >
+                        <FlipVertical className="w-4 h-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Flip selected object vertically</p>
+                    </TooltipContent>
+                  </Tooltip>
+
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        onClick={handleDelete}
+                        size="sm"
+                        className="bg-red-600 hover:bg-red-700"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Delete selected object</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+              </div>
+
+              {/* Download */}
+              <Button
+                onClick={handleDownload}
+                className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
+                disabled={!backgroundImage}
+              >
+                <Download className="mr-2 w-4 h-4" />
+                Download Meme
+              </Button>
+            </div>
+          </div>
+
+          {/* Canvas Area */}
+          <div className="flex-1 p-4">
+            <MemeCanvas
+              ref={canvasRef}
+              backgroundImage={backgroundImage}
+              topText={topText}
+              bottomText={bottomText}
+            />
           </div>
         </div>
-
-        {/* Canvas Area */}
-        <div className="flex-1 p-4">
-          <MemeCanvas
-            ref={canvasRef}
-            backgroundImage={backgroundImage}
-            topText={topText}
-            bottomText={bottomText}
-          />
-        </div>
       </div>
-    </div>
+    </TooltipProvider>
   );
 };
 
