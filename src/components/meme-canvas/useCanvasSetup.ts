@@ -18,29 +18,7 @@ export const useCanvasSetup = () => {
 
     fabricCanvasRef.current = canvas;
 
-    // Add wizard head image
-    FabricImage.fromURL('/lovable-uploads/6816180e-9cbd-413e-ba28-1ac3ed4f1eec.png').then((img) => {
-      img.set({
-        left: 400,
-        top: 300,
-        scaleX: 0.3,
-        scaleY: 0.3,
-        originX: 'center',
-        originY: 'center',
-        hasControls: true,
-        hasBorders: true,
-        cornerStyle: 'circle',
-        cornerColor: '#ff6b35',
-        cornerSize: 12,
-        transparentCorners: false,
-        lockUniScaling: true,
-      });
-      
-      wizardImageRef.current = img;
-      canvas.add(img);
-      canvas.setActiveObject(img);
-      canvas.renderAll();
-    });
+    // No longer automatically adding wizard image - users can add assets from the library
 
     return () => {
       canvas.dispose();

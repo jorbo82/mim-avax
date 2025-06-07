@@ -4,54 +4,54 @@ import { Canvas as FabricCanvas, FabricImage } from "fabric";
 
 const ASSET_LIBRARY = [
   {
-    id: 'wizard-head-1',
-    name: 'Original Wizard Head',
-    url: '/lovable-uploads/6816180e-9cbd-413e-ba28-1ac3ed4f1eec.png'
+    id: 'chuck-norris-action',
+    name: 'Chuck Norris Action',
+    url: '/lovable-uploads/4180231f-60f8-4690-995f-92ddfd1fcc8d.png'
   },
   {
-    id: 'wizard-head-2', 
-    name: 'New Wizard Head',
-    url: '/lovable-uploads/34792e5b-91a2-44f9-9653-12d177de8af1.png'
-  },
-  {
-    id: 'wizard-laptop-avalanche',
-    name: 'Wizard with Laptop & Avalanche',
-    url: '/lovable-uploads/0767f171-a7a9-4a8f-871b-5643b0ae10a1.png'
-  },
-  {
-    id: 'magic-internet-money-wizard',
-    name: 'Magic Internet Money Wizard',
-    url: '/lovable-uploads/09c6b040-c8cd-4e77-8b57-9863364ec316.png'
-  },
-  {
-    id: 'jorbo-ai-robot',
-    name: 'JORBO AI Robot',
-    url: '/lovable-uploads/1fd93b82-ebe6-4487-bf4c-92f934198a7d.png'
-  },
-  {
-    id: 'pixelated-character',
-    name: 'Pixelated Character',
-    url: '/lovable-uploads/4a0fe933-d8fc-4083-81c1-b982504cc458.png'
-  },
-  {
-    id: 'chad-face',
-    name: 'Chad Face',
-    url: '/lovable-uploads/4aa465de-e873-44f8-80ff-6bfbf3663c14.png'
-  },
-  {
-    id: 'big-lebowski-character',
-    name: 'Big Lebowski Character',
-    url: '/lovable-uploads/4ef9ea17-4aaa-40dd-92b7-5e72a1f5313b.png'
-  },
-  {
-    id: 'tony-stark-pose',
-    name: 'Tony Stark Pose',
-    url: '/lovable-uploads/549a4bd7-bbf7-4a9c-87e9-9e01ede358fb.png'
+    id: 'john-wick',
+    name: 'John Wick',
+    url: '/lovable-uploads/ae89a959-e486-4a8f-aeaa-53ebf501716e.png'
   },
   {
     id: 'rocky-victory',
     name: 'Rocky Victory',
-    url: '/lovable-uploads/849d406f-73f2-4990-b515-77693d496e1e.png'
+    url: '/lovable-uploads/591e0f73-72e0-4c38-9108-84e4ad8c86b1.png'
+  },
+  {
+    id: 'tony-stark-pose',
+    name: 'Tony Stark Pose',
+    url: '/lovable-uploads/38a3afcd-7179-4eb4-b934-50ed64819bcf.png'
+  },
+  {
+    id: 'big-lebowski-character',
+    name: 'Big Lebowski Character',
+    url: '/lovable-uploads/657675aa-04fc-4448-be1f-1790ee9e1b9e.png'
+  },
+  {
+    id: 'chad-face',
+    name: 'Chad Face',
+    url: '/lovable-uploads/82872567-05fa-4184-a39e-69e0ec1fb763.png'
+  },
+  {
+    id: 'magic-internet-money-wizard',
+    name: 'Magic Internet Money Wizard',
+    url: '/lovable-uploads/994639ab-fb50-452c-9b25-0a4138ace906.png'
+  },
+  {
+    id: 'pixelated-character',
+    name: 'Pixelated Character',
+    url: '/lovable-uploads/4b058054-2291-4736-8e35-7eb4602270d2.png'
+  },
+  {
+    id: 'jorbo-ai-robot',
+    name: 'JORBO AI Robot',
+    url: '/lovable-uploads/f7a9ef3a-32ca-4bc3-88df-b5329ad8b0c0.png'
+  },
+  {
+    id: 'wizard-laptop-avalanche',
+    name: 'Wizard with Laptop & Avalanche',
+    url: '/lovable-uploads/6649b943-04e0-4a9b-80f2-f286961943c8.png'
   }
 ];
 
