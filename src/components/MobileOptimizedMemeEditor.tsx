@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { X, Settings, Image, Type, Layers, Download } from "lucide-react";
+import { X, Download, Image, Type, Layers } from "lucide-react";
 import MemeCanvas from "./MemeCanvas";
 import MobileCanvasControls from "./mobile-meme/MobileCanvasControls";
 import MobileTextControls from "./mobile-meme/MobileTextControls";
@@ -77,7 +77,16 @@ const MobileOptimizedMemeEditor = ({ onClose, initialBackgroundImage }: MobileOp
 
   return (
     <TooltipProvider>
-      <div className="fixed inset-0 w-screen h-screen bg-gradient-to-br from-purple-900/95 to-blue-900/95 flex flex-col z-50 overflow-hidden">
+      <div 
+        className="w-full h-full flex flex-col"
+        style={{
+          width: '100%',
+          height: '100%',
+          maxWidth: '100%',
+          maxHeight: '100%',
+          position: 'relative'
+        }}
+      >
         {/* Mobile Header */}
         <div className="flex items-center justify-between p-4 border-b border-purple-500/30 shrink-0">
           <h2 className="text-xl font-bold text-yellow-400">MIM-ME</h2>
