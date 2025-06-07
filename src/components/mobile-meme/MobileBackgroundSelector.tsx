@@ -1,5 +1,8 @@
 
+import { useState } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 const BACKGROUND_MEMES = [
   {
@@ -39,31 +42,48 @@ interface MobileBackgroundSelectorProps {
 }
 
 const MobileBackgroundSelector = ({ onBackgroundSelect }: MobileBackgroundSelectorProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
-    <div>
-      <label className="block text-sm font-medium text-blue-300 mb-3">
-        Background Memes
-      </label>
-      <div className="grid grid-cols-3 gap-2">
-        {BACKGROUND_MEMES.map((meme) => (
-          <Button
-            key={meme.id}
-            onClick={() => onBackgroundSelect(meme.url)}
-            className="h-16 p-1 bg-blue-800/30 hover:bg-blue-700/50 border border-blue-500/30 flex flex-col items-center justify-center"
-            variant="outline"
-          >
-            <img 
-              src={meme.url} 
-              alt={meme.name}
-              className="w-8 h-8 object-contain mb-1"
-            />
-            <span className="text-blue-200 text-xs text-center leading-tight">
-              {meme.name.split(' ')[0]}
-            </span>
-          </Button>
-        ))}
-      </div>
-    </div>
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <CollapsibleTrigger asChild>
+        <Button
+          variant="outline"
+          className="w-full justify-between bg-blue-800/30 border-blue-500/30 text-blue-300 hover:bg-blue-700/50 h-12"
+        >
+          <span className="text-sm font-medium">Background Memes</span>
+          {isOpen ? (
+            <ChevronUp className="h-4 w-4" />
+          ) : (
+            <ChevronDown className="h-4 w-4" />
+          )}
+        </Button>
+      </CollapsibleTrigger>
+      <CollapsibleContent className="space-y-2 mt-2">
+        <div className="grid grid-cols-3 gap-2">
+          {BACKGROUND_MEMES.map((meme) => (
+            <Button
+              key={meme.id}
+              onClick={() => onBackgroundSelect(meme.url)}
+              className="h-16 p-1 bg-blue-800/30 hover:bg-blue-700/50 border border-blue-500/30 flex flex-col items-center justify-center"
+              variant="outline"
+            >
+              <img 
+                src={meme.url} 
+                alt={meme.name}
+                className="w-8 h-8 object-contain mb-1"
+              />
+              <span className="text-blue-200 text-xs text-center leading-tight">
+                {meme.name.split(' ')[0]}
+              </span>
+            </Button>
+          ))}
+        </div>
+        <p className="text-xs text-blue-400 text-center">
+          Click to use as background
+        </p>
+      </CollapsibleContent>
+    </Collapsible>
   );
 };
 

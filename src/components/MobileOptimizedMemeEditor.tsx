@@ -3,11 +3,12 @@ import { useState, useRef, useEffect } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { X, Download, Image, Type, Layers } from "lucide-react";
+import { X, Download, Image, Type, Layers, Settings } from "lucide-react";
 import MemeCanvas from "./MemeCanvas";
 import MobileCanvasControls from "./mobile-meme/MobileCanvasControls";
 import MobileTextControls from "./mobile-meme/MobileTextControls";
 import MobileAssetLibrary from "./mobile-meme/MobileAssetLibrary";
+import MobileToolsControls from "./mobile-meme/MobileToolsControls";
 
 interface MobileOptimizedMemeEditorProps {
   onClose: () => void;
@@ -75,6 +76,48 @@ const MobileOptimizedMemeEditor = ({ onClose, initialBackgroundImage }: MobileOp
     }
   };
 
+  const handleRotate = () => {
+    if (canvasRef.current) {
+      canvasRef.current.rotateSelectedObject();
+    }
+  };
+
+  const handleFlipHorizontal = () => {
+    if (canvasRef.current) {
+      canvasRef.current.flipSelectedObjectHorizontal();
+    }
+  };
+
+  const handleFlipVertical = () => {
+    if (canvasRef.current) {
+      canvasRef.current.flipSelectedObjectVertical();
+    }
+  };
+
+  const handleDelete = () => {
+    if (canvasRef.current) {
+      canvasRef.current.deleteSelectedObject();
+    }
+  };
+
+  const handleZoomIn = () => {
+    if (canvasRef.current) {
+      canvasRef.current.zoomIn();
+    }
+  };
+
+  const handleZoomOut = () => {
+    if (canvasRef.current) {
+      canvasRef.current.zoomOut();
+    }
+  };
+
+  const handleResetZoom = () => {
+    if (canvasRef.current) {
+      canvasRef.current.resetZoom();
+    }
+  };
+
   return (
     <TooltipProvider>
       <div 
@@ -117,6 +160,9 @@ const MobileOptimizedMemeEditor = ({ onClose, initialBackgroundImage }: MobileOp
               backgroundImage={backgroundImage}
               topText={topText}
               bottomText={bottomText}
+              onZoomIn={handleZoomIn}
+              onZoomOut={handleZoomOut}
+              onResetZoom={handleResetZoom}
             />
           </div>
         </div>
@@ -124,7 +170,7 @@ const MobileOptimizedMemeEditor = ({ onClose, initialBackgroundImage }: MobileOp
         {/* Mobile Bottom Controls */}
         <div className="border-t border-purple-500/30 bg-purple-900/30 shrink-0">
           <Tabs defaultValue="canvas" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 bg-transparent border-0 h-12">
+            <TabsList className="grid w-full grid-cols-4 bg-transparent border-0 h-12">
               <TabsTrigger 
                 value="canvas" 
                 className="flex flex-col items-center gap-1 data-[state=active]:bg-purple-700/50 text-white"
@@ -145,6 +191,13 @@ const MobileOptimizedMemeEditor = ({ onClose, initialBackgroundImage }: MobileOp
               >
                 <Layers className="w-4 h-4" />
                 <span className="text-xs">Assets</span>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="tools" 
+                className="flex flex-col items-center gap-1 data-[state=active]:bg-purple-700/50 text-white"
+              >
+                <Settings className="w-4 h-4" />
+                <span className="text-xs">Tools</span>
               </TabsTrigger>
             </TabsList>
             
@@ -171,6 +224,18 @@ const MobileOptimizedMemeEditor = ({ onClose, initialBackgroundImage }: MobileOp
                 <MobileAssetLibrary 
                   assets={canvasRef.current?.assets || []}
                   onAssetSelect={handleAssetSelect}
+                />
+              </TabsContent>
+
+              <TabsContent value="tools" className="m-0 p-4">
+                <MobileToolsControls 
+                  onRotate={handleRotate}
+                  onFlipHorizontal={handleFlipHorizontal}
+                  onFlipVertical={handleFlipVertical}
+                  onDelete={handleDelete}
+                  onZoomIn={handleZoomIn}
+                  onZoomOut={handleZoomOut}
+                  onResetZoom={handleResetZoom}
                 />
               </TabsContent>
             </div>
