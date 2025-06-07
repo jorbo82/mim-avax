@@ -1,9 +1,9 @@
-
 import { Image, Twitter, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useState } from "react";
 import MemeModal from "./MemeModal";
+import MimeMeModal from "./MimeMeModal";
 
 const MemeGallery = () => {
   const [selectedMeme, setSelectedMeme] = useState<{
@@ -12,6 +12,8 @@ const MemeGallery = () => {
     title: string;
   } | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isMimeMeOpen, setIsMimeMeOpen] = useState(false);
+  const [selectedBackgroundImage, setSelectedBackgroundImage] = useState<string | null>(null);
 
   const memes = [
     {
@@ -86,6 +88,18 @@ const MemeGallery = () => {
     setSelectedMeme(null);
   };
 
+  const handleUseAsBackground = (imageUrl: string) => {
+    setSelectedBackgroundImage(imageUrl);
+    setIsModalOpen(false);
+    setSelectedMeme(null);
+    setIsMimeMeOpen(true);
+  };
+
+  const handleCloseMimeMe = () => {
+    setIsMimeMeOpen(false);
+    setSelectedBackgroundImage(null);
+  };
+
   return (
     <section className="relative z-10 container mx-auto px-4 pb-16">
       <div className="text-center mb-12">
@@ -137,7 +151,14 @@ const MemeGallery = () => {
       <MemeModal 
         isOpen={isModalOpen}
         onClose={handleCloseModal}
+        onUseAsBackground={handleUseAsBackground}
         meme={selectedMeme}
+      />
+
+      <MimeMeModal 
+        isOpen={isMimeMeOpen} 
+        onClose={handleCloseMimeMe}
+        initialBackgroundImage={selectedBackgroundImage}
       />
     </section>
   );

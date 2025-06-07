@@ -1,5 +1,4 @@
-
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import MemeCanvas from "./MemeCanvas";
@@ -12,13 +11,21 @@ import DownloadButton from "./meme-canvas/DownloadButton";
 
 interface MemeEditorProps {
   onClose: () => void;
+  initialBackgroundImage?: string | null;
 }
 
-const MemeEditor = ({ onClose }: MemeEditorProps) => {
+const MemeEditor = ({ onClose, initialBackgroundImage }: MemeEditorProps) => {
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
   const [topText, setTopText] = useState("");
   const [bottomText, setBottomText] = useState("");
   const canvasRef = useRef<any>(null);
+
+  // Set initial background image when component mounts
+  useEffect(() => {
+    if (initialBackgroundImage) {
+      setBackgroundImage(initialBackgroundImage);
+    }
+  }, [initialBackgroundImage]);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
