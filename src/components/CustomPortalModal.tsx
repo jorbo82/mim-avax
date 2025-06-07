@@ -18,11 +18,15 @@ const CustomPortalModal = ({ isOpen, onClose, children }: CustomPortalModalProps
 
   useEffect(() => {
     if (isOpen) {
-      // Prevent body scroll and ensure modal is visible
-      const originalStyle = window.getComputedStyle(document.body);
-      const originalOverflow = originalStyle.overflow;
-      const originalPosition = originalStyle.position;
+      // Store original styles
+      const originalOverflow = document.body.style.overflow;
+      const originalPosition = document.body.style.position;
+      const originalWidth = document.body.style.width;
+      const originalHeight = document.body.style.height;
+      const originalTop = document.body.style.top;
+      const originalLeft = document.body.style.left;
       
+      // Prevent body scroll
       document.body.style.overflow = 'hidden';
       document.body.style.position = 'fixed';
       document.body.style.width = '100%';
@@ -40,12 +44,13 @@ const CustomPortalModal = ({ isOpen, onClose, children }: CustomPortalModalProps
       document.addEventListener('keydown', handleEscape);
 
       return () => {
+        // Restore original styles
         document.body.style.overflow = originalOverflow;
         document.body.style.position = originalPosition;
-        document.body.style.width = '';
-        document.body.style.height = '';
-        document.body.style.top = '';
-        document.body.style.left = '';
+        document.body.style.width = originalWidth;
+        document.body.style.height = originalHeight;
+        document.body.style.top = originalTop;
+        document.body.style.left = originalLeft;
         document.removeEventListener('keydown', handleEscape);
       };
     }
