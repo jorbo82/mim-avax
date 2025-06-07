@@ -16,9 +16,19 @@ export const useCanvasSetup = () => {
       backgroundColor: '#ffffff',
     });
 
+    // Ensure white background is immediately visible
+    canvas.backgroundColor = '#ffffff';
+    canvas.renderAll();
+
     fabricCanvasRef.current = canvas;
 
-    // No longer automatically adding wizard image - users can add assets from the library
+    // Add a small delay to ensure canvas is fully initialized
+    setTimeout(() => {
+      if (canvas) {
+        canvas.backgroundColor = '#ffffff';
+        canvas.renderAll();
+      }
+    }, 50);
 
     return () => {
       canvas.dispose();

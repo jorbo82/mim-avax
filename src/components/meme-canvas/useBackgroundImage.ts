@@ -51,19 +51,31 @@ export const useBackgroundImage = (
         console.error('Error loading background image:', error);
       });
     } else {
-      // Handle blank canvas mode - ensure white background is always set
+      // Handle blank canvas mode - ensure white background is always set immediately
       const objects = canvas.getObjects().filter(obj => obj.selectable !== false);
-      canvas.clear();
       
-      // Set white background color for the canvas
+      // Clear canvas and immediately set white background
+      canvas.clear();
       canvas.backgroundColor = '#ffffff';
+      
+      // Force immediate render of white background
+      canvas.renderAll();
       
       // Re-add all objects that are not background images
       objects.forEach(obj => {
         canvas.add(obj);
       });
 
+      // Final render to ensure everything is visible
       canvas.renderAll();
+      
+      // Additional render after a small delay to ensure visibility
+      setTimeout(() => {
+        if (canvas) {
+          canvas.backgroundColor = '#ffffff';
+          canvas.renderAll();
+        }
+      }, 10);
     }
   }, [backgroundImage, fabricCanvasRef, wizardImageRef, topTextRef, bottomTextRef]);
 };
