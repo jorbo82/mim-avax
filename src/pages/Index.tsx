@@ -1,5 +1,6 @@
 
 import BackgroundSparkles from "@/components/BackgroundSparkles";
+import TokenPriceWidget from "@/components/TokenPriceWidget";
 import HeroSection from "@/components/HeroSection";
 import StatsSection from "@/components/StatsSection";
 import MemeGallery from "@/components/MemeGallery";
@@ -12,6 +13,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 text-white overflow-hidden relative">
       <BackgroundSparkles />
+      <TokenPriceWidget />
       <HeroSection />
       <StatsSection />
       <MemeGallery />
