@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import MobileEditorHeader from "./mobile-meme/MobileEditorHeader";
 import MobileEditorCanvas from "./mobile-meme/MobileEditorCanvas";
 import MobileEditorTabs from "./mobile-meme/MobileEditorTabs";
+import { ASSET_LIBRARY } from "./meme-canvas/assetLibrary";
 
 interface MobileOptimizedMemeEditorProps {
   onClose: () => void;
@@ -132,7 +133,7 @@ const MobileOptimizedMemeEditor = ({ onClose, initialBackgroundImage }: MobileOp
           bottomText={bottomText}
           onTopTextChange={setTopText}
           onBottomTextChange={setBottomText}
-          assets={canvasRef.current?.assets || []}
+          assets={ASSET_LIBRARY}
           onAssetSelect={handleAssetSelect}
           onRotate={handleRotate}
           onFlipHorizontal={handleFlipHorizontal}
