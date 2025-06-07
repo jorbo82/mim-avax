@@ -2,7 +2,6 @@
 import { useState, useRef, useEffect } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { X, Settings, Image, Type, Layers, Download } from "lucide-react";
 import MemeCanvas from "./MemeCanvas";
@@ -19,7 +18,6 @@ const MobileOptimizedMemeEditor = ({ onClose, initialBackgroundImage }: MobileOp
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
   const [topText, setTopText] = useState("");
   const [bottomText, setBottomText] = useState("");
-  const [isControlsOpen, setIsControlsOpen] = useState(false);
   const canvasRef = useRef<any>(null);
 
   // Set initial background image when component mounts
@@ -28,6 +26,24 @@ const MobileOptimizedMemeEditor = ({ onClose, initialBackgroundImage }: MobileOp
       setBackgroundImage(initialBackgroundImage);
     }
   }, [initialBackgroundImage]);
+
+  // Prevent viewport scaling and ensure proper mobile display
+  useEffect(() => {
+    const viewport = document.querySelector('meta[name=viewport]');
+    const originalContent = viewport?.getAttribute('content');
+    
+    // Set mobile-optimized viewport
+    if (viewport) {
+      viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+    }
+
+    // Cleanup on unmount
+    return () => {
+      if (viewport && originalContent) {
+        viewport.setAttribute('content', originalContent);
+      }
+    };
+  }, []);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -62,9 +78,21 @@ const MobileOptimizedMemeEditor = ({ onClose, initialBackgroundImage }: MobileOp
 
   return (
     <TooltipProvider>
-      <div className="w-full h-full flex flex-col bg-gradient-to-br from-purple-900/95 to-blue-900/95">
+      <div 
+        className="w-full h-full flex flex-col bg-gradient-to-br from-purple-900/95 to-blue-900/95 relative"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 50,
+          minHeight: '100vh',
+          minHeight: '100dvh' // Use dynamic viewport height for better mobile support
+        }}
+      >
         {/* Mobile Header */}
-        <div className="flex items-center justify-between p-4 border-b border-purple-500/30">
+        <div className="flex items-center justify-between p-4 border-b border-purple-500/30 shrink-0">
           <h2 className="text-xl font-bold text-yellow-400">MIM-ME</h2>
           <div className="flex items-center gap-2">
             <Button
@@ -86,7 +114,7 @@ const MobileOptimizedMemeEditor = ({ onClose, initialBackgroundImage }: MobileOp
         </div>
 
         {/* Canvas Area */}
-        <div className="flex-1 p-4 overflow-hidden">
+        <div className="flex-1 p-4 overflow-hidden min-h-0">
           <div className="w-full h-full relative">
             <MemeCanvas
               ref={canvasRef}
@@ -98,7 +126,7 @@ const MobileOptimizedMemeEditor = ({ onClose, initialBackgroundImage }: MobileOp
         </div>
 
         {/* Mobile Bottom Controls */}
-        <div className="border-t border-purple-500/30 bg-purple-900/30">
+        <div className="border-t border-purple-500/30 bg-purple-900/30 shrink-0">
           <Tabs defaultValue="canvas" className="w-full">
             <TabsList className="grid w-full grid-cols-3 bg-transparent border-0 h-12">
               <TabsTrigger 
