@@ -15,10 +15,15 @@ const TokenPriceWidget = () => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
             <p className="text-purple-300 text-sm">Unable to load live token data</p>
-            <div className="flex gap-3">
+            <div className="hidden md:flex gap-3">
               <MimeMeButton />
               <DeFiAggregatorButton />
             </div>
+          </div>
+          {/* Mobile Action Buttons - Stacked */}
+          <div className="md:hidden mt-3 flex flex-col gap-2">
+            <MimeMeButton />
+            <DeFiAggregatorButton />
           </div>
         </div>
       </div>
@@ -39,10 +44,15 @@ const TokenPriceWidget = () => {
               <Skeleton className="h-4 w-20 bg-purple-500/20" />
               <Skeleton className="h-4 w-16 bg-purple-500/20" />
             </div>
-            <div className="flex gap-3">
+            <div className="hidden md:flex gap-3">
               <MimeMeButton />
               <DeFiAggregatorButton />
             </div>
+          </div>
+          {/* Mobile Action Buttons - Stacked */}
+          <div className="md:hidden mt-4 flex flex-col gap-2">
+            <MimeMeButton />
+            <DeFiAggregatorButton />
           </div>
         </div>
       </div>
@@ -116,15 +126,15 @@ const TokenPriceWidget = () => {
             </div>
           </div>
 
-          {/* Action Buttons */}
+          {/* Action Buttons - Desktop */}
           <div className="hidden md:flex gap-3">
             <MimeMeButton />
             <DeFiAggregatorButton />
           </div>
         </div>
 
-        {/* Mobile Action Buttons */}
-        <div className="md:hidden mt-4 flex justify-center gap-3">
+        {/* Mobile Action Buttons - Stacked */}
+        <div className="md:hidden mt-4 flex flex-col gap-2">
           <MimeMeButton />
           <DeFiAggregatorButton />
         </div>
