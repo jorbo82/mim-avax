@@ -1,14 +1,9 @@
 
 import { useState, useRef, useEffect } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { X, Download, Image, Type, Layers, Settings } from "lucide-react";
-import MemeCanvas from "./MemeCanvas";
-import MobileCanvasControls from "./mobile-meme/MobileCanvasControls";
-import MobileTextControls from "./mobile-meme/MobileTextControls";
-import MobileAssetLibrary from "./mobile-meme/MobileAssetLibrary";
-import MobileToolsControls from "./mobile-meme/MobileToolsControls";
+import MobileEditorHeader from "./mobile-meme/MobileEditorHeader";
+import MobileEditorCanvas from "./mobile-meme/MobileEditorCanvas";
+import MobileEditorTabs from "./mobile-meme/MobileEditorTabs";
 
 interface MobileOptimizedMemeEditorProps {
   onClose: () => void;
@@ -113,117 +108,40 @@ const MobileOptimizedMemeEditor = ({ onClose, initialBackgroundImage }: MobileOp
           position: 'relative'
         }}
       >
-        {/* Mobile Header */}
-        <div className="flex items-center justify-between p-4 border-b border-purple-500/30 shrink-0">
-          <h2 className="text-xl font-bold text-yellow-400">MIM-ME</h2>
-          <div className="flex items-center gap-2">
-            <Button
-              onClick={handleDownload}
-              size="sm"
-              className="bg-green-600 hover:bg-green-700 text-white"
-            >
-              <Download className="w-4 h-4" />
-            </Button>
-            <Button
-              onClick={onClose}
-              size="sm"
-              variant="ghost"
-              className="text-white hover:bg-white/10"
-            >
-              <X className="w-5 h-5" />
-            </Button>
-          </div>
-        </div>
+        <MobileEditorHeader 
+          onClose={onClose}
+          onDownload={handleDownload}
+        />
 
-        {/* Canvas Area */}
-        <div className="flex-1 p-4 overflow-hidden min-h-0">
-          <div className="w-full h-full relative">
-            <MemeCanvas
-              ref={canvasRef}
-              backgroundImage={backgroundImage}
-              topText={topText}
-              bottomText={bottomText}
-              onZoomIn={handleZoomIn}
-              onZoomOut={handleZoomOut}
-              onResetZoom={handleResetZoom}
-            />
-          </div>
-        </div>
+        <MobileEditorCanvas
+          ref={canvasRef}
+          backgroundImage={backgroundImage}
+          topText={topText}
+          bottomText={bottomText}
+          onZoomIn={handleZoomIn}
+          onZoomOut={handleZoomOut}
+          onResetZoom={handleResetZoom}
+        />
 
-        {/* Mobile Bottom Controls */}
-        <div className="border-t border-purple-500/30 bg-purple-900/30 shrink-0">
-          <Tabs defaultValue="canvas" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 bg-transparent border-0 h-12">
-              <TabsTrigger 
-                value="canvas" 
-                className="flex flex-col items-center gap-1 data-[state=active]:bg-purple-700/50 text-white"
-              >
-                <Image className="w-4 h-4" />
-                <span className="text-xs">Canvas</span>
-              </TabsTrigger>
-              <TabsTrigger 
-                value="text" 
-                className="flex flex-col items-center gap-1 data-[state=active]:bg-purple-700/50 text-white"
-              >
-                <Type className="w-4 h-4" />
-                <span className="text-xs">Text</span>
-              </TabsTrigger>
-              <TabsTrigger 
-                value="assets" 
-                className="flex flex-col items-center gap-1 data-[state=active]:bg-purple-700/50 text-white"
-              >
-                <Layers className="w-4 h-4" />
-                <span className="text-xs">Assets</span>
-              </TabsTrigger>
-              <TabsTrigger 
-                value="tools" 
-                className="flex flex-col items-center gap-1 data-[state=active]:bg-purple-700/50 text-white"
-              >
-                <Settings className="w-4 h-4" />
-                <span className="text-xs">Tools</span>
-              </TabsTrigger>
-            </TabsList>
-            
-            <div className="max-h-64 overflow-y-auto">
-              <TabsContent value="canvas" className="m-0 p-4">
-                <MobileCanvasControls 
-                  backgroundImage={backgroundImage}
-                  onImageUpload={handleImageUpload}
-                  onBlankCanvas={handleBlankCanvas}
-                  onBackgroundSelect={handleBackgroundSelect}
-                />
-              </TabsContent>
-              
-              <TabsContent value="text" className="m-0 p-4">
-                <MobileTextControls 
-                  topText={topText}
-                  bottomText={bottomText}
-                  onTopTextChange={setTopText}
-                  onBottomTextChange={setBottomText}
-                />
-              </TabsContent>
-              
-              <TabsContent value="assets" className="m-0 p-4">
-                <MobileAssetLibrary 
-                  assets={canvasRef.current?.assets || []}
-                  onAssetSelect={handleAssetSelect}
-                />
-              </TabsContent>
-
-              <TabsContent value="tools" className="m-0 p-4">
-                <MobileToolsControls 
-                  onRotate={handleRotate}
-                  onFlipHorizontal={handleFlipHorizontal}
-                  onFlipVertical={handleFlipVertical}
-                  onDelete={handleDelete}
-                  onZoomIn={handleZoomIn}
-                  onZoomOut={handleZoomOut}
-                  onResetZoom={handleResetZoom}
-                />
-              </TabsContent>
-            </div>
-          </Tabs>
-        </div>
+        <MobileEditorTabs
+          backgroundImage={backgroundImage}
+          onImageUpload={handleImageUpload}
+          onBlankCanvas={handleBlankCanvas}
+          onBackgroundSelect={handleBackgroundSelect}
+          topText={topText}
+          bottomText={bottomText}
+          onTopTextChange={setTopText}
+          onBottomTextChange={setBottomText}
+          assets={canvasRef.current?.assets || []}
+          onAssetSelect={handleAssetSelect}
+          onRotate={handleRotate}
+          onFlipHorizontal={handleFlipHorizontal}
+          onFlipVertical={handleFlipVertical}
+          onDelete={handleDelete}
+          onZoomIn={handleZoomIn}
+          onZoomOut={handleZoomOut}
+          onResetZoom={handleResetZoom}
+        />
       </div>
     </TooltipProvider>
   );
