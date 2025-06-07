@@ -1,4 +1,3 @@
-
 import { useState, useRef } from "react";
 import { X, Upload, Download, RotateCw, FlipHorizontal, FlipVertical, Trash2, FileImage } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -6,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import MemeCanvas from "./MemeCanvas";
 import AssetLibrary from "./meme-canvas/AssetLibrary";
+import BackgroundSelector from "./meme-canvas/BackgroundSelector";
 
 interface MemeEditorProps {
   onClose: () => void;
@@ -31,6 +31,10 @@ const MemeEditor = ({ onClose }: MemeEditorProps) => {
 
   const handleBlankCanvas = () => {
     setBackgroundImage(null);
+  };
+
+  const handleBackgroundSelect = (backgroundUrl: string) => {
+    setBackgroundImage(backgroundUrl);
   };
 
   const handleDownload = () => {
@@ -126,6 +130,9 @@ const MemeEditor = ({ onClose }: MemeEditorProps) => {
                   </p>
                 )}
               </div>
+
+              {/* Background Meme Selector */}
+              <BackgroundSelector onBackgroundSelect={handleBackgroundSelect} />
 
               {/* Asset Library */}
               <AssetLibrary 
