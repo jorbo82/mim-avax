@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { Canvas as FabricCanvas, FabricImage, FabricText } from "fabric";
 
@@ -10,32 +9,63 @@ export const useBackgroundImage = (
   bottomTextRef: React.RefObject<FabricText | null>
 ) => {
   useEffect(() => {
-    if (!fabricCanvasRef.current || !backgroundImage) return;
+    if (!fabricCanvasRef.current) return;
 
-    FabricImage.fromURL(backgroundImage).then((img) => {
-      const canvas = fabricCanvasRef.current!;
-      const canvasWidth = canvas.getWidth();
-      const canvasHeight = canvas.getHeight();
+    const canvas = fabricCanvasRef.current;
+
+    if (backgroundImage) {
+      // Load and set background image
+      FabricImage.fromURL(backgroundImage).then((img) => {
+        const canvasWidth = canvas.getWidth();
+        const canvasHeight = canvas.getHeight();
+        
+        // Scale image to fit canvas while maintaining aspect ratio
+        const scale = Math.min(canvasWidth / img.width!, canvasHeight / img.height!);
+        
+        img.set({
+          left: canvasWidth / 2,
+          top: canvasHeight / 2,
+          originX: 'center',
+          originY: 'center',
+          scaleX: scale,
+          scaleY: scale,
+          selectable: false,
+          evented: false,
+        });
+
+        canvas.clear();
+        canvas.add(img);
+        canvas.sendObjectToBack(img);
+
+        // Re-add wizard image
+        if (wizardImageRef.current) {
+          canvas.add(wizardImageRef.current);
+        }
+
+        // Re-add texts
+        if (topTextRef.current) {
+          canvas.add(topTextRef.current);
+        }
+        if (bottomTextRef.current) {
+          canvas.add(bottomTextRef.current);
+        }
+
+        canvas.renderAll();
+      });
+    } else {
+      // Handle blank canvas mode - clear background but keep objects
+      const objects = canvas.getObjects();
+      canvas.clear();
+      canvas.backgroundColor = '#ffffff';
       
-      // Scale image to fit canvas while maintaining aspect ratio
-      const scale = Math.min(canvasWidth / img.width!, canvasHeight / img.height!);
-      
-      img.set({
-        left: canvasWidth / 2,
-        top: canvasHeight / 2,
-        originX: 'center',
-        originY: 'center',
-        scaleX: scale,
-        scaleY: scale,
-        selectable: false,
-        evented: false,
+      // Re-add all non-background objects
+      objects.forEach(obj => {
+        if (obj.selectable !== false) {
+          canvas.add(obj);
+        }
       });
 
-      canvas.clear();
-      canvas.add(img);
-      canvas.sendObjectToBack(img);
-
-      // Re-add wizard image
+      // Re-add wizard image if it exists
       if (wizardImageRef.current) {
         canvas.add(wizardImageRef.current);
       }
@@ -49,6 +79,6 @@ export const useBackgroundImage = (
       }
 
       canvas.renderAll();
-    });
+    }
   }, [backgroundImage, fabricCanvasRef, wizardImageRef, topTextRef, bottomTextRef]);
 };

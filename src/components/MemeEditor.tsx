@@ -1,6 +1,6 @@
 
 import { useState, useRef } from "react";
-import { X, Upload, Download, RotateCw, FlipHorizontal, FlipVertical, Trash2 } from "lucide-react";
+import { X, Upload, Download, RotateCw, FlipHorizontal, FlipVertical, Trash2, FileImage } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -27,6 +27,10 @@ const MemeEditor = ({ onClose }: MemeEditorProps) => {
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleBlankCanvas = () => {
+    setBackgroundImage(null);
   };
 
   const handleDownload = () => {
@@ -87,25 +91,40 @@ const MemeEditor = ({ onClose }: MemeEditorProps) => {
           {/* Controls Panel */}
           <div className="w-full lg:w-80 p-4 border-r border-purple-500/30 bg-purple-900/20 overflow-y-auto">
             <div className="space-y-4">
-              {/* Upload Image */}
+              {/* Canvas Options */}
               <div>
                 <label className="block text-sm font-medium text-purple-300 mb-2">
-                  Upload Background Image
+                  Canvas Setup
                 </label>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                />
-                <Button
-                  onClick={() => fileInputRef.current?.click()}
-                  className="w-full bg-blue-600 hover:bg-blue-700"
-                >
-                  <Upload className="mr-2 w-4 h-4" />
-                  Choose Image
-                </Button>
+                <div className="grid grid-cols-1 gap-2">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                  />
+                  <Button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-full bg-blue-600 hover:bg-blue-700"
+                  >
+                    <Upload className="mr-2 w-4 h-4" />
+                    Upload Background
+                  </Button>
+                  <Button
+                    onClick={handleBlankCanvas}
+                    className="w-full bg-gray-600 hover:bg-gray-700"
+                    variant="outline"
+                  >
+                    <FileImage className="mr-2 w-4 h-4" />
+                    Blank Canvas
+                  </Button>
+                </div>
+                {backgroundImage && (
+                  <p className="text-xs text-green-400 mt-1">
+                    Background image loaded
+                  </p>
+                )}
               </div>
 
               {/* Asset Library */}
@@ -211,7 +230,6 @@ const MemeEditor = ({ onClose }: MemeEditorProps) => {
               <Button
                 onClick={handleDownload}
                 className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
-                disabled={!backgroundImage}
               >
                 <Download className="mr-2 w-4 h-4" />
                 Download Meme
