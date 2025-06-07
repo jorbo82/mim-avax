@@ -28,23 +28,6 @@ const MobileOptimizedMemeEditor = ({ onClose, initialBackgroundImage }: MobileOp
     }
   }, [initialBackgroundImage]);
 
-  // Prevent body scrolling when modal is open
-  useEffect(() => {
-    // Prevent body scroll
-    document.body.style.overflow = 'hidden';
-    document.body.style.position = 'fixed';
-    document.body.style.width = '100%';
-    document.body.style.height = '100%';
-    
-    // Cleanup on unmount
-    return () => {
-      document.body.style.overflow = '';
-      document.body.style.position = '';
-      document.body.style.width = '';
-      document.body.style.height = '';
-    };
-  }, []);
-
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {

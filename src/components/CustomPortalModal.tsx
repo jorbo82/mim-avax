@@ -18,13 +18,14 @@ const CustomPortalModal = ({ isOpen, onClose, children }: CustomPortalModalProps
 
   useEffect(() => {
     if (isOpen) {
-      // Store original styles
-      const originalOverflow = document.body.style.overflow;
-      const originalPosition = document.body.style.position;
-      const originalWidth = document.body.style.width;
-      const originalHeight = document.body.style.height;
-      const originalTop = document.body.style.top;
-      const originalLeft = document.body.style.left;
+      // Store original styles - use computed styles as fallback for empty inline styles
+      const computedStyle = window.getComputedStyle(document.body);
+      const originalOverflow = document.body.style.overflow || computedStyle.overflow || 'auto';
+      const originalPosition = document.body.style.position || computedStyle.position || 'static';
+      const originalWidth = document.body.style.width || '';
+      const originalHeight = document.body.style.height || '';
+      const originalTop = document.body.style.top || '';
+      const originalLeft = document.body.style.left || '';
       
       // Prevent body scroll
       document.body.style.overflow = 'hidden';
@@ -43,18 +44,43 @@ const CustomPortalModal = ({ isOpen, onClose, children }: CustomPortalModalProps
 
       document.addEventListener('keydown', handleEscape);
 
+      // Cleanup function
+      const restoreBodyStyles = () => {
+        // Use requestAnimationFrame to ensure restoration happens after all DOM updates
+        requestAnimationFrame(() => {
+          // Restore original styles or defaults
+          document.body.style.overflow = originalOverflow === 'auto' && !document.body.style.overflow ? '' : originalOverflow;
+          document.body.style.position = originalPosition === 'static' && !document.body.style.position ? '' : originalPosition;
+          document.body.style.width = originalWidth;
+          document.body.style.height = originalHeight;
+          document.body.style.top = originalTop;
+          document.body.style.left = originalLeft;
+        });
+      };
+
       return () => {
-        // Restore original styles
-        document.body.style.overflow = originalOverflow;
-        document.body.style.position = originalPosition;
-        document.body.style.width = originalWidth;
-        document.body.style.height = originalHeight;
-        document.body.style.top = originalTop;
-        document.body.style.left = originalLeft;
+        restoreBodyStyles();
         document.removeEventListener('keydown', handleEscape);
       };
     }
   }, [isOpen, onClose]);
+
+  // Defensive cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (mounted) {
+        requestAnimationFrame(() => {
+          // Ensure scroll is always restored to default behavior
+          document.body.style.overflow = '';
+          document.body.style.position = '';
+          document.body.style.width = '';
+          document.body.style.height = '';
+          document.body.style.top = '';
+          document.body.style.left = '';
+        });
+      }
+    };
+  }, [mounted]);
 
   if (!mounted || !isOpen) return null;
 
