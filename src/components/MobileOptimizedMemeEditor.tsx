@@ -87,7 +87,6 @@ const MobileOptimizedMemeEditor = ({ onClose, initialBackgroundImage }: MobileOp
           right: 0,
           bottom: 0,
           zIndex: 50,
-          minHeight: '100vh',
           minHeight: '100dvh' // Use dynamic viewport height for better mobile support
         }}
       >
