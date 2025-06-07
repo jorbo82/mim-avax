@@ -12,7 +12,7 @@ interface MimeMeModalProps {
 const MimeMeModal = ({ isOpen, onClose, initialBackgroundImage }: MimeMeModalProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="fixed inset-0 w-screen h-screen max-w-none max-h-none m-0 p-0 bg-gradient-to-br from-purple-900/95 to-blue-900/95 backdrop-blur-md border-0 rounded-none overflow-hidden">
+      <DialogContent className="fixed inset-0 w-screen h-screen max-w-none max-h-none m-0 p-0 border-0 rounded-none overflow-hidden bg-transparent">
         <VisuallyHidden>
           <DialogTitle>MIM-ME Meme Editor</DialogTitle>
           <DialogDescription>

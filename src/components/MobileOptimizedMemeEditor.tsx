@@ -27,21 +27,20 @@ const MobileOptimizedMemeEditor = ({ onClose, initialBackgroundImage }: MobileOp
     }
   }, [initialBackgroundImage]);
 
-  // Prevent viewport scaling and ensure proper mobile display
+  // Prevent body scrolling when modal is open
   useEffect(() => {
-    const viewport = document.querySelector('meta[name=viewport]');
-    const originalContent = viewport?.getAttribute('content');
+    // Prevent body scroll
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
+    document.body.style.height = '100%';
     
-    // Set mobile-optimized viewport
-    if (viewport) {
-      viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
-    }
-
     // Cleanup on unmount
     return () => {
-      if (viewport && originalContent) {
-        viewport.setAttribute('content', originalContent);
-      }
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.height = '';
     };
   }, []);
 
@@ -78,18 +77,7 @@ const MobileOptimizedMemeEditor = ({ onClose, initialBackgroundImage }: MobileOp
 
   return (
     <TooltipProvider>
-      <div 
-        className="w-full h-full flex flex-col bg-gradient-to-br from-purple-900/95 to-blue-900/95 relative"
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          zIndex: 50,
-          minHeight: '100dvh' // Use dynamic viewport height for better mobile support
-        }}
-      >
+      <div className="fixed inset-0 w-screen h-screen bg-gradient-to-br from-purple-900/95 to-blue-900/95 flex flex-col z-50 overflow-hidden">
         {/* Mobile Header */}
         <div className="flex items-center justify-between p-4 border-b border-purple-500/30 shrink-0">
           <h2 className="text-xl font-bold text-yellow-400">MIM-ME</h2>
