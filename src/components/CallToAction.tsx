@@ -26,7 +26,7 @@ const CallToAction = () => {
             variant="outline" 
             size="lg"
             className="border-2 border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-black font-bold py-4 px-8 rounded-full transform hover:scale-105 transition-all duration-200"
-            onClick={() => window.open('https://x.com/MoralGuideline', '_blank')}
+            onClick={() => window.open('https://x.com/mimonavax', '_blank')}
           >
             <Twitter className="mr-2" />
             Follow on X
