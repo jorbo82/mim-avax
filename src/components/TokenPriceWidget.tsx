@@ -4,6 +4,7 @@ import { useTokenData } from "@/hooks/useTokenData";
 import { formatPrice, formatLargeNumber, formatPercentage } from "@/utils/formatters";
 import { Skeleton } from "@/components/ui/skeleton";
 import DeFiAggregatorButton from "./DeFiAggregatorButton";
+import MimeMeButton from "./MimeMeButton";
 
 const TokenPriceWidget = () => {
   const { data: tokenData, isLoading, error } = useTokenData();
@@ -14,7 +15,10 @@ const TokenPriceWidget = () => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
             <p className="text-purple-300 text-sm">Unable to load live token data</p>
-            <DeFiAggregatorButton />
+            <div className="flex gap-3">
+              <MimeMeButton />
+              <DeFiAggregatorButton />
+            </div>
           </div>
         </div>
       </div>
@@ -35,7 +39,10 @@ const TokenPriceWidget = () => {
               <Skeleton className="h-4 w-20 bg-purple-500/20" />
               <Skeleton className="h-4 w-16 bg-purple-500/20" />
             </div>
-            <DeFiAggregatorButton />
+            <div className="flex gap-3">
+              <MimeMeButton />
+              <DeFiAggregatorButton />
+            </div>
           </div>
         </div>
       </div>
@@ -109,14 +116,16 @@ const TokenPriceWidget = () => {
             </div>
           </div>
 
-          {/* DeFi Aggregator Button */}
-          <div className="hidden md:block">
+          {/* Action Buttons */}
+          <div className="hidden md:flex gap-3">
+            <MimeMeButton />
             <DeFiAggregatorButton />
           </div>
         </div>
 
-        {/* Mobile DeFi Aggregator Button */}
-        <div className="md:hidden mt-4 flex justify-center">
+        {/* Mobile Action Buttons */}
+        <div className="md:hidden mt-4 flex justify-center gap-3">
+          <MimeMeButton />
           <DeFiAggregatorButton />
         </div>
       </div>
