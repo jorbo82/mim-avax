@@ -114,7 +114,7 @@ const MemeCanvas = forwardRef<any, MemeCanvasProps>(({ backgroundImage, topText,
 
       canvas.clear();
       canvas.add(img);
-      canvas.sendToBack(img);
+      canvas.sendObjectToBack(img);
 
       // Re-add wizard image
       if (wizardImageRef.current) {
