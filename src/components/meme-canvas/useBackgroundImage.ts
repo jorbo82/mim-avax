@@ -33,50 +33,32 @@ export const useBackgroundImage = (
           evented: false,
         });
 
+        // Store current objects
+        const objects = canvas.getObjects().filter(obj => obj.selectable !== false);
+        
         canvas.clear();
         canvas.add(img);
         canvas.sendObjectToBack(img);
 
-        // Re-add wizard image
-        if (wizardImageRef.current) {
-          canvas.add(wizardImageRef.current);
-        }
-
-        // Re-add texts
-        if (topTextRef.current) {
-          canvas.add(topTextRef.current);
-        }
-        if (bottomTextRef.current) {
-          canvas.add(bottomTextRef.current);
-        }
+        // Re-add all other objects
+        objects.forEach(obj => {
+          canvas.add(obj);
+        });
 
         canvas.renderAll();
+      }).catch((error) => {
+        console.error('Error loading background image:', error);
       });
     } else {
-      // Handle blank canvas mode - clear background but keep objects
-      const objects = canvas.getObjects();
+      // Handle blank canvas mode - set white background and keep all objects
+      const objects = canvas.getObjects().filter(obj => obj.selectable !== false);
       canvas.clear();
       canvas.backgroundColor = '#ffffff';
       
-      // Re-add all non-background objects
+      // Re-add all objects that are not background images
       objects.forEach(obj => {
-        if (obj.selectable !== false) {
-          canvas.add(obj);
-        }
+        canvas.add(obj);
       });
-
-      // Re-add wizard image if it exists
-      if (wizardImageRef.current) {
-        canvas.add(wizardImageRef.current);
-      }
-
-      // Re-add texts
-      if (topTextRef.current) {
-        canvas.add(topTextRef.current);
-      }
-      if (bottomTextRef.current) {
-        canvas.add(bottomTextRef.current);
-      }
 
       canvas.renderAll();
     }

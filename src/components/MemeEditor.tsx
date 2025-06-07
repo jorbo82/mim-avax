@@ -1,6 +1,7 @@
 
 import { useState, useRef } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import MemeCanvas from "./MemeCanvas";
 import AssetLibrary from "./meme-canvas/AssetLibrary";
 import MemeEditorHeader from "./meme-canvas/MemeEditorHeader";
@@ -81,38 +82,40 @@ const MemeEditor = ({ onClose }: MemeEditorProps) => {
         <MemeEditorHeader onClose={onClose} />
 
         <div className="flex-1 flex flex-col lg:flex-row">
-          {/* Controls Panel */}
-          <div className="w-full lg:w-80 p-4 border-r border-purple-500/30 bg-purple-900/20 overflow-y-auto">
-            <div className="space-y-4">
-              <CanvasControls 
-                backgroundImage={backgroundImage}
-                onImageUpload={handleImageUpload}
-                onBlankCanvas={handleBlankCanvas}
-                onBackgroundSelect={handleBackgroundSelect}
-              />
+          {/* Controls Panel with ScrollArea */}
+          <div className="w-full lg:w-80 border-r border-purple-500/30 bg-purple-900/20">
+            <ScrollArea className="h-full">
+              <div className="p-4 space-y-4">
+                <CanvasControls 
+                  backgroundImage={backgroundImage}
+                  onImageUpload={handleImageUpload}
+                  onBlankCanvas={handleBlankCanvas}
+                  onBackgroundSelect={handleBackgroundSelect}
+                />
 
-              {/* Asset Library */}
-              <AssetLibrary 
-                assets={canvasRef.current?.assets || []}
-                onAssetSelect={handleAssetSelect}
-              />
+                {/* Asset Library */}
+                <AssetLibrary 
+                  assets={canvasRef.current?.assets || []}
+                  onAssetSelect={handleAssetSelect}
+                />
 
-              <TextControls 
-                topText={topText}
-                bottomText={bottomText}
-                onTopTextChange={setTopText}
-                onBottomTextChange={setBottomText}
-              />
+                <TextControls 
+                  topText={topText}
+                  bottomText={bottomText}
+                  onTopTextChange={setTopText}
+                  onBottomTextChange={setBottomText}
+                />
 
-              <ObjectControls 
-                onRotate={handleRotate}
-                onFlipHorizontal={handleFlipHorizontal}
-                onFlipVertical={handleFlipVertical}
-                onDelete={handleDelete}
-              />
+                <ObjectControls 
+                  onRotate={handleRotate}
+                  onFlipHorizontal={handleFlipHorizontal}
+                  onFlipVertical={handleFlipVertical}
+                  onDelete={handleDelete}
+                />
 
-              <DownloadButton onDownload={handleDownload} />
-            </div>
+                <DownloadButton onDownload={handleDownload} />
+              </div>
+            </ScrollArea>
           </div>
 
           {/* Canvas Area */}
