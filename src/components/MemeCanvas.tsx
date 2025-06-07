@@ -5,6 +5,7 @@ import { useCanvasSetup } from "./meme-canvas/useCanvasSetup";
 import { useBackgroundImage } from "./meme-canvas/useBackgroundImage";
 import { useTextHandling } from "./meme-canvas/useTextHandling";
 import { useMemeActions } from "./meme-canvas/useMemeActions";
+import { useAssetLibrary } from "./meme-canvas/useAssetLibrary";
 
 const MemeCanvas = forwardRef<MemeCanvasRef, MemeCanvasProps>(
   ({ backgroundImage, topText, bottomText }, ref) => {
@@ -14,6 +15,7 @@ const MemeCanvas = forwardRef<MemeCanvasRef, MemeCanvasProps>(
       fabricCanvasRef,
       wizardImageRef
     );
+    const { assets, addAssetToCanvas } = useAssetLibrary(fabricCanvasRef);
 
     useBackgroundImage(fabricCanvasRef, backgroundImage, wizardImageRef, topTextRef, bottomTextRef);
 
@@ -21,7 +23,9 @@ const MemeCanvas = forwardRef<MemeCanvasRef, MemeCanvasProps>(
       downloadMeme,
       rotateWizard,
       flipWizardHorizontal,
-      flipWizardVertical
+      flipWizardVertical,
+      assets,
+      addAssetToCanvas
     }));
 
     return (

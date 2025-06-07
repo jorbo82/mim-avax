@@ -4,6 +4,7 @@ import { X, Upload, Download, RotateCw, FlipHorizontal, FlipVertical } from "luc
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import MemeCanvas from "./MemeCanvas";
+import AssetLibrary from "./meme-canvas/AssetLibrary";
 
 interface MemeEditorProps {
   onClose: () => void;
@@ -51,6 +52,12 @@ const MemeEditor = ({ onClose }: MemeEditorProps) => {
     }
   };
 
+  const handleAssetSelect = (assetUrl: string) => {
+    if (canvasRef.current) {
+      canvasRef.current.addAssetToCanvas(assetUrl);
+    }
+  };
+
   return (
     <div className="w-full h-full flex flex-col">
       {/* Header */}
@@ -70,7 +77,7 @@ const MemeEditor = ({ onClose }: MemeEditorProps) => {
 
       <div className="flex-1 flex flex-col lg:flex-row">
         {/* Controls Panel */}
-        <div className="w-full lg:w-80 p-4 border-r border-purple-500/30 bg-purple-900/20">
+        <div className="w-full lg:w-80 p-4 border-r border-purple-500/30 bg-purple-900/20 overflow-y-auto">
           <div className="space-y-4">
             {/* Upload Image */}
             <div>
@@ -92,6 +99,12 @@ const MemeEditor = ({ onClose }: MemeEditorProps) => {
                 Choose Image
               </Button>
             </div>
+
+            {/* Asset Library */}
+            <AssetLibrary 
+              assets={canvasRef.current?.assets || []}
+              onAssetSelect={handleAssetSelect}
+            />
 
             {/* Text Inputs */}
             <div>
@@ -121,7 +134,7 @@ const MemeEditor = ({ onClose }: MemeEditorProps) => {
             {/* Wizard Controls */}
             <div>
               <label className="block text-sm font-medium text-purple-300 mb-2">
-                Wizard Head Controls
+                Selected Object Controls
               </label>
               <div className="grid grid-cols-3 gap-2">
                 <Button
