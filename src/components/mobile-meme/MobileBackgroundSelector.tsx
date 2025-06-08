@@ -34,6 +34,71 @@ const BACKGROUND_MEMES = [
     id: 'more-magic',
     name: 'More Magic Please',
     url: '/lovable-uploads/4aa465de-e873-44f8-80ff-6bfbf3663c14.png'
+  },
+  {
+    id: 'mim-is-way',
+    name: 'MIM is the Way',
+    url: '/lovable-uploads/e91f040a-44f2-4c34-b171-3cfd47998775.png'
+  },
+  {
+    id: 'gmim-golden',
+    name: 'GMIM Golden Magic',
+    url: '/lovable-uploads/0767f171-a7a9-4a8f-871b-5643b0ae10a1.png'
+  },
+  {
+    id: 'pixel-magic',
+    name: 'Pixel Magic',
+    url: '/lovable-uploads/09c6b040-c8cd-4e77-8b57-9863364ec316.png'
+  },
+  {
+    id: 'building-defi',
+    name: 'Building DeFi',
+    url: '/lovable-uploads/fc68946c-623c-4d29-9c9e-1f5c348d87fc.png'
+  },
+  {
+    id: 'chart-magic',
+    name: 'Chart Magic',
+    url: '/lovable-uploads/da42fa5e-a2da-45fc-a782-15ee26974ade.png'
+  },
+  {
+    id: 'good-morning',
+    name: 'Good Morning MIM',
+    url: '/lovable-uploads/4ef9ea17-4aaa-40dd-92b7-5e72a1f5313b.png'
+  },
+  {
+    id: 'conjuring-magic',
+    name: 'Conjuring Magic',
+    url: '/lovable-uploads/07c77816-0782-438d-83d8-65eae6a60c4b.png'
+  },
+  {
+    id: 'tower-builder',
+    name: 'Magic Tower Builder',
+    url: '/lovable-uploads/08a94be2-cbf9-456c-ab16-a7a907308145.png'
+  },
+  {
+    id: 'lightning-wizard',
+    name: 'Lightning Wizard',
+    url: '/lovable-uploads/1f93a159-f2dc-41b1-846c-a5536787979d.png'
+  },
+  {
+    id: 'scroll-master',
+    name: 'Ancient Scroll Master',
+    url: '/lovable-uploads/34792e5b-91a2-44f9-9653-12d177de8af1.png'
+  },
+  {
+    id: 'fire-magic',
+    name: 'Fire Magic Master',
+    url: '/lovable-uploads/38a3afcd-7179-4eb4-b934-50ed64819bcf.png'
+  },
+  {
+    id: 'crystal-magic',
+    name: 'Crystal Magic',
+    url: '/lovable-uploads/3b4ae095-2460-46bc-bdf2-16bb509742a2.png'
+  },
+  {
+    id: 'storm-master',
+    name: 'Storm Master',
+    url: '/lovable-uploads/4180231f-60f8-4690-995f-92ddfd1fcc8d.png'
   }
 ];
 

@@ -1,4 +1,3 @@
-
 import { Image, Twitter, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -76,6 +75,41 @@ const MemeGallery = () => {
       src: "/lovable-uploads/4ef9ea17-4aaa-40dd-92b7-5e72a1f5313b.png",
       alt: "Good Morning Magic Internet Money",
       title: "GMIM - Good Morning!"
+    },
+    {
+      src: "/lovable-uploads/07c77816-0782-438d-83d8-65eae6a60c4b.png",
+      alt: "MIM Wizard Conjuring Magic",
+      title: "Conjuring Magic"
+    },
+    {
+      src: "/lovable-uploads/08a94be2-cbf9-456c-ab16-a7a907308145.png",
+      alt: "Wizard Building Magic Towers",
+      title: "Magic Tower Builder"
+    },
+    {
+      src: "/lovable-uploads/1f93a159-f2dc-41b1-846c-a5536787979d.png",
+      alt: "Powerful Wizard with Lightning",
+      title: "Lightning Wizard"
+    },
+    {
+      src: "/lovable-uploads/34792e5b-91a2-44f9-9653-12d177de8af1.png",
+      alt: "Ancient Wizard with Scrolls",
+      title: "Ancient Scroll Master"
+    },
+    {
+      src: "/lovable-uploads/38a3afcd-7179-4eb4-b934-50ed64819bcf.png",
+      alt: "Fire Magic Wizard",
+      title: "Fire Magic Master"
+    },
+    {
+      src: "/lovable-uploads/3b4ae095-2460-46bc-bdf2-16bb509742a2.png",
+      alt: "Crystal Magic Wizard",
+      title: "Crystal Magic"
+    },
+    {
+      src: "/lovable-uploads/4180231f-60f8-4690-995f-92ddfd1fcc8d.png",
+      alt: "Storm Wizard with Lightning",
+      title: "Storm Master"
     }
   ];
 
