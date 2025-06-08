@@ -1,3 +1,4 @@
+
 import { Sparkles, Zap, ExternalLink, Twitter, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -55,7 +56,7 @@ const HeroSection = () => {
             variant="outline" 
             size="lg"
             className="border-2 border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-purple-900 font-bold py-4 px-8 rounded-full transform hover:scale-105 transition-all duration-200"
-            onClick={() => window.open('https://x.com/i/communities/1930683048946815295', '_blank')}
+            onClick={() => window.open('https://x.com/mimonavax', '_blank')}
           >
             <Twitter className="mr-2" />
             Join the Wizards

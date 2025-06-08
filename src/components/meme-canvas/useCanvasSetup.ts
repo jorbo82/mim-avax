@@ -2,7 +2,7 @@
 import { useEffect, useRef } from "react";
 import { Canvas as FabricCanvas, FabricImage } from "fabric";
 
-export const useCanvasSetup = () => {
+export const useCanvasSetup = (aspectRatio?: string) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvasRef = useRef<FabricCanvas | null>(null);
   const wizardImageRef = useRef<FabricImage | null>(null);
@@ -15,17 +15,42 @@ export const useCanvasSetup = () => {
     const containerWidth = container?.clientWidth || 800;
     const containerHeight = container?.clientHeight || 600;
     
-    // Calculate canvas size based on container, maintaining aspect ratio
-    const maxWidth = Math.min(containerWidth - 20, 800);
-    const maxHeight = Math.min(containerHeight - 20, 600);
-    const aspectRatio = 4 / 3;
+    // Calculate canvas size based on aspect ratio
+    let canvasWidth: number;
+    let canvasHeight: number;
     
-    let canvasWidth = maxWidth;
-    let canvasHeight = maxWidth / aspectRatio;
-    
-    if (canvasHeight > maxHeight) {
-      canvasHeight = maxHeight;
-      canvasWidth = maxHeight * aspectRatio;
+    if (aspectRatio === "1:1") {
+      // Square aspect ratio
+      const size = Math.min(containerWidth - 20, containerHeight - 20, 600);
+      canvasWidth = size;
+      canvasHeight = size;
+    } else if (aspectRatio === "9:16") {
+      // Portrait aspect ratio (9:16)
+      const maxWidth = Math.min(containerWidth - 20, 400);
+      const maxHeight = Math.min(containerHeight - 20, 700);
+      
+      // Calculate based on 9:16 ratio
+      canvasWidth = Math.min(maxWidth, maxHeight * (9/16));
+      canvasHeight = canvasWidth * (16/9);
+      
+      // Ensure it fits in container
+      if (canvasHeight > maxHeight) {
+        canvasHeight = maxHeight;
+        canvasWidth = canvasHeight * (9/16);
+      }
+    } else {
+      // Default 4:3 aspect ratio
+      const maxWidth = Math.min(containerWidth - 20, 800);
+      const maxHeight = Math.min(containerHeight - 20, 600);
+      const defaultAspectRatio = 4 / 3;
+      
+      canvasWidth = maxWidth;
+      canvasHeight = maxWidth / defaultAspectRatio;
+      
+      if (canvasHeight > maxHeight) {
+        canvasHeight = maxHeight;
+        canvasWidth = maxHeight * defaultAspectRatio;
+      }
     }
 
     const canvas = new FabricCanvas(canvasRef.current, {
@@ -54,15 +79,36 @@ export const useCanvasSetup = () => {
         const newContainerWidth = container.clientWidth;
         const newContainerHeight = container.clientHeight;
         
-        const newMaxWidth = Math.min(newContainerWidth - 20, 800);
-        const newMaxHeight = Math.min(newContainerHeight - 20, 600);
+        let newCanvasWidth: number;
+        let newCanvasHeight: number;
         
-        let newCanvasWidth = newMaxWidth;
-        let newCanvasHeight = newMaxWidth / aspectRatio;
-        
-        if (newCanvasHeight > newMaxHeight) {
-          newCanvasHeight = newMaxHeight;
-          newCanvasWidth = newMaxHeight * aspectRatio;
+        if (aspectRatio === "1:1") {
+          const size = Math.min(newContainerWidth - 20, newContainerHeight - 20, 600);
+          newCanvasWidth = size;
+          newCanvasHeight = size;
+        } else if (aspectRatio === "9:16") {
+          const maxWidth = Math.min(newContainerWidth - 20, 400);
+          const maxHeight = Math.min(newContainerHeight - 20, 700);
+          
+          newCanvasWidth = Math.min(maxWidth, maxHeight * (9/16));
+          newCanvasHeight = newCanvasWidth * (16/9);
+          
+          if (newCanvasHeight > maxHeight) {
+            newCanvasHeight = maxHeight;
+            newCanvasWidth = newCanvasHeight * (9/16);
+          }
+        } else {
+          const newMaxWidth = Math.min(newContainerWidth - 20, 800);
+          const newMaxHeight = Math.min(newContainerHeight - 20, 600);
+          const defaultAspectRatio = 4 / 3;
+          
+          newCanvasWidth = newMaxWidth;
+          newCanvasHeight = newMaxWidth / defaultAspectRatio;
+          
+          if (newCanvasHeight > newMaxHeight) {
+            newCanvasHeight = newMaxHeight;
+            newCanvasWidth = newMaxHeight * defaultAspectRatio;
+          }
         }
         
         canvas.setDimensions({
@@ -98,7 +144,7 @@ export const useCanvasSetup = () => {
       window.removeEventListener('orientationchange', handleResize);
       canvas.dispose();
     };
-  }, []);
+  }, [aspectRatio]);
 
   return { canvasRef, fabricCanvasRef, wizardImageRef };
 };

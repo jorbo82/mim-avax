@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -18,6 +19,7 @@ const MemeEditor = ({ onClose, initialBackgroundImage }: MemeEditorProps) => {
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
   const [topText, setTopText] = useState("");
   const [bottomText, setBottomText] = useState("");
+  const [aspectRatio, setAspectRatio] = useState<string | undefined>(undefined);
   const canvasRef = useRef<any>(null);
 
   // Set initial background image when component mounts
@@ -33,17 +35,20 @@ const MemeEditor = ({ onClose, initialBackgroundImage }: MemeEditorProps) => {
       const reader = new FileReader();
       reader.onload = (e) => {
         setBackgroundImage(e.target?.result as string);
+        setAspectRatio(undefined); // Reset aspect ratio when uploading image
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleBlankCanvas = () => {
+  const handleBlankCanvas = (selectedAspectRatio?: string) => {
     setBackgroundImage(null);
+    setAspectRatio(selectedAspectRatio);
   };
 
   const handleBackgroundSelect = (backgroundUrl: string) => {
     setBackgroundImage(backgroundUrl);
+    setAspectRatio(undefined); // Reset aspect ratio when selecting background
   };
 
   const handleDownload = () => {
@@ -132,6 +137,7 @@ const MemeEditor = ({ onClose, initialBackgroundImage }: MemeEditorProps) => {
               backgroundImage={backgroundImage}
               topText={topText}
               bottomText={bottomText}
+              aspectRatio={aspectRatio}
             />
           </div>
         </div>

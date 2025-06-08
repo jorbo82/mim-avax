@@ -141,7 +141,7 @@ const MemeGallery = () => {
           variant="outline" 
           size="lg"
           className="border-2 border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-purple-900 font-bold py-3 px-6 rounded-full transform hover:scale-105 transition-all duration-200"
-          onClick={() => window.open('https://x.com/i/communities/1930683048946815295', '_blank')}
+          onClick={() => window.open('https://x.com/mimonavax', '_blank')}
         >
           <Twitter className="mr-2" />
           Share Your Memes

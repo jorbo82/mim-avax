@@ -15,6 +15,7 @@ const MobileOptimizedMemeEditor = ({ onClose, initialBackgroundImage }: MobileOp
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
   const [topText, setTopText] = useState("");
   const [bottomText, setBottomText] = useState("");
+  const [aspectRatio, setAspectRatio] = useState<string | undefined>(undefined);
   const canvasRef = useRef<any>(null);
 
   // Set initial background image when component mounts
@@ -30,17 +31,20 @@ const MobileOptimizedMemeEditor = ({ onClose, initialBackgroundImage }: MobileOp
       const reader = new FileReader();
       reader.onload = (e) => {
         setBackgroundImage(e.target?.result as string);
+        setAspectRatio(undefined); // Reset aspect ratio when uploading image
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleBlankCanvas = () => {
+  const handleBlankCanvas = (selectedAspectRatio?: string) => {
     setBackgroundImage(null);
+    setAspectRatio(selectedAspectRatio);
   };
 
   const handleBackgroundSelect = (backgroundUrl: string) => {
     setBackgroundImage(backgroundUrl);
+    setAspectRatio(undefined); // Reset aspect ratio when selecting background
   };
 
   const handleDownload = () => {
@@ -119,6 +123,7 @@ const MobileOptimizedMemeEditor = ({ onClose, initialBackgroundImage }: MobileOp
           backgroundImage={backgroundImage}
           topText={topText}
           bottomText={bottomText}
+          aspectRatio={aspectRatio}
           onZoomIn={handleZoomIn}
           onZoomOut={handleZoomOut}
           onResetZoom={handleResetZoom}

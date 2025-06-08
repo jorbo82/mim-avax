@@ -9,11 +9,12 @@ import { useAssetLibrary } from "./meme-canvas/useAssetLibrary";
 import { useCanvasZoom } from "./meme-canvas/useCanvasZoom";
 
 const MemeCanvas = forwardRef<MemeCanvasRef, MemeCanvasProps & {
+  aspectRatio?: string;
   onZoomIn?: () => void;
   onZoomOut?: () => void;
   onResetZoom?: () => void;
-}>(({ backgroundImage, topText, bottomText, onZoomIn, onZoomOut, onResetZoom }, ref) => {
-  const { canvasRef, fabricCanvasRef, wizardImageRef } = useCanvasSetup();
+}>(({ backgroundImage, topText, bottomText, aspectRatio, onZoomIn, onZoomOut, onResetZoom }, ref) => {
+  const { canvasRef, fabricCanvasRef, wizardImageRef } = useCanvasSetup(aspectRatio);
   const { topTextRef, bottomTextRef } = useTextHandling(fabricCanvasRef, topText, bottomText);
   const { 
     downloadMeme, 

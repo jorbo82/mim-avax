@@ -10,7 +10,7 @@ interface MobileEditorTabsProps {
   // Canvas props
   backgroundImage: string | null;
   onImageUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onBlankCanvas: () => void;
+  onBlankCanvas: (aspectRatio?: string) => void;
   onBackgroundSelect: (backgroundUrl: string) => void;
   
   // Text props
