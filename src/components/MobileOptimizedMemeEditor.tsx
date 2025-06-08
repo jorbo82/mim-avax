@@ -1,7 +1,6 @@
 
 import { useState, useRef, useEffect } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import MobileEditorHeader from "./mobile-meme/MobileEditorHeader";
 import MobileEditorCanvas from "./mobile-meme/MobileEditorCanvas";
 import MobileEditorTabs from "./mobile-meme/MobileEditorTabs";
@@ -231,46 +230,38 @@ const MobileOptimizedMemeEditor = ({ onClose, initialBackgroundImage }: MobileOp
           onPostToX={handlePostToX}
         />
 
-        <ResizablePanelGroup direction="vertical" className="flex-1">
-          <ResizablePanel defaultSize={70} minSize={30}>
-            <MobileEditorCanvas
-              ref={canvasRef}
-              backgroundImage={backgroundImage}
-              topText={topText}
-              bottomText={bottomText}
-              aspectRatio={aspectRatio}
-              onZoomIn={handleZoomIn}
-              onZoomOut={handleZoomOut}
-              onResetZoom={handleResetZoom}
-            />
-          </ResizablePanel>
-          
-          <ResizableHandle withHandle />
-          
-          <ResizablePanel defaultSize={30} minSize={20} maxSize={70}>
-            <MobileEditorTabs
-              backgroundImage={backgroundImage}
-              onImageUpload={handleImageUpload}
-              onBlankCanvas={handleBlankCanvas}
-              onBackgroundSelect={handleBackgroundSelect}
-              topText={topText}
-              bottomText={bottomText}
-              onTopTextChange={setTopText}
-              onBottomTextChange={setBottomText}
-              assets={ASSET_LIBRARY}
-              onAssetSelect={handleAssetSelect}
-              onRotate={handleRotate}
-              onFlipHorizontal={handleFlipHorizontal}
-              onFlipVertical={handleFlipVertical}
-              onDelete={handleDelete}
-              onZoomIn={handleZoomIn}
-              onZoomOut={handleZoomOut}
-              onResetZoom={handleResetZoom}
-              onBringForward={handleBringForward}
-              onSendBackward={handleSendBackward}
-            />
-          </ResizablePanel>
-        </ResizablePanelGroup>
+        <MobileEditorCanvas
+          ref={canvasRef}
+          backgroundImage={backgroundImage}
+          topText={topText}
+          bottomText={bottomText}
+          aspectRatio={aspectRatio}
+          onZoomIn={handleZoomIn}
+          onZoomOut={handleZoomOut}
+          onResetZoom={handleResetZoom}
+        />
+
+        <MobileEditorTabs
+          backgroundImage={backgroundImage}
+          onImageUpload={handleImageUpload}
+          onBlankCanvas={handleBlankCanvas}
+          onBackgroundSelect={handleBackgroundSelect}
+          topText={topText}
+          bottomText={bottomText}
+          onTopTextChange={setTopText}
+          onBottomTextChange={setBottomText}
+          assets={ASSET_LIBRARY}
+          onAssetSelect={handleAssetSelect}
+          onRotate={handleRotate}
+          onFlipHorizontal={handleFlipHorizontal}
+          onFlipVertical={handleFlipVertical}
+          onDelete={handleDelete}
+          onZoomIn={handleZoomIn}
+          onZoomOut={handleZoomOut}
+          onResetZoom={handleResetZoom}
+          onBringForward={handleBringForward}
+          onSendBackward={handleSendBackward}
+        />
       </div>
     </TooltipProvider>
   );

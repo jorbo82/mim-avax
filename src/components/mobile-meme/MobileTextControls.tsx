@@ -1,5 +1,5 @@
 
-import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 
 interface MobileTextControlsProps {
   topText: string;
@@ -15,17 +15,16 @@ const MobileTextControls = ({
   onBottomTextChange 
 }: MobileTextControlsProps) => {
   return (
-    <div className="space-y-4 h-full">
+    <div className="space-y-4">
       <div>
         <label className="block text-sm font-medium text-purple-300 mb-2">
           Top Text
         </label>
-        <Textarea
+        <Input
           value={topText}
           onChange={(e) => onTopTextChange(e.target.value)}
           placeholder="Enter top text..."
-          className="bg-purple-800/50 border-purple-500/50 text-white placeholder-purple-300 text-base resize-none"
-          rows={3}
+          className="bg-purple-800/50 border-purple-500/50 text-white placeholder-purple-300 h-12 text-base"
         />
       </div>
 
@@ -33,12 +32,11 @@ const MobileTextControls = ({
         <label className="block text-sm font-medium text-purple-300 mb-2">
           Bottom Text
         </label>
-        <Textarea
+        <Input
           value={bottomText}
           onChange={(e) => onBottomTextChange(e.target.value)}
           placeholder="Enter bottom text..."
-          className="bg-purple-800/50 border-purple-500/50 text-white placeholder-purple-300 text-base resize-none"
-          rows={3}
+          className="bg-purple-800/50 border-purple-500/50 text-white placeholder-purple-300 h-12 text-base"
         />
       </div>
     </div>
