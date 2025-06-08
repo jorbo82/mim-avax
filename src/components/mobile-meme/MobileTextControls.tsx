@@ -1,5 +1,5 @@
 
-import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 interface MobileTextControlsProps {
   topText: string;
@@ -15,30 +15,34 @@ const MobileTextControls = ({
   onBottomTextChange 
 }: MobileTextControlsProps) => {
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div>
-        <label className="block text-sm font-medium text-purple-300 mb-2">
+        <label className="block text-sm font-medium text-purple-300 mb-3">
           Top Text
         </label>
-        <Input
+        <Textarea
           value={topText}
           onChange={(e) => onTopTextChange(e.target.value)}
           placeholder="Enter top text..."
-          className="bg-purple-800/50 border-purple-500/50 text-white placeholder-purple-300 h-12 text-base"
+          className="bg-purple-800/50 border-purple-500/50 text-white placeholder-purple-300 min-h-[80px] text-base resize-none"
+          rows={3}
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-purple-300 mb-2">
+        <label className="block text-sm font-medium text-purple-300 mb-3">
           Bottom Text
         </label>
-        <Input
+        <Textarea
           value={bottomText}
           onChange={(e) => onBottomTextChange(e.target.value)}
           placeholder="Enter bottom text..."
-          className="bg-purple-800/50 border-purple-500/50 text-white placeholder-purple-300 h-12 text-base"
+          className="bg-purple-800/50 border-purple-500/50 text-white placeholder-purple-300 min-h-[80px] text-base resize-none"
+          rows={3}
         />
       </div>
+      
+      <div className="h-4"></div> {/* Extra space for comfortable scrolling */}
     </div>
   );
 };

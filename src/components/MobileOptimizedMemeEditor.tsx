@@ -221,7 +221,8 @@ const MobileOptimizedMemeEditor = ({ onClose, initialBackgroundImage }: MobileOp
           maxHeight: '100%',
           position: 'fixed',
           top: 0,
-          left: 0
+          left: 0,
+          paddingBottom: 'env(safe-area-inset-bottom)' // iOS safe area
         }}
       >
         <MobileEditorHeader 
@@ -230,16 +231,24 @@ const MobileOptimizedMemeEditor = ({ onClose, initialBackgroundImage }: MobileOp
           onPostToX={handlePostToX}
         />
 
-        <MobileEditorCanvas
-          ref={canvasRef}
-          backgroundImage={backgroundImage}
-          topText={topText}
-          bottomText={bottomText}
-          aspectRatio={aspectRatio}
-          onZoomIn={handleZoomIn}
-          onZoomOut={handleZoomOut}
-          onResetZoom={handleResetZoom}
-        />
+        <div 
+          className="flex-1 overflow-hidden"
+          style={{
+            height: '60vh', // 60% for canvas
+            minHeight: 'calc(100vh - 200px)' // Fallback calculation
+          }}
+        >
+          <MobileEditorCanvas
+            ref={canvasRef}
+            backgroundImage={backgroundImage}
+            topText={topText}
+            bottomText={bottomText}
+            aspectRatio={aspectRatio}
+            onZoomIn={handleZoomIn}
+            onZoomOut={handleZoomOut}
+            onResetZoom={handleResetZoom}
+          />
+        </div>
 
         <MobileEditorTabs
           backgroundImage={backgroundImage}
