@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { X, Download, Share } from "lucide-react";
+import { X, Download } from "lucide-react";
 
 interface MobileEditorHeaderProps {
   onClose: () => void;
@@ -19,7 +19,11 @@ const MobileEditorHeader = ({ onClose, onDownload, onPostToX }: MobileEditorHead
           className="bg-blue-600 hover:bg-blue-700 text-white"
           title="Share on X"
         >
-          <Share className="w-4 h-4" />
+          <img 
+            src="/lovable-uploads/2fbd28b9-3c42-4b7f-aab8-95e1dfd483d3.png" 
+            alt="X Logo" 
+            className="w-4 h-4"
+          />
         </Button>
         <Button
           onClick={onDownload}
