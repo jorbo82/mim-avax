@@ -10,6 +10,22 @@ export const useTextHandling = (
   const topTextRef = useRef<FabricText | null>(null);
   const bottomTextRef = useRef<FabricText | null>(null);
 
+  const ensureTextOnTop = () => {
+    if (!fabricCanvasRef.current) return;
+    
+    const canvas = fabricCanvasRef.current;
+    
+    // Bring both text objects to front
+    if (topTextRef.current) {
+      canvas.bringToFront(topTextRef.current);
+    }
+    if (bottomTextRef.current) {
+      canvas.bringToFront(bottomTextRef.current);
+    }
+    
+    canvas.renderAll();
+  };
+
   useEffect(() => {
     if (!fabricCanvasRef.current) return;
 
@@ -38,6 +54,7 @@ export const useTextHandling = (
 
       topTextRef.current = text;
       canvas.add(text);
+      canvas.bringToFront(text); // Ensure text is on top
     }
 
     canvas.renderAll();
@@ -71,10 +88,11 @@ export const useTextHandling = (
 
       bottomTextRef.current = text;
       canvas.add(text);
+      canvas.bringToFront(text); // Ensure text is on top
     }
 
     canvas.renderAll();
   }, [bottomText, fabricCanvasRef]);
 
-  return { topTextRef, bottomTextRef };
+  return { topTextRef, bottomTextRef, ensureTextOnTop };
 };

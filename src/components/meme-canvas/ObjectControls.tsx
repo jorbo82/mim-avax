@@ -1,5 +1,5 @@
 
-import { RotateCw, FlipHorizontal, FlipVertical, Trash2 } from "lucide-react";
+import { RotateCw, FlipHorizontal, FlipVertical, Trash2, ArrowUp, ArrowDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -8,13 +8,17 @@ interface ObjectControlsProps {
   onFlipHorizontal: () => void;
   onFlipVertical: () => void;
   onDelete: () => void;
+  onBringForward: () => void;
+  onSendBackward: () => void;
 }
 
 const ObjectControls = ({ 
   onRotate, 
   onFlipHorizontal, 
   onFlipVertical, 
-  onDelete 
+  onDelete,
+  onBringForward,
+  onSendBackward
 }: ObjectControlsProps) => {
   return (
     <div>
@@ -79,6 +83,36 @@ const ObjectControls = ({
           </TooltipTrigger>
           <TooltipContent>
             <p>Delete selected object</p>
+          </TooltipContent>
+        </Tooltip>
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              onClick={onBringForward}
+              size="sm"
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              <ArrowUp className="w-4 h-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Bring object forward</p>
+          </TooltipContent>
+        </Tooltip>
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              onClick={onSendBackward}
+              size="sm"
+              className="bg-indigo-600 hover:bg-indigo-700"
+            >
+              <ArrowDown className="w-4 h-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Send object backward</p>
           </TooltipContent>
         </Tooltip>
       </div>

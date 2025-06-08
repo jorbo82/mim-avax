@@ -23,6 +23,22 @@ export const useMemeActions = (
     return fabricCanvasRef.current.getActiveObject();
   };
 
+  const ensureTextOnTop = () => {
+    if (!fabricCanvasRef.current) return;
+    
+    const canvas = fabricCanvasRef.current;
+    const objects = canvas.getObjects();
+    
+    // Find all text objects and bring them to front
+    objects.forEach(obj => {
+      if (obj.type === 'text') {
+        canvas.bringToFront(obj);
+      }
+    });
+    
+    canvas.renderAll();
+  };
+
   const rotateSelectedObject = () => {
     const activeObject = getSelectedObject();
     if (activeObject) {
@@ -56,6 +72,22 @@ export const useMemeActions = (
     }
   };
 
+  const bringSelectedObjectForward = () => {
+    const activeObject = getSelectedObject();
+    if (activeObject && fabricCanvasRef.current) {
+      fabricCanvasRef.current.bringForward(activeObject);
+      ensureTextOnTop(); // Ensure text stays on top
+    }
+  };
+
+  const sendSelectedObjectBackward = () => {
+    const activeObject = getSelectedObject();
+    if (activeObject && fabricCanvasRef.current) {
+      fabricCanvasRef.current.sendBackwards(activeObject);
+      ensureTextOnTop(); // Ensure text stays on top
+    }
+  };
+
   // Keep backward compatibility with old function names
   const rotateWizard = rotateSelectedObject;
   const flipWizardHorizontal = flipSelectedObjectHorizontal;
@@ -69,6 +101,9 @@ export const useMemeActions = (
     rotateSelectedObject,
     flipSelectedObjectHorizontal,
     flipSelectedObjectVertical,
-    deleteSelectedObject
+    deleteSelectedObject,
+    bringSelectedObjectForward,
+    sendSelectedObjectBackward,
+    ensureTextOnTop
   };
 };

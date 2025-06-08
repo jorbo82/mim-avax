@@ -1,5 +1,5 @@
 
-import { RotateCw, FlipHorizontal, FlipVertical, Trash2, ZoomIn, ZoomOut, RotateCcw } from "lucide-react";
+import { RotateCw, FlipHorizontal, FlipVertical, Trash2, ZoomIn, ZoomOut, RotateCcw, ArrowUp, ArrowDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface MobileToolsControlsProps {
@@ -10,6 +10,8 @@ interface MobileToolsControlsProps {
   onZoomIn: () => void;
   onZoomOut: () => void;
   onResetZoom: () => void;
+  onBringForward: () => void;
+  onSendBackward: () => void;
 }
 
 const MobileToolsControls = ({ 
@@ -19,7 +21,9 @@ const MobileToolsControls = ({
   onDelete,
   onZoomIn,
   onZoomOut,
-  onResetZoom
+  onResetZoom,
+  onBringForward,
+  onSendBackward
 }: MobileToolsControlsProps) => {
   return (
     <div className="space-y-4">
@@ -86,6 +90,20 @@ const MobileToolsControls = ({
           >
             <Trash2 className="w-4 h-4 mr-1" />
             <span className="text-xs">Delete</span>
+          </Button>
+          <Button
+            onClick={onBringForward}
+            className="bg-blue-600 hover:bg-blue-700 text-white h-12"
+          >
+            <ArrowUp className="w-4 h-4 mr-1" />
+            <span className="text-xs">Forward</span>
+          </Button>
+          <Button
+            onClick={onSendBackward}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white h-12"
+          >
+            <ArrowDown className="w-4 h-4 mr-1" />
+            <span className="text-xs">Backward</span>
           </Button>
         </div>
         <p className="text-xs text-orange-400 mt-2 text-center">

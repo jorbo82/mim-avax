@@ -96,6 +96,18 @@ const MobileOptimizedMemeEditor = ({ onClose, initialBackgroundImage }: MobileOp
     }
   };
 
+  const handleBringForward = () => {
+    if (canvasRef.current) {
+      canvasRef.current.bringSelectedObjectForward();
+    }
+  };
+
+  const handleSendBackward = () => {
+    if (canvasRef.current) {
+      canvasRef.current.sendSelectedObjectBackward();
+    }
+  };
+
   const handleZoomIn = () => {
     if (canvasRef.current) {
       canvasRef.current.zoomIn();
@@ -187,6 +199,8 @@ const MobileOptimizedMemeEditor = ({ onClose, initialBackgroundImage }: MobileOp
           onZoomIn={handleZoomIn}
           onZoomOut={handleZoomOut}
           onResetZoom={handleResetZoom}
+          onBringForward={handleBringForward}
+          onSendBackward={handleSendBackward}
         />
       </div>
     </TooltipProvider>

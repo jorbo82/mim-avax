@@ -31,6 +31,8 @@ interface MobileEditorTabsProps {
   onZoomIn: () => void;
   onZoomOut: () => void;
   onResetZoom: () => void;
+  onBringForward: () => void;
+  onSendBackward: () => void;
 }
 
 const MobileEditorTabs = ({
@@ -50,7 +52,9 @@ const MobileEditorTabs = ({
   onDelete,
   onZoomIn,
   onZoomOut,
-  onResetZoom
+  onResetZoom,
+  onBringForward,
+  onSendBackward
 }: MobileEditorTabsProps) => {
   return (
     <div className="border-t border-purple-500/30 bg-purple-900/30 shrink-0">
@@ -121,6 +125,8 @@ const MobileEditorTabs = ({
               onZoomIn={onZoomIn}
               onZoomOut={onZoomOut}
               onResetZoom={onResetZoom}
+              onBringForward={onBringForward}
+              onSendBackward={onSendBackward}
             />
           </TabsContent>
         </div>

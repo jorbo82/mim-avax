@@ -15,7 +15,7 @@ const MemeCanvas = forwardRef<MemeCanvasRef, MemeCanvasProps & {
   onResetZoom?: () => void;
 }>(({ backgroundImage, topText, bottomText, aspectRatio, onZoomIn, onZoomOut, onResetZoom }, ref) => {
   const { canvasRef, fabricCanvasRef, wizardImageRef } = useCanvasSetup(aspectRatio);
-  const { topTextRef, bottomTextRef } = useTextHandling(fabricCanvasRef, topText, bottomText);
+  const { topTextRef, bottomTextRef, ensureTextOnTop } = useTextHandling(fabricCanvasRef, topText, bottomText);
   const { 
     downloadMeme, 
     rotateWizard, 
@@ -24,12 +24,14 @@ const MemeCanvas = forwardRef<MemeCanvasRef, MemeCanvasProps & {
     rotateSelectedObject,
     flipSelectedObjectHorizontal,
     flipSelectedObjectVertical,
-    deleteSelectedObject
+    deleteSelectedObject,
+    bringSelectedObjectForward,
+    sendSelectedObjectBackward
   } = useMemeActions(
     fabricCanvasRef,
     wizardImageRef
   );
-  const { assets, addAssetToCanvas } = useAssetLibrary(fabricCanvasRef);
+  const { assets, addAssetToCanvas } = useAssetLibrary(fabricCanvasRef, ensureTextOnTop);
   const { zoomIn, zoomOut, resetZoom } = useCanvasZoom(fabricCanvasRef);
 
   useBackgroundImage(fabricCanvasRef, backgroundImage, wizardImageRef, topTextRef, bottomTextRef);
@@ -43,6 +45,8 @@ const MemeCanvas = forwardRef<MemeCanvasRef, MemeCanvasProps & {
     flipSelectedObjectHorizontal,
     flipSelectedObjectVertical,
     deleteSelectedObject,
+    bringSelectedObjectForward,
+    sendSelectedObjectBackward,
     assets,
     addAssetToCanvas,
     zoomIn,

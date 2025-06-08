@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -81,6 +80,18 @@ const MemeEditor = ({ onClose, initialBackgroundImage }: MemeEditorProps) => {
     }
   };
 
+  const handleBringForward = () => {
+    if (canvasRef.current) {
+      canvasRef.current.bringSelectedObjectForward();
+    }
+  };
+
+  const handleSendBackward = () => {
+    if (canvasRef.current) {
+      canvasRef.current.sendSelectedObjectBackward();
+    }
+  };
+
   const handleAssetSelect = (assetUrl: string) => {
     if (canvasRef.current) {
       canvasRef.current.addAssetToCanvas(assetUrl);
@@ -123,6 +134,8 @@ const MemeEditor = ({ onClose, initialBackgroundImage }: MemeEditorProps) => {
                   onFlipHorizontal={handleFlipHorizontal}
                   onFlipVertical={handleFlipVertical}
                   onDelete={handleDelete}
+                  onBringForward={handleBringForward}
+                  onSendBackward={handleSendBackward}
                 />
 
                 <DownloadButton onDownload={handleDownload} />

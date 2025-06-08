@@ -3,7 +3,10 @@ import { useEffect, useRef } from "react";
 import { Canvas as FabricCanvas, FabricImage } from "fabric";
 import { ASSET_LIBRARY } from "./assetLibrary";
 
-export const useAssetLibrary = (fabricCanvasRef: React.RefObject<FabricCanvas | null>) => {
+export const useAssetLibrary = (
+  fabricCanvasRef: React.RefObject<FabricCanvas | null>,
+  ensureTextOnTop?: () => void
+) => {
   const addAssetToCanvas = (assetUrl: string) => {
     if (!fabricCanvasRef.current) return;
 
@@ -28,6 +31,12 @@ export const useAssetLibrary = (fabricCanvasRef: React.RefObject<FabricCanvas | 
       
       canvas.add(img);
       canvas.setActiveObject(img);
+      
+      // Ensure text stays on top after adding asset
+      if (ensureTextOnTop) {
+        ensureTextOnTop();
+      }
+      
       canvas.renderAll();
     }).catch((error) => {
       console.error('Error loading asset:', error);
