@@ -20,7 +20,7 @@ const MobileEditorHeader = ({ onClose, onDownload, onPostToX }: MobileEditorHead
           title="Share on X"
         >
           <img 
-            src="/lovable-uploads/2fbd28b9-3c42-4b7f-aab8-95e1dfd483d3.png" 
+            src="/lovable-uploads/981dc6c6-3b1e-4b24-b673-bf3ae5864859.png" 
             alt="X Logo" 
             className="w-4 h-4"
           />
