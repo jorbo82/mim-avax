@@ -89,5 +89,45 @@ export const ASSET_LIBRARY = [
     id: 'wizard-laptop-avalanche',
     name: 'Wizard with Laptop & Avalanche',
     url: '/lovable-uploads/6649b943-04e0-4a9b-80f2-f286961943c8.png'
+  },
+  {
+    id: 'step-brothers-duo',
+    name: 'Step Brothers Duo',
+    url: '/lovable-uploads/84656a15-f922-404a-95f2-ddd6040b4560.png'
+  },
+  {
+    id: 'office-worker-tie',
+    name: 'Office Worker with Tie',
+    url: '/lovable-uploads/31b1f47b-09b9-4b42-b4d2-b1b74f43c4ca.png'
+  },
+  {
+    id: 'ned-stark-winter',
+    name: 'Ned Stark Winter',
+    url: '/lovable-uploads/f6cba2d9-2cca-443c-ac78-aded0eef9742.png'
+  },
+  {
+    id: 'borat-mankini',
+    name: 'Borat Mankini',
+    url: '/lovable-uploads/6169b33f-2494-4cb9-a3ff-4c3ae8b5d217.png'
+  },
+  {
+    id: 'dwight-office',
+    name: 'Dwight Office',
+    url: '/lovable-uploads/8e97798f-5012-4e42-90a2-43b573dec37b.png'
+  },
+  {
+    id: 'ted-lasso-coach',
+    name: 'Ted Lasso Coach',
+    url: '/lovable-uploads/4a68529c-3d80-4b61-9fc5-900cad90e9f9.png'
+  },
+  {
+    id: 'willy-wonka-hat',
+    name: 'Willy Wonka Hat',
+    url: '/lovable-uploads/d57f29aa-efd3-4e27-a307-7bd96fae27da.png'
+  },
+  {
+    id: 'yoda-wise-old',
+    name: 'Yoda Wise Old',
+    url: '/lovable-uploads/c46d00a9-ae8b-4977-bfaf-100bc908da35.png'
   }
 ];
