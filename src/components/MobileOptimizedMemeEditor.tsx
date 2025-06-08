@@ -1,9 +1,9 @@
-
 import { useState, useRef, useEffect } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import MobileEditorHeader from "./mobile-meme/MobileEditorHeader";
 import MobileEditorCanvas from "./mobile-meme/MobileEditorCanvas";
 import MobileEditorTabs from "./mobile-meme/MobileEditorTabs";
+import AspectRatioSelector from "./mobile-meme/AspectRatioSelector";
 import { ASSET_LIBRARY } from "./meme-canvas/assetLibrary";
 
 interface MobileOptimizedMemeEditorProps {
@@ -16,14 +16,27 @@ const MobileOptimizedMemeEditor = ({ onClose, initialBackgroundImage }: MobileOp
   const [topText, setTopText] = useState("");
   const [bottomText, setBottomText] = useState("");
   const [aspectRatio, setAspectRatio] = useState<string | undefined>(undefined);
+  const [showAspectRatioSelector, setShowAspectRatioSelector] = useState(false);
   const canvasRef = useRef<any>(null);
 
   // Set initial background image when component mounts
   useEffect(() => {
     if (initialBackgroundImage) {
       setBackgroundImage(initialBackgroundImage);
+      setShowAspectRatioSelector(false);
+    } else {
+      setShowAspectRatioSelector(true);
     }
   }, [initialBackgroundImage]);
+
+  const handleAspectRatioSelect = (selectedAspectRatio: string) => {
+    setAspectRatio(selectedAspectRatio);
+    setShowAspectRatioSelector(false);
+  };
+
+  const handleSkipAspectRatio = () => {
+    setShowAspectRatioSelector(false);
+  };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -100,6 +113,33 @@ const MobileOptimizedMemeEditor = ({ onClose, initialBackgroundImage }: MobileOp
       canvasRef.current.resetZoom();
     }
   };
+
+  if (showAspectRatioSelector) {
+    return (
+      <TooltipProvider>
+        <div 
+          className="w-full h-full flex flex-col"
+          style={{
+            width: '100%',
+            height: '100%',
+            maxWidth: '100%',
+            maxHeight: '100%',
+            position: 'relative'
+          }}
+        >
+          <MobileEditorHeader 
+            onClose={onClose}
+            onDownload={handleDownload}
+          />
+          
+          <AspectRatioSelector
+            onSelect={handleAspectRatioSelect}
+            onSkip={handleSkipAspectRatio}
+          />
+        </div>
+      </TooltipProvider>
+    );
+  }
 
   return (
     <TooltipProvider>
