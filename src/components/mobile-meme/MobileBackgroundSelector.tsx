@@ -65,39 +65,39 @@ const BACKGROUND_MEMES = [
     url: '/lovable-uploads/4ef9ea17-4aaa-40dd-92b7-5e72a1f5313b.png'
   },
   {
-    id: 'mystical-power',
-    name: 'Mystical Power',
-    url: '/lovable-uploads/4b058054-2291-4736-8e35-7eb4602270d2.png'
+    id: 'alchemy-lab',
+    name: 'Alchemy Lab',
+    url: '/lovable-uploads/283f2977-1a2f-49c7-b063-eaf23202c1f3.png'
   },
   {
-    id: 'forest-magic',
-    name: 'Forest Magic',
-    url: '/lovable-uploads/591e0f73-72e0-4c38-9108-84e4ad8c86b1.png'
+    id: 'potion-brewing',
+    name: 'Potion Brewing',
+    url: '/lovable-uploads/6953ac9b-9c01-471a-91e2-5439c1aca199.png'
   },
   {
-    id: 'portal-magic',
-    name: 'Portal Magic',
-    url: '/lovable-uploads/657675aa-04fc-4448-be1f-1790ee9e1b9e.png'
+    id: 'wise-forest',
+    name: 'Wise Forest',
+    url: '/lovable-uploads/5406383c-c11d-4328-8a46-fa725fb174fc.png'
   },
   {
-    id: 'cosmic-star',
-    name: 'Cosmic Star',
-    url: '/lovable-uploads/6649b943-04e0-4a9b-80f2-f286961943c8.png'
+    id: 'mim-conjurer',
+    name: 'MIM Conjurer',
+    url: '/lovable-uploads/42dfaa71-0754-41f4-83bf-c1db73884a01.png'
   },
   {
-    id: 'shadow-magic',
-    name: 'Shadow Magic',
-    url: '/lovable-uploads/82872567-05fa-4184-a39e-69e0ec1fb763.png'
+    id: 'all-mim-poker',
+    name: 'All MIM Poker',
+    url: '/lovable-uploads/9892e9b9-eab4-407b-a9c3-f24678d81277.png'
   },
   {
-    id: 'time-keeper',
-    name: 'Time Keeper',
-    url: '/lovable-uploads/994639ab-fb50-452c-9b25-0a4138ace906.png'
+    id: 'basketball-magic',
+    name: 'Basketball Magic',
+    url: '/lovable-uploads/e39e2c30-7155-4d6a-b59c-7940b336f233.png'
   },
   {
-    id: 'elemental-magic',
-    name: 'Elemental Magic',
-    url: '/lovable-uploads/ae89a959-e486-4a8f-aeaa-53ebf501716e.png'
+    id: 'warehouse-wizard',
+    name: 'Warehouse Wizard',
+    url: '/lovable-uploads/93ef64eb-600b-4673-b4a7-f900acb30fed.png'
   }
 ];
 

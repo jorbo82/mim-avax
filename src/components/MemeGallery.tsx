@@ -77,39 +77,39 @@ const MemeGallery = () => {
       title: "GMIM - Good Morning!"
     },
     {
-      src: "/lovable-uploads/4b058054-2291-4736-8e35-7eb4602270d2.png",
-      alt: "New Wizard with Mystical Powers",
-      title: "Mystical Power Wizard"
+      src: "/lovable-uploads/283f2977-1a2f-49c7-b063-eaf23202c1f3.png",
+      alt: "Alchemy Lab Wizard",
+      title: "Alchemy Master"
     },
     {
-      src: "/lovable-uploads/591e0f73-72e0-4c38-9108-84e4ad8c86b1.png",
-      alt: "Enchanted Forest Wizard",
-      title: "Forest Magic Master"
+      src: "/lovable-uploads/6953ac9b-9c01-471a-91e2-5439c1aca199.png",
+      alt: "Potion Brewing Wizard",
+      title: "Potion Brewing Magic"
     },
     {
-      src: "/lovable-uploads/657675aa-04fc-4448-be1f-1790ee9e1b9e.png",
-      alt: "Portal Wizard with Dimensional Magic",
-      title: "Portal Magic Wizard"
+      src: "/lovable-uploads/5406383c-c11d-4328-8a46-fa725fb174fc.png",
+      alt: "Forest Wizard with Blue Hat",
+      title: "Wise Forest Wizard"
     },
     {
-      src: "/lovable-uploads/6649b943-04e0-4a9b-80f2-f286961943c8.png",
-      alt: "Cosmic Wizard with Star Magic",
-      title: "Cosmic Star Wizard"
+      src: "/lovable-uploads/42dfaa71-0754-41f4-83bf-c1db73884a01.png",
+      alt: "MIM Token Conjuring Wizard",
+      title: "MIM Conjurer"
     },
     {
-      src: "/lovable-uploads/82872567-05fa-4184-a39e-69e0ec1fb763.png",
-      alt: "Dark Magic Wizard",
-      title: "Shadow Magic Master"
+      src: "/lovable-uploads/9892e9b9-eab4-407b-a9c3-f24678d81277.png",
+      alt: "I'm All MIM Poker Wizard",
+      title: "I'm All MIM!"
     },
     {
-      src: "/lovable-uploads/994639ab-fb50-452c-9b25-0a4138ace906.png",
-      alt: "Time Magic Wizard",
-      title: "Time Keeper Wizard"
+      src: "/lovable-uploads/e39e2c30-7155-4d6a-b59c-7940b336f233.png",
+      alt: "Basketball Wizard with MIM Ball",
+      title: "MIM Basketball Magic"
     },
     {
-      src: "/lovable-uploads/ae89a959-e486-4a8f-aeaa-53ebf501716e.png",
-      alt: "Element Master Wizard",
-      title: "Elemental Magic"
+      src: "/lovable-uploads/93ef64eb-600b-4673-b4a7-f900acb30fed.png",
+      alt: "Warehouse Wizard Worker",
+      title: "Warehouse Magic"
     }
   ];
 
