@@ -1,6 +1,36 @@
 
 export const ASSET_LIBRARY = [
   {
+    id: 'mim-logo',
+    name: 'MIM Logo',
+    url: '/lovable-uploads/0413f033-5398-4a7c-af37-142cfe888dc7.png'
+  },
+  {
+    id: 'mim-wizard-happy',
+    name: 'MIM Wizard Happy',
+    url: '/lovable-uploads/de3f3511-0f17-42e3-9b62-f8fe1f658974.png'
+  },
+  {
+    id: 'magic-internet-money-logo',
+    name: 'Magic Internet Money',
+    url: '/lovable-uploads/54df4878-e5b3-4038-87d6-6a1a01dda5b7.png'
+  },
+  {
+    id: 'mim-wizard-happy-alt',
+    name: 'MIM Wizard Happy Alt',
+    url: '/lovable-uploads/547d1bf4-fbb7-476d-975a-829d4d30505c.png'
+  },
+  {
+    id: 'mim-wizard-serious',
+    name: 'MIM Wizard Serious',
+    url: '/lovable-uploads/c3961d1b-f7b0-40d8-84d6-b670bd42b2b8.png'
+  },
+  {
+    id: 'mim-wizard-bright',
+    name: 'MIM Wizard Bright',
+    url: '/lovable-uploads/ba5add6e-c90c-4909-8136-2dc92e9863bf.png'
+  },
+  {
     id: 'mim-wizard-head',
     name: 'MIM Wizard Head',
     url: '/lovable-uploads/b3055ff0-376f-42dd-a541-83e57ea167eb.png'
