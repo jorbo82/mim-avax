@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import MobileEditorHeader from "./mobile-meme/MobileEditorHeader";
@@ -185,11 +186,13 @@ const MobileOptimizedMemeEditor = ({ onClose, initialBackgroundImage }: MobileOp
         <div 
           className="w-full h-full flex flex-col"
           style={{
-            width: '100%',
-            height: '100%',
+            width: '100vw',
+            height: '100vh',
             maxWidth: '100%',
             maxHeight: '100%',
-            position: 'relative'
+            position: 'fixed',
+            top: 0,
+            left: 0
           }}
         >
           <MobileEditorHeader 
@@ -212,11 +215,13 @@ const MobileOptimizedMemeEditor = ({ onClose, initialBackgroundImage }: MobileOp
       <div 
         className="w-full h-full flex flex-col"
         style={{
-          width: '100%',
-          height: '100%',
+          width: '100vw',
+          height: '100vh',
           maxWidth: '100%',
           maxHeight: '100%',
-          position: 'relative'
+          position: 'fixed',
+          top: 0,
+          left: 0
         }}
       >
         <MobileEditorHeader 

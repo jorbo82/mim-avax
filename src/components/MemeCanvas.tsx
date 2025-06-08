@@ -56,15 +56,15 @@ const MemeCanvas = forwardRef<MemeCanvasRef, MemeCanvasProps & {
   }));
 
   return (
-    <div className="w-full h-full flex items-center justify-center bg-gray-900/20 rounded-lg">
-      <div className="border-2 border-purple-500/30 rounded-lg overflow-hidden w-full h-full max-w-full max-h-full">
+    <div className="w-full h-full flex items-center justify-center bg-gray-900/20 rounded-lg p-2">
+      <div className="border-2 border-purple-500/30 rounded-lg overflow-hidden w-full h-full max-w-full max-h-full flex items-center justify-center">
         <canvas 
           ref={canvasRef} 
-          className="w-full h-full object-contain"
+          className="max-w-full max-h-full object-contain"
           style={{ 
             touchAction: 'manipulation',
-            maxWidth: '100%',
-            maxHeight: '100%'
+            display: 'block',
+            margin: 'auto'
           }}
         />
       </div>
