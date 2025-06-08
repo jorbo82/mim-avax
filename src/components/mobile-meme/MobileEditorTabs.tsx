@@ -90,16 +90,8 @@ const MobileEditorTabs = ({
           </TabsTrigger>
         </TabsList>
         
-        <div 
-          className="overflow-y-auto overflow-x-hidden"
-          style={{
-            height: 'calc(40vh - 3rem)', // 40% of viewport height minus tab navigation
-            maxHeight: '400px',
-            minHeight: '200px',
-            WebkitOverflowScrolling: 'touch' // iOS smooth scrolling
-          }}
-        >
-          <TabsContent value="canvas" className="m-0 p-4 pb-8">
+        <div className="max-h-64 overflow-y-auto">
+          <TabsContent value="canvas" className="m-0 p-4">
             <MobileCanvasControls 
               backgroundImage={backgroundImage}
               onImageUpload={onImageUpload}
@@ -108,7 +100,7 @@ const MobileEditorTabs = ({
             />
           </TabsContent>
           
-          <TabsContent value="text" className="m-0 p-4 pb-8">
+          <TabsContent value="text" className="m-0 p-4">
             <MobileTextControls 
               topText={topText}
               bottomText={bottomText}
@@ -117,14 +109,14 @@ const MobileEditorTabs = ({
             />
           </TabsContent>
           
-          <TabsContent value="assets" className="m-0 p-4 pb-8">
+          <TabsContent value="assets" className="m-0 p-4">
             <MobileAssetLibrary 
               assets={assets}
               onAssetSelect={onAssetSelect}
             />
           </TabsContent>
 
-          <TabsContent value="tools" className="m-0 p-4 pb-8">
+          <TabsContent value="tools" className="m-0 p-4">
             <MobileToolsControls 
               onRotate={onRotate}
               onFlipHorizontal={onFlipHorizontal}
