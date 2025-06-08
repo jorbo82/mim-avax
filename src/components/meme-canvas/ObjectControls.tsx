@@ -37,7 +37,7 @@ const ObjectControls = ({
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Rotate selected object 15°</p>
+            <p>Rotate selected object 15° (R)</p>
           </TooltipContent>
         </Tooltip>
 
@@ -52,7 +52,7 @@ const ObjectControls = ({
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Flip selected object horizontally</p>
+            <p>Flip selected object horizontally (H)</p>
           </TooltipContent>
         </Tooltip>
 
@@ -67,7 +67,7 @@ const ObjectControls = ({
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Flip selected object vertically</p>
+            <p>Flip selected object vertically (V)</p>
           </TooltipContent>
         </Tooltip>
 
@@ -82,7 +82,7 @@ const ObjectControls = ({
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Delete selected object</p>
+            <p>Delete selected object (Del)</p>
           </TooltipContent>
         </Tooltip>
 
@@ -97,7 +97,7 @@ const ObjectControls = ({
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Bring object forward</p>
+            <p>Bring object forward (Shift + ↑)</p>
           </TooltipContent>
         </Tooltip>
 
@@ -112,7 +112,7 @@ const ObjectControls = ({
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Send object backward</p>
+            <p>Send object backward (Shift + ↓)</p>
           </TooltipContent>
         </Tooltip>
       </div>

@@ -8,6 +8,7 @@ import CanvasControls from "./meme-canvas/CanvasControls";
 import TextControls from "./meme-canvas/TextControls";
 import ObjectControls from "./meme-canvas/ObjectControls";
 import DownloadButton from "./meme-canvas/DownloadButton";
+import { useKeyboardShortcuts } from "./meme-canvas/useKeyboardShortcuts";
 
 interface MemeEditorProps {
   onClose: () => void;
@@ -97,6 +98,17 @@ const MemeEditor = ({ onClose, initialBackgroundImage }: MemeEditorProps) => {
       canvasRef.current.addAssetToCanvas(assetUrl);
     }
   };
+
+  // Setup keyboard shortcuts
+  useKeyboardShortcuts({
+    onRotate: handleRotate,
+    onFlipHorizontal: handleFlipHorizontal,
+    onFlipVertical: handleFlipVertical,
+    onDelete: handleDelete,
+    onBringForward: handleBringForward,
+    onSendBackward: handleSendBackward,
+    onDownload: handleDownload,
+  });
 
   return (
     <TooltipProvider>

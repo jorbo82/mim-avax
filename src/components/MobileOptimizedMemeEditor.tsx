@@ -5,6 +5,7 @@ import MobileEditorCanvas from "./mobile-meme/MobileEditorCanvas";
 import MobileEditorTabs from "./mobile-meme/MobileEditorTabs";
 import AspectRatioSelector from "./mobile-meme/AspectRatioSelector";
 import { ASSET_LIBRARY } from "./meme-canvas/assetLibrary";
+import { useKeyboardShortcuts } from "./meme-canvas/useKeyboardShortcuts";
 
 interface MobileOptimizedMemeEditorProps {
   onClose: () => void;
@@ -125,6 +126,20 @@ const MobileOptimizedMemeEditor = ({ onClose, initialBackgroundImage }: MobileOp
       canvasRef.current.resetZoom();
     }
   };
+
+  // Setup keyboard shortcuts
+  useKeyboardShortcuts({
+    onRotate: handleRotate,
+    onFlipHorizontal: handleFlipHorizontal,
+    onFlipVertical: handleFlipVertical,
+    onDelete: handleDelete,
+    onBringForward: handleBringForward,
+    onSendBackward: handleSendBackward,
+    onZoomIn: handleZoomIn,
+    onZoomOut: handleZoomOut,
+    onResetZoom: handleResetZoom,
+    onDownload: handleDownload,
+  });
 
   if (showAspectRatioSelector) {
     return (

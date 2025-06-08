@@ -36,6 +36,7 @@ const MobileToolsControls = ({
           <Button
             onClick={onZoomIn}
             className="bg-green-600 hover:bg-green-700 text-white h-12"
+            title="Zoom In (Ctrl/Cmd + +)"
           >
             <ZoomIn className="w-4 h-4 mr-1" />
             <span className="text-xs">Zoom In</span>
@@ -43,6 +44,7 @@ const MobileToolsControls = ({
           <Button
             onClick={onZoomOut}
             className="bg-green-600 hover:bg-green-700 text-white h-12"
+            title="Zoom Out (Ctrl/Cmd + -)"
           >
             <ZoomOut className="w-4 h-4 mr-1" />
             <span className="text-xs">Zoom Out</span>
@@ -50,6 +52,7 @@ const MobileToolsControls = ({
           <Button
             onClick={onResetZoom}
             className="bg-green-600 hover:bg-green-700 text-white h-12"
+            title="Reset Zoom (Ctrl/Cmd + 0)"
           >
             <RotateCcw className="w-4 h-4 mr-1" />
             <span className="text-xs">Reset</span>
@@ -66,6 +69,7 @@ const MobileToolsControls = ({
           <Button
             onClick={onRotate}
             className="bg-orange-600 hover:bg-orange-700 text-white h-12"
+            title="Rotate (R)"
           >
             <RotateCw className="w-4 h-4 mr-1" />
             <span className="text-xs">Rotate</span>
@@ -73,6 +77,7 @@ const MobileToolsControls = ({
           <Button
             onClick={onFlipHorizontal}
             className="bg-orange-600 hover:bg-orange-700 text-white h-12"
+            title="Flip Horizontal (H)"
           >
             <FlipHorizontal className="w-4 h-4 mr-1" />
             <span className="text-xs">Flip H</span>
@@ -80,6 +85,7 @@ const MobileToolsControls = ({
           <Button
             onClick={onFlipVertical}
             className="bg-orange-600 hover:bg-orange-700 text-white h-12"
+            title="Flip Vertical (V)"
           >
             <FlipVertical className="w-4 h-4 mr-1" />
             <span className="text-xs">Flip V</span>
@@ -87,6 +93,7 @@ const MobileToolsControls = ({
           <Button
             onClick={onDelete}
             className="bg-red-600 hover:bg-red-700 text-white h-12"
+            title="Delete (Del)"
           >
             <Trash2 className="w-4 h-4 mr-1" />
             <span className="text-xs">Delete</span>
@@ -94,6 +101,7 @@ const MobileToolsControls = ({
           <Button
             onClick={onBringForward}
             className="bg-blue-600 hover:bg-blue-700 text-white h-12"
+            title="Bring Forward (Shift + ↑)"
           >
             <ArrowUp className="w-4 h-4 mr-1" />
             <span className="text-xs">Forward</span>
@@ -101,6 +109,7 @@ const MobileToolsControls = ({
           <Button
             onClick={onSendBackward}
             className="bg-indigo-600 hover:bg-indigo-700 text-white h-12"
+            title="Send Backward (Shift + ↓)"
           >
             <ArrowDown className="w-4 h-4 mr-1" />
             <span className="text-xs">Backward</span>
@@ -108,6 +117,9 @@ const MobileToolsControls = ({
         </div>
         <p className="text-xs text-orange-400 mt-2 text-center">
           Select an object on the canvas to use these tools
+        </p>
+        <p className="text-xs text-orange-300 mt-1 text-center">
+          💡 Use keyboard shortcuts for faster editing
         </p>
       </div>
     </div>
