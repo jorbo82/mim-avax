@@ -77,39 +77,39 @@ const MemeGallery = () => {
       title: "GMIM - Good Morning!"
     },
     {
-      src: "/lovable-uploads/07c77816-0782-438d-83d8-65eae6a60c4b.png",
-      alt: "MIM Wizard Conjuring Magic",
-      title: "Conjuring Magic"
+      src: "/lovable-uploads/4b058054-2291-4736-8e35-7eb4602270d2.png",
+      alt: "New Wizard with Mystical Powers",
+      title: "Mystical Power Wizard"
     },
     {
-      src: "/lovable-uploads/08a94be2-cbf9-456c-ab16-a7a907308145.png",
-      alt: "Wizard Building Magic Towers",
-      title: "Magic Tower Builder"
+      src: "/lovable-uploads/591e0f73-72e0-4c38-9108-84e4ad8c86b1.png",
+      alt: "Enchanted Forest Wizard",
+      title: "Forest Magic Master"
     },
     {
-      src: "/lovable-uploads/1f93a159-f2dc-41b1-846c-a5536787979d.png",
-      alt: "Powerful Wizard with Lightning",
-      title: "Lightning Wizard"
+      src: "/lovable-uploads/657675aa-04fc-4448-be1f-1790ee9e1b9e.png",
+      alt: "Portal Wizard with Dimensional Magic",
+      title: "Portal Magic Wizard"
     },
     {
-      src: "/lovable-uploads/34792e5b-91a2-44f9-9653-12d177de8af1.png",
-      alt: "Ancient Wizard with Scrolls",
-      title: "Ancient Scroll Master"
+      src: "/lovable-uploads/6649b943-04e0-4a9b-80f2-f286961943c8.png",
+      alt: "Cosmic Wizard with Star Magic",
+      title: "Cosmic Star Wizard"
     },
     {
-      src: "/lovable-uploads/38a3afcd-7179-4eb4-b934-50ed64819bcf.png",
-      alt: "Fire Magic Wizard",
-      title: "Fire Magic Master"
+      src: "/lovable-uploads/82872567-05fa-4184-a39e-69e0ec1fb763.png",
+      alt: "Dark Magic Wizard",
+      title: "Shadow Magic Master"
     },
     {
-      src: "/lovable-uploads/3b4ae095-2460-46bc-bdf2-16bb509742a2.png",
-      alt: "Crystal Magic Wizard",
-      title: "Crystal Magic"
+      src: "/lovable-uploads/994639ab-fb50-452c-9b25-0a4138ace906.png",
+      alt: "Time Magic Wizard",
+      title: "Time Keeper Wizard"
     },
     {
-      src: "/lovable-uploads/4180231f-60f8-4690-995f-92ddfd1fcc8d.png",
-      alt: "Storm Wizard with Lightning",
-      title: "Storm Master"
+      src: "/lovable-uploads/ae89a959-e486-4a8f-aeaa-53ebf501716e.png",
+      alt: "Element Master Wizard",
+      title: "Elemental Magic"
     }
   ];
 

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -66,39 +65,39 @@ const BACKGROUND_MEMES = [
     url: '/lovable-uploads/4ef9ea17-4aaa-40dd-92b7-5e72a1f5313b.png'
   },
   {
-    id: 'conjuring-magic',
-    name: 'Conjuring Magic',
-    url: '/lovable-uploads/07c77816-0782-438d-83d8-65eae6a60c4b.png'
+    id: 'mystical-power',
+    name: 'Mystical Power',
+    url: '/lovable-uploads/4b058054-2291-4736-8e35-7eb4602270d2.png'
   },
   {
-    id: 'tower-builder',
-    name: 'Magic Tower Builder',
-    url: '/lovable-uploads/08a94be2-cbf9-456c-ab16-a7a907308145.png'
+    id: 'forest-magic',
+    name: 'Forest Magic',
+    url: '/lovable-uploads/591e0f73-72e0-4c38-9108-84e4ad8c86b1.png'
   },
   {
-    id: 'lightning-wizard',
-    name: 'Lightning Wizard',
-    url: '/lovable-uploads/1f93a159-f2dc-41b1-846c-a5536787979d.png'
+    id: 'portal-magic',
+    name: 'Portal Magic',
+    url: '/lovable-uploads/657675aa-04fc-4448-be1f-1790ee9e1b9e.png'
   },
   {
-    id: 'scroll-master',
-    name: 'Ancient Scroll Master',
-    url: '/lovable-uploads/34792e5b-91a2-44f9-9653-12d177de8af1.png'
+    id: 'cosmic-star',
+    name: 'Cosmic Star',
+    url: '/lovable-uploads/6649b943-04e0-4a9b-80f2-f286961943c8.png'
   },
   {
-    id: 'fire-magic',
-    name: 'Fire Magic Master',
-    url: '/lovable-uploads/38a3afcd-7179-4eb4-b934-50ed64819bcf.png'
+    id: 'shadow-magic',
+    name: 'Shadow Magic',
+    url: '/lovable-uploads/82872567-05fa-4184-a39e-69e0ec1fb763.png'
   },
   {
-    id: 'crystal-magic',
-    name: 'Crystal Magic',
-    url: '/lovable-uploads/3b4ae095-2460-46bc-bdf2-16bb509742a2.png'
+    id: 'time-keeper',
+    name: 'Time Keeper',
+    url: '/lovable-uploads/994639ab-fb50-452c-9b25-0a4138ace906.png'
   },
   {
-    id: 'storm-master',
-    name: 'Storm Master',
-    url: '/lovable-uploads/4180231f-60f8-4690-995f-92ddfd1fcc8d.png'
+    id: 'elemental-magic',
+    name: 'Elemental Magic',
+    url: '/lovable-uploads/ae89a959-e486-4a8f-aeaa-53ebf501716e.png'
   }
 ];
 
