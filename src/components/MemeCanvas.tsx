@@ -51,7 +51,8 @@ const MemeCanvas = forwardRef<MemeCanvasRef, MemeCanvasProps & {
     addAssetToCanvas,
     zoomIn,
     zoomOut,
-    resetZoom
+    resetZoom,
+    fabricCanvasRef // Expose the canvas ref
   }));
 
   return (

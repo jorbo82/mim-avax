@@ -67,6 +67,44 @@ const MobileOptimizedMemeEditor = ({ onClose, initialBackgroundImage }: MobileOp
     }
   };
 
+  const handlePostToX = () => {
+    if (canvasRef.current) {
+      // Get the canvas element and convert to data URL
+      const canvas = canvasRef.current.fabricCanvasRef?.current;
+      if (canvas) {
+        const dataURL = canvas.toDataURL({
+          format: 'png',
+          quality: 1,
+          multiplier: 2
+        });
+        
+        // Create a tweet text with hashtags
+        const tweetText = "Just created this epic meme with MIM-ME! 🧙‍♂️✨ #MIMME #MagicInternetMoney #MemeMagic #AVAX #DeFi";
+        
+        // Convert data URL to blob and create object URL for sharing
+        fetch(dataURL)
+          .then(res => res.blob())
+          .then(blob => {
+            const file = new File([blob], "mim-meme.png", { type: "image/png" });
+            
+            // Check if Web Share API is available (mainly mobile browsers)
+            if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+              navigator.share({
+                title: "MIM-ME Meme",
+                text: tweetText,
+                files: [file]
+              }).catch(console.error);
+            } else {
+              // Fallback to Twitter Web Intent
+              const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}&url=${encodeURIComponent(window.location.origin)}`;
+              window.open(twitterUrl, '_blank', 'width=600,height=400');
+            }
+          })
+          .catch(console.error);
+      }
+    }
+  };
+
   const handleAssetSelect = (assetUrl: string) => {
     if (canvasRef.current) {
       canvasRef.current.addAssetToCanvas(assetUrl);
@@ -157,6 +195,7 @@ const MobileOptimizedMemeEditor = ({ onClose, initialBackgroundImage }: MobileOp
           <MobileEditorHeader 
             onClose={onClose}
             onDownload={handleDownload}
+            onPostToX={handlePostToX}
           />
           
           <AspectRatioSelector
@@ -183,6 +222,7 @@ const MobileOptimizedMemeEditor = ({ onClose, initialBackgroundImage }: MobileOp
         <MobileEditorHeader 
           onClose={onClose}
           onDownload={handleDownload}
+          onPostToX={handlePostToX}
         />
 
         <MobileEditorCanvas

@@ -104,6 +104,7 @@ export const useMemeActions = (
     deleteSelectedObject,
     bringSelectedObjectForward,
     sendSelectedObjectBackward,
-    ensureTextOnTop
+    ensureTextOnTop,
+    fabricCanvasRef // Expose the canvas ref for external use
   };
 };
