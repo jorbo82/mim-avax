@@ -32,7 +32,7 @@ export const useMemeActions = (
     // Find all text objects and bring them to front
     objects.forEach(obj => {
       if (obj.type === 'text') {
-        canvas.bringToFront(obj);
+        canvas.bringObjectToFront(obj);
       }
     });
     
@@ -75,7 +75,7 @@ export const useMemeActions = (
   const bringSelectedObjectForward = () => {
     const activeObject = getSelectedObject();
     if (activeObject && fabricCanvasRef.current) {
-      fabricCanvasRef.current.bringForward(activeObject);
+      fabricCanvasRef.current.bringObjectForward(activeObject);
       ensureTextOnTop(); // Ensure text stays on top
     }
   };
@@ -83,7 +83,7 @@ export const useMemeActions = (
   const sendSelectedObjectBackward = () => {
     const activeObject = getSelectedObject();
     if (activeObject && fabricCanvasRef.current) {
-      fabricCanvasRef.current.sendBackwards(activeObject);
+      fabricCanvasRef.current.sendObjectBackwards(activeObject);
       ensureTextOnTop(); // Ensure text stays on top
     }
   };

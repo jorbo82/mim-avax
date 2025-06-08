@@ -17,10 +17,10 @@ export const useTextHandling = (
     
     // Bring both text objects to front
     if (topTextRef.current) {
-      canvas.bringToFront(topTextRef.current);
+      canvas.bringObjectToFront(topTextRef.current);
     }
     if (bottomTextRef.current) {
-      canvas.bringToFront(bottomTextRef.current);
+      canvas.bringObjectToFront(bottomTextRef.current);
     }
     
     canvas.renderAll();
@@ -54,7 +54,7 @@ export const useTextHandling = (
 
       topTextRef.current = text;
       canvas.add(text);
-      canvas.bringToFront(text); // Ensure text is on top
+      canvas.bringObjectToFront(text); // Ensure text is on top
     }
 
     canvas.renderAll();
@@ -88,7 +88,7 @@ export const useTextHandling = (
 
       bottomTextRef.current = text;
       canvas.add(text);
-      canvas.bringToFront(text); // Ensure text is on top
+      canvas.bringObjectToFront(text); // Ensure text is on top
     }
 
     canvas.renderAll();
