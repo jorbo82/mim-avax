@@ -1,5 +1,5 @@
 
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
@@ -12,218 +12,241 @@ interface GenerationRequest {
   size: string;
   quality: string;
   jobType: 'text_to_image' | 'image_edit';
-  jobId: string;
-  inputImages?: string[]; // base64 encoded images
+  inputImages?: string[];
+  mask?: string;
 }
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    // Get the authorization header
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      throw new Error('No authorization header');
-    }
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    const openaiApiKey = Deno.env.get('OPENAI_API_KEY')!
 
-    // Initialize Supabase client
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseKey, {
-      global: { headers: { Authorization: authHeader } }
-    });
-
-    // Verify user authentication
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    if (userError || !user) {
-      throw new Error('Unauthorized');
-    }
-
-    const { prompt, size, quality, jobType, jobId, inputImages }: GenerationRequest = await req.json();
-
-    if (!prompt || !jobId) {
-      throw new Error('Missing required parameters');
-    }
-
-    console.log(`Starting image generation for job ${jobId}, user ${user.id}`);
-
-    // Update job status to processing
-    await supabase
-      .from('image_generation_jobs')
-      .update({ status: 'processing' })
-      .eq('id', jobId)
-      .eq('user_id', user.id);
-
-    // Prepare OpenAI request
-    const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
     if (!openaiApiKey) {
-      throw new Error('OpenAI API key not configured');
+      throw new Error('OpenAI API key not configured')
     }
 
-    let openaiResponse;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey)
     
-    if (jobType === 'text_to_image') {
-      // Text-to-image generation
-      openaiResponse = await fetch('https://api.openai.com/v1/images/generations', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${openaiApiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'dall-e-3',
+    const authHeader = req.headers.get('Authorization')!
+    const token = authHeader.replace('Bearer ', '')
+    
+    const { data: { user } } = await supabase.auth.getUser(token)
+    if (!user) {
+      throw new Error('Unauthorized')
+    }
+
+    const { prompt, size, quality, jobType, inputImages, mask }: GenerationRequest = await req.json()
+
+    console.log('Received request:', { prompt, size, quality, jobType, hasInputImages: !!inputImages?.length })
+
+    // Create job record
+    const { data: job, error: jobError } = await supabase
+      .from('image_generation_jobs')
+      .insert({
+        user_id: user.id,
+        prompt,
+        size,
+        quality,
+        job_type: jobType,
+        status: 'processing'
+      })
+      .select()
+      .single()
+
+    if (jobError) {
+      console.error('Job creation error:', jobError)
+      throw new Error('Failed to create job record')
+    }
+
+    console.log('Created job:', job.id)
+
+    let openaiResponse
+    let imageUrl
+
+    try {
+      if (jobType === 'image_edit' && inputImages?.length) {
+        // Image editing with GPT-Image-1
+        const formData = new FormData()
+        
+        // Add each input image
+        for (let i = 0; i < inputImages.length; i++) {
+          const imageBase64 = inputImages[i]
+          const imageBytes = Uint8Array.from(atob(imageBase64), c => c.charCodeAt(0))
+          const imageBlob = new Blob([imageBytes], { type: 'image/png' })
+          formData.append('image', imageBlob, `input_${i}.png`)
+        }
+
+        // Add mask if provided
+        if (mask) {
+          const maskBytes = Uint8Array.from(atob(mask), c => c.charCodeAt(0))
+          const maskBlob = new Blob([maskBytes], { type: 'image/png' })
+          formData.append('mask', maskBlob, 'mask.png')
+        }
+
+        // Add parameters
+        formData.append('model', 'gpt-image-1')
+        formData.append('prompt', prompt)
+        formData.append('n', '1')
+        formData.append('size', size)
+        formData.append('quality', quality)
+        formData.append('response_format', 'b64_json')
+
+        const response = await fetch('https://api.openai.com/v1/images/edits', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${openaiApiKey}`,
+          },
+          body: formData,
+        })
+
+        if (!response.ok) {
+          const errorText = await response.text()
+          console.error('OpenAI API error:', errorText)
+          throw new Error(`OpenAI API error: ${response.status}`)
+        }
+
+        openaiResponse = await response.json()
+        console.log('OpenAI edit response received')
+        
+      } else {
+        // Text-to-image generation with GPT-Image-1
+        const requestBody = {
+          model: 'gpt-image-1',
           prompt: prompt,
           n: 1,
           size: size,
           quality: quality,
-          response_format: 'url'
-        }),
-      });
-    } else {
-      // Image-to-image editing (requires DALL-E 2)
-      if (!inputImages || inputImages.length === 0) {
-        throw new Error('Input images required for image editing');
+          response_format: 'b64_json'
+        }
+
+        console.log('Making OpenAI request:', { ...requestBody, prompt: prompt.substring(0, 50) + '...' })
+
+        const response = await fetch('https://api.openai.com/v1/images/generations', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${openaiApiKey}`,
+          },
+          body: JSON.stringify(requestBody),
+        })
+
+        if (!response.ok) {
+          const errorText = await response.text()
+          console.error('OpenAI API error:', errorText)
+          throw new Error(`OpenAI API error: ${response.status}`)
+        }
+
+        openaiResponse = await response.json()
+        console.log('OpenAI generation response received')
       }
 
-      // Convert first base64 image to blob for editing
-      const imageBase64 = inputImages[0];
-      const imageBuffer = Uint8Array.from(atob(imageBase64), c => c.charCodeAt(0));
+      if (!openaiResponse?.data?.[0]?.b64_json) {
+        throw new Error('No image data received from OpenAI')
+      }
+
+      // Convert base64 to blob and upload to Supabase Storage
+      const imageBase64 = openaiResponse.data[0].b64_json
+      const imageBytes = Uint8Array.from(atob(imageBase64), c => c.charCodeAt(0))
       
-      const formData = new FormData();
-      formData.append('image', new Blob([imageBuffer], { type: 'image/png' }));
-      formData.append('prompt', prompt);
-      formData.append('n', '1');
-      formData.append('size', size);
-      formData.append('response_format', 'url');
+      const fileName = `${user.id}/${job.id}_${Date.now()}.png`
+      
+      console.log('Uploading to storage:', fileName)
 
-      openaiResponse = await fetch('https://api.openai.com/v1/images/edits', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${openaiApiKey}`,
-        },
-        body: formData,
-      });
-    }
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('generated-images')
+        .upload(fileName, imageBytes, {
+          contentType: 'image/png',
+          upsert: false
+        })
 
-    if (!openaiResponse.ok) {
-      const errorData = await openaiResponse.json();
-      throw new Error(errorData.error?.message || 'OpenAI API request failed');
-    }
-
-    const result = await openaiResponse.json();
-    console.log('OpenAI response received for job:', jobId);
-
-    if (!result.data || result.data.length === 0) {
-      throw new Error('No image generated');
-    }
-
-    const imageUrl = result.data[0].url;
-    
-    // Download the generated image
-    const imageResponse = await fetch(imageUrl);
-    if (!imageResponse.ok) {
-      throw new Error('Failed to download generated image');
-    }
-
-    const imageBlob = await imageResponse.blob();
-    const imageBuffer = await imageBlob.arrayBuffer();
-    
-    // Upload to Supabase Storage
-    const fileName = `${user.id}/${jobId}_${Date.now()}.png`;
-    const { data: uploadData, error: uploadError } = await supabase.storage
-      .from('generated-images')
-      .upload(fileName, imageBuffer, {
-        contentType: 'image/png',
-        upsert: false
-      });
-
-    if (uploadError) {
-      console.error('Storage upload error:', uploadError);
-      throw new Error('Failed to save image to storage');
-    }
-
-    // Get the public URL for the uploaded image
-    const { data: urlData } = supabase.storage
-      .from('generated-images')
-      .getPublicUrl(fileName);
-
-    const storedImageUrl = urlData.publicUrl;
-
-    // Save image record to database
-    await supabase
-      .from('user_images')
-      .insert({
-        user_id: user.id,
-        job_id: jobId,
-        image_url: storedImageUrl,
-        storage_path: fileName,
-        prompt: prompt,
-        size: size,
-        quality: quality,
-        job_type: jobType
-      });
-
-    // Update job status to completed
-    await supabase
-      .from('image_generation_jobs')
-      .update({ 
-        status: 'completed',
-        completed_at: new Date().toISOString(),
-        openai_response: result
-      })
-      .eq('id', jobId)
-      .eq('user_id', user.id);
-
-    console.log(`Successfully completed job ${jobId}`);
-
-    return new Response(
-      JSON.stringify({
-        success: true,
-        imageUrl: storedImageUrl,
-        jobId: jobId
-      }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      if (uploadError) {
+        console.error('Storage upload error:', uploadError)
+        throw new Error(`Storage upload failed: ${uploadError.message}`)
       }
-    );
+
+      console.log('Upload successful:', uploadData.path)
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('generated-images')
+        .getPublicUrl(uploadData.path)
+
+      imageUrl = publicUrl
+      console.log('Public URL generated:', imageUrl)
+
+      // Update job status to completed
+      await supabase
+        .from('image_generation_jobs')
+        .update({
+          status: 'completed',
+          completed_at: new Date().toISOString(),
+          openai_response: openaiResponse
+        })
+        .eq('id', job.id)
+
+      // Save to user_images table
+      const { error: imageError } = await supabase
+        .from('user_images')
+        .insert({
+          user_id: user.id,
+          job_id: job.id,
+          image_url: imageUrl,
+          storage_path: uploadData.path,
+          prompt,
+          size,
+          quality,
+          job_type: jobType
+        })
+
+      if (imageError) {
+        console.error('Error saving to user_images:', imageError)
+      }
+
+      console.log('Job completed successfully')
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          imageUrl,
+          jobId: job.id,
+          modelUsed: 'gpt-image-1'
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      )
+
+    } catch (openaiError: any) {
+      console.error('OpenAI/Processing error:', openaiError)
+      
+      // Update job status to failed
+      await supabase
+        .from('image_generation_jobs')
+        .update({
+          status: 'failed',
+          error_message: openaiError.message,
+          completed_at: new Date().toISOString()
+        })
+        .eq('id', job.id)
+
+      throw openaiError
+    }
 
   } catch (error: any) {
-    console.error('Image generation error:', error);
-    
-    // Try to update job status to failed if we have the jobId
-    try {
-      const { jobId } = await req.json();
-      if (jobId) {
-        const authHeader = req.headers.get('Authorization');
-        const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-        const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
-        const supabase = createClient(supabaseUrl, supabaseKey, {
-          global: { headers: { Authorization: authHeader } }
-        });
-        
-        await supabase
-          .from('image_generation_jobs')
-          .update({ 
-            status: 'failed',
-            error_message: error.message,
-            completed_at: new Date().toISOString()
-          })
-          .eq('id', jobId);
-      }
-    } catch (updateError) {
-      console.error('Failed to update job status:', updateError);
-    }
-
+    console.error('Function error:', error)
     return new Response(
-      JSON.stringify({ 
-        error: error.message || 'Internal server error' 
+      JSON.stringify({
+        error: error.message || 'Internal server error'
       }),
       {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
-    );
+    )
   }
-});
+})

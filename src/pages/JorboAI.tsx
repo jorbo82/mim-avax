@@ -1,6 +1,7 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Sparkles, Upload, Image, Wand2, Download, LogOut, History } from "lucide-react";
+import { ArrowLeft, Sparkles, Image, Wand2, Download, LogOut, History, ImageIcon, Palette } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,9 +11,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEnhancedImageGeneration } from "@/hooks/useEnhancedImageGeneration";
-import { validateImageFile, downloadImage } from "@/utils/imageUtils";
+import { downloadImage } from "@/utils/imageUtils";
 import UserGallery from "@/components/UserGallery";
 import JobStatus from "@/components/JobStatus";
+import { MultiImageUpload } from "@/components/MultiImageUpload";
+import { GallerySelector } from "@/components/GallerySelector";
 
 const JorboAI = () => {
   const navigate = useNavigate();
@@ -21,6 +24,7 @@ const JorboAI = () => {
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [selectedSize, setSelectedSize] = useState("1024x1024");
   const [selectedQuality, setSelectedQuality] = useState("high");
+  const [showGallerySelector, setShowGallerySelector] = useState(false);
   
   const { isGenerating, generatedImageUrl, generateImage, resetGeneration } = useEnhancedImageGeneration();
 
@@ -30,32 +34,6 @@ const JorboAI = () => {
       navigate("/auth");
     }
   }, [user, authLoading, navigate]);
-
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files) {
-      const validFiles: File[] = [];
-      
-      Array.from(files).forEach(file => {
-        if (validateImageFile(file)) {
-          validFiles.push(file);
-        } else {
-          toast.error(`Invalid file: ${file.name}. Please upload images under 10MB.`);
-        }
-      });
-
-      const newImages = validFiles.slice(0, 10 - selectedImages.length);
-      setSelectedImages(prev => [...prev, ...newImages]);
-      
-      if (newImages.length > 0) {
-        toast.success(`Added ${newImages.length} image(s)`);
-      }
-    }
-  };
-
-  const removeImage = (index: number) => {
-    setSelectedImages(prev => prev.filter((_, i) => i !== index));
-  };
 
   const handleGeneration = async () => {
     const jobType = selectedImages.length > 0 ? 'image_edit' : 'text_to_image';
@@ -78,6 +56,11 @@ const JorboAI = () => {
   const handleSignOut = async () => {
     await signOut();
     navigate("/");
+  };
+
+  const handleGalleryImagesSelected = (imageFiles: File[]) => {
+    setSelectedImages(prev => [...prev, ...imageFiles].slice(0, 10));
+    toast.success(`Added ${imageFiles.length} image${imageFiles.length !== 1 ? 's' : ''} from gallery`);
   };
 
   if (authLoading) {
@@ -115,7 +98,8 @@ const JorboAI = () => {
                 <h1 className="text-4xl font-bold bg-gradient-to-r from-mim-teal to-mim-gold bg-clip-text text-transparent">
                   JORBO AI
                 </h1>
-                <p className="text-muted-foreground">Welcome back, {user.email}</p>
+                <p className="text-muted-foreground">AI Image Generator with GPT-Image-1</p>
+                <p className="text-sm text-muted-foreground">Welcome back, {user.email}</p>
               </div>
             </div>
           </div>
@@ -159,10 +143,10 @@ const JorboAI = () => {
                   </CardHeader>
                   <CardContent>
                     <Textarea
-                      placeholder="Describe the image you want to create or edit..."
+                      placeholder="Describe the image you want to create or edit... e.g., 'A majestic dragon flying over a medieval castle at sunset'"
                       value={prompt}
                       onChange={(e) => setPrompt(e.target.value)}
-                      className="min-h-[100px] resize-none border-mim-teal/30 focus:border-mim-teal"
+                      className="min-h-[120px] resize-none border-mim-teal/30 focus:border-mim-teal"
                     />
                   </CardContent>
                 </Card>
@@ -170,50 +154,35 @@ const JorboAI = () => {
                 <Card className="cute-border cute-shadow">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-mim-teal">
-                      <Upload className="w-5 h-5" />
-                      Upload Images (Optional)
+                      <ImageIcon className="w-5 h-5" />
+                      Reference Images
                       <Badge variant="secondary">{selectedImages.length}/10</Badge>
                     </CardTitle>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowGallerySelector(true)}
+                        className="flex items-center gap-2"
+                      >
+                        <Palette className="w-4 h-4" />
+                        From Gallery
+                      </Button>
+                    </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-4">
-                      <input
-                        type="file"
-                        multiple
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                        disabled={selectedImages.length >= 10}
-                        className="w-full p-3 border border-mim-teal/30 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-mim-teal file:text-white hover:file:bg-mim-teal-dark"
-                      />
-                      
-                      {selectedImages.length > 0 && (
-                        <div className="grid grid-cols-2 gap-3">
-                          {selectedImages.map((image, index) => (
-                            <div key={index} className="relative group">
-                              <img
-                                src={URL.createObjectURL(image)}
-                                alt={`Upload ${index + 1}`}
-                                className="w-full h-24 object-cover rounded-lg border border-mim-teal/30"
-                              />
-                              <Button
-                                size="sm"
-                                variant="destructive"
-                                className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 p-0"
-                                onClick={() => removeImage(index)}
-                              >
-                                ×
-                              </Button>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
+                    <MultiImageUpload
+                      images={selectedImages}
+                      onImagesChange={setSelectedImages}
+                      maxImages={10}
+                      disabled={isGenerating}
+                    />
                   </CardContent>
                 </Card>
 
                 <Card className="cute-border cute-shadow">
                   <CardHeader>
-                    <CardTitle className="text-mim-teal">Settings</CardTitle>
+                    <CardTitle className="text-mim-teal">Generation Settings</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div>
@@ -237,8 +206,10 @@ const JorboAI = () => {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="standard">Standard</SelectItem>
-                          <SelectItem value="hd">HD (High Definition)</SelectItem>
+                          <SelectItem value="low">Low (Fastest)</SelectItem>
+                          <SelectItem value="medium">Medium (Balanced)</SelectItem>
+                          <SelectItem value="high">High (Best Quality)</SelectItem>
+                          <SelectItem value="auto">Auto (AI Optimized)</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -253,7 +224,7 @@ const JorboAI = () => {
                   {isGenerating ? (
                     <>
                       <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full mr-3" />
-                      Generating Magic...
+                      Generating with GPT-Image-1...
                     </>
                   ) : (
                     <>
@@ -264,10 +235,14 @@ const JorboAI = () => {
                 </Button>
 
                 {selectedImages.length > 0 && (
-                  <p className="text-sm text-muted-foreground text-center">
-                    ✨ You've uploaded {selectedImages.length} image{selectedImages.length !== 1 ? 's' : ''} - 
-                    JORBO AI will use image-to-image generation
-                  </p>
+                  <div className="text-center space-y-2">
+                    <p className="text-sm text-muted-foreground">
+                      🎨 Using {selectedImages.length} reference image{selectedImages.length !== 1 ? 's' : ''} for image-to-image editing
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      GPT-Image-1 will intelligently blend and edit your reference images
+                    </p>
+                  </div>
                 )}
               </div>
 
@@ -286,7 +261,7 @@ const JorboAI = () => {
                         <img
                           src={generatedImageUrl}
                           alt="Generated by JORBO AI"
-                          className="w-full rounded-lg border border-mim-teal/30"
+                          className="w-full rounded-lg border border-mim-teal/30 shadow-lg"
                         />
                         <div className="flex gap-2">
                           <Button 
@@ -297,17 +272,27 @@ const JorboAI = () => {
                             <Download className="w-4 h-4 mr-2" />
                             Download
                           </Button>
+                          <Button 
+                            onClick={resetGeneration}
+                            variant="outline"
+                            className="px-4"
+                          >
+                            New
+                          </Button>
                         </div>
                       </div>
                     ) : (
                       <div className="h-64 border-2 border-dashed border-mim-teal/30 rounded-lg flex items-center justify-center">
                         <div className="text-center text-muted-foreground">
                           <Sparkles className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                          <p>Your generated image will appear here</p>
+                          <p className="font-medium">Your AI masterpiece will appear here</p>
                           <p className="text-sm mt-1">
                             {selectedImages.length > 0 
-                              ? "Image-to-image editing mode" 
-                              : "Text-to-image generation mode"}
+                              ? "🎨 Image-to-image editing mode" 
+                              : "✨ Text-to-image generation mode"}
+                          </p>
+                          <p className="text-xs mt-2 opacity-75">
+                            Powered by OpenAI's GPT-Image-1
                           </p>
                         </div>
                       </div>
@@ -315,16 +300,28 @@ const JorboAI = () => {
                   </CardContent>
                 </Card>
 
-                <Card className="cute-border bg-mim-cream/50 dark:bg-mim-brown/30">
+                <Card className="cute-border bg-gradient-to-r from-mim-cream/50 to-mim-pink-light/30 dark:from-mim-brown/30 dark:to-mim-pink-dark/20">
                   <CardContent className="pt-6">
-                    <div className="text-center space-y-2">
-                      <h3 className="font-semibold text-mim-teal">🎨 JORBO AI Features</h3>
-                      <ul className="text-sm text-muted-foreground space-y-1">
-                        <li>✨ AI-powered image generation</li>
-                        <li>🖼️ Image-to-image editing</li>
-                        <li>📊 Job tracking & history</li>
-                        <li>💾 Personal gallery with favorites</li>
-                      </ul>
+                    <div className="text-center space-y-3">
+                      <h3 className="font-semibold text-mim-teal">🚀 JORBO AI Features</h3>
+                      <div className="grid grid-cols-2 gap-2 text-sm text-muted-foreground">
+                        <div className="flex items-center gap-2">
+                          <span>✨</span>
+                          <span>GPT-Image-1 Model</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span>🖼️</span>
+                          <span>Multi-Image Editing</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span>📊</span>
+                          <span>Job Tracking</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span>💾</span>
+                          <span>Smart Gallery</span>
+                        </div>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -341,6 +338,13 @@ const JorboAI = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      <GallerySelector
+        isOpen={showGallerySelector}
+        onClose={() => setShowGallerySelector(false)}
+        onSelectImages={handleGalleryImagesSelected}
+        maxSelections={5}
+      />
     </div>
   );
 };

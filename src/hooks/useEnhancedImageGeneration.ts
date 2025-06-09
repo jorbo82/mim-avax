@@ -1,21 +1,20 @@
 
-import { useState } from "react";
-import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
-import { useJobTracking } from "./useJobTracking";
+import { useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 
-export interface ImageGenerationParams {
+export interface GenerationParams {
   prompt: string;
   size: string;
   quality: string;
   jobType: 'text_to_image' | 'image_edit';
   inputImages?: File[];
+  maskImage?: File;
 }
 
 export const useEnhancedImageGeneration = () => {
   const { user } = useAuth();
-  const { createJob, updateJobStatus, saveGeneratedImage } = useJobTracking();
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null);
   const [currentJobId, setCurrentJobId] = useState<string | null>(null);
@@ -32,15 +31,15 @@ export const useEnhancedImageGeneration = () => {
     });
   };
 
-  const generateImage = async (params: ImageGenerationParams) => {
+  const generateImage = async (params: GenerationParams) => {
     if (!user) {
-      toast.error("Please sign in to generate images");
-      return null;
+      toast.error('You must be signed in to generate images');
+      return;
     }
 
     if (!params.prompt.trim()) {
-      toast.error("Please enter a description for your image");
-      return null;
+      toast.error('Please enter a prompt');
+      return;
     }
 
     setIsGenerating(true);
@@ -48,29 +47,27 @@ export const useEnhancedImageGeneration = () => {
     setCurrentJobId(null);
 
     try {
-      // Create job record in database
-      const job = await createJob({
-        prompt: params.prompt,
-        size: params.size,
-        quality: params.quality,
-        jobType: params.jobType
+      console.log('Starting image generation with params:', {
+        ...params,
+        inputImagesCount: params.inputImages?.length || 0,
+        hasMask: !!params.maskImage
       });
 
-      if (!job) {
-        throw new Error("Failed to create generation job");
-      }
-
-      setCurrentJobId(job.id);
-
-      // Convert images to base64 if provided
-      let imagesBase64: string[] = [];
-      if (params.inputImages && params.inputImages.length > 0) {
-        imagesBase64 = await Promise.all(
+      // Convert input images to base64 if provided
+      let inputImagesBase64: string[] = [];
+      if (params.inputImages?.length) {
+        inputImagesBase64 = await Promise.all(
           params.inputImages.map(file => convertFileToBase64(file))
         );
+        console.log(`Converted ${inputImagesBase64.length} input images to base64`);
       }
 
-      console.log('Starting image generation for job:', job.id);
+      // Convert mask to base64 if provided
+      let maskBase64: string | undefined;
+      if (params.maskImage) {
+        maskBase64 = await convertFileToBase64(params.maskImage);
+        console.log('Converted mask image to base64');
+      }
 
       // Call the edge function
       const { data, error } = await supabase.functions.invoke('openai-image-generator', {
@@ -79,34 +76,35 @@ export const useEnhancedImageGeneration = () => {
           size: params.size,
           quality: params.quality,
           jobType: params.jobType,
-          jobId: job.id,
-          inputImages: imagesBase64
+          inputImages: inputImagesBase64,
+          mask: maskBase64
         }
       });
 
       if (error) {
         console.error('Edge function error:', error);
-        throw new Error(error.message || 'Failed to generate image');
+        throw new Error(error.message || 'Generation failed');
       }
 
-      if (!data || !data.success) {
-        throw new Error(data?.error || 'Image generation failed');
+      if (data?.success && data?.imageUrl) {
+        setGeneratedImageUrl(data.imageUrl);
+        setCurrentJobId(data.jobId);
+        
+        const jobTypeText = params.jobType === 'image_edit' ? 'image editing' : 'text-to-image';
+        toast.success(`Successfully generated image using ${jobTypeText} with GPT-Image-1!`);
+        
+        console.log('Generation successful:', {
+          imageUrl: data.imageUrl,
+          jobId: data.jobId,
+          modelUsed: data.modelUsed
+        });
+      } else {
+        throw new Error('No image returned from generation');
       }
 
-      setGeneratedImageUrl(data.imageUrl);
-      toast.success(`Image generated successfully using ${params.jobType.replace('_', '-to-')}!`);
-      
-      return data.imageUrl;
     } catch (error: any) {
       console.error('Image generation error:', error);
-      
-      // Update job status to failed if we have a job ID
-      if (currentJobId) {
-        await updateJobStatus(currentJobId, 'failed', error.message);
-      }
-      
       toast.error(error.message || 'Failed to generate image');
-      return null;
     } finally {
       setIsGenerating(false);
     }
@@ -114,7 +112,6 @@ export const useEnhancedImageGeneration = () => {
 
   const resetGeneration = () => {
     setGeneratedImageUrl(null);
-    setIsGenerating(false);
     setCurrentJobId(null);
   };
 
