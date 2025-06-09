@@ -42,7 +42,7 @@ serve(async (req) => {
 
     const { prompt, size, quality, jobType, inputImages, mask }: GenerationRequest = await req.json()
 
-    console.log('Received request:', { prompt, size, quality, jobType, hasInputImages: !!inputImages?.length })
+    console.log('Received request:', { prompt, size, quality, jobType, hasInputImages: !!inputImages?.length, inputImagesCount: inputImages?.length })
 
     // Create job record
     const { data: job, error: jobError } = await supabase
@@ -66,18 +66,20 @@ serve(async (req) => {
     console.log('Created job:', job.id)
 
     let openaiResponse
-    let imageUrl
+    let imageBytes: Uint8Array
 
     try {
       if (jobType === 'image_edit' && inputImages?.length) {
         // Image editing with GPT-Image-1
         const formData = new FormData()
         
-        // Add the first input image (GPT-Image-1 takes one image for edits)
-        const imageBase64 = inputImages[0]
-        const imageBytes = Uint8Array.from(atob(imageBase64), c => c.charCodeAt(0))
-        const imageBlob = new Blob([imageBytes], { type: 'image/png' })
-        formData.append('image', imageBlob, 'input.png')
+        // Add multiple input images using image[] parameter for GPT-Image-1
+        inputImages.forEach((imageBase64, index) => {
+          const imageByteArray = Uint8Array.from(atob(imageBase64), c => c.charCodeAt(0))
+          const imageBlob = new Blob([imageByteArray], { type: 'image/png' })
+          // Use image[] for multiple images
+          formData.append('image[]', imageBlob, `input_${index}.png`)
+        })
 
         // Add mask if provided
         if (mask) {
@@ -93,6 +95,8 @@ serve(async (req) => {
         formData.append('size', size)
         formData.append('quality', quality)
 
+        console.log('Making OpenAI edit request with', inputImages.length, 'images')
+
         const response = await fetch('https://api.openai.com/v1/images/edits', {
           method: 'POST',
           headers: {
@@ -104,11 +108,11 @@ serve(async (req) => {
         if (!response.ok) {
           const errorText = await response.text()
           console.error('OpenAI API error:', errorText)
-          throw new Error(`OpenAI API error: ${response.status}`)
+          throw new Error(`OpenAI API error: ${response.status} - ${errorText}`)
         }
 
         openaiResponse = await response.json()
-        console.log('OpenAI edit response received')
+        console.log('OpenAI edit response received:', { hasData: !!openaiResponse?.data, dataLength: openaiResponse?.data?.length })
         
       } else {
         // Text-to-image generation with GPT-Image-1
@@ -121,7 +125,7 @@ serve(async (req) => {
           // Note: response_format is NOT supported by gpt-image-1
         }
 
-        console.log('Making OpenAI request:', { ...requestBody, prompt: prompt.substring(0, 50) + '...' })
+        console.log('Making OpenAI generation request:', { ...requestBody, prompt: prompt.substring(0, 50) + '...' })
 
         const response = await fetch('https://api.openai.com/v1/images/generations', {
           method: 'POST',
@@ -135,29 +139,42 @@ serve(async (req) => {
         if (!response.ok) {
           const errorText = await response.text()
           console.error('OpenAI API error:', errorText)
-          throw new Error(`OpenAI API error: ${response.status}`)
+          throw new Error(`OpenAI API error: ${response.status} - ${errorText}`)
         }
 
         openaiResponse = await response.json()
-        console.log('OpenAI generation response received')
+        console.log('OpenAI generation response received:', { hasData: !!openaiResponse?.data, dataLength: openaiResponse?.data?.length })
       }
 
-      // GPT-Image-1 returns URLs by default, not base64
-      if (!openaiResponse?.data?.[0]?.url) {
+      // GPT-Image-1 returns base64 data by default
+      if (!openaiResponse?.data?.[0]) {
+        console.error('No data in OpenAI response:', openaiResponse)
         throw new Error('No image data received from OpenAI')
       }
 
-      // Download the image from OpenAI's URL
-      const imageResponse = await fetch(openaiResponse.data[0].url)
-      if (!imageResponse.ok) {
-        throw new Error('Failed to download generated image')
+      const imageData = openaiResponse.data[0]
+      
+      // Handle both base64 and URL responses
+      if (imageData.b64_json) {
+        // Base64 response
+        console.log('Processing base64 response')
+        imageBytes = Uint8Array.from(atob(imageData.b64_json), c => c.charCodeAt(0))
+      } else if (imageData.url) {
+        // URL response - download the image
+        console.log('Processing URL response, downloading image')
+        const imageResponse = await fetch(imageData.url)
+        if (!imageResponse.ok) {
+          throw new Error('Failed to download generated image from URL')
+        }
+        imageBytes = new Uint8Array(await imageResponse.arrayBuffer())
+      } else {
+        console.error('Unexpected response format:', imageData)
+        throw new Error('Unexpected response format from OpenAI - no base64 or URL found')
       }
-
-      const imageBytes = new Uint8Array(await imageResponse.arrayBuffer())
       
       const fileName = `${user.id}/${job.id}_${Date.now()}.png`
       
-      console.log('Uploading to storage:', fileName)
+      console.log('Uploading to storage:', fileName, 'Size:', imageBytes.length, 'bytes')
 
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('generated-images')
@@ -178,8 +195,7 @@ serve(async (req) => {
         .from('generated-images')
         .getPublicUrl(uploadData.path)
 
-      imageUrl = publicUrl
-      console.log('Public URL generated:', imageUrl)
+      console.log('Public URL generated:', publicUrl)
 
       // Update job status to completed
       await supabase
@@ -197,7 +213,7 @@ serve(async (req) => {
         .insert({
           user_id: user.id,
           job_id: job.id,
-          image_url: imageUrl,
+          image_url: publicUrl,
           storage_path: uploadData.path,
           prompt,
           size,
@@ -214,7 +230,7 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({
           success: true,
-          imageUrl,
+          imageUrl: publicUrl,
           jobId: job.id,
           modelUsed: 'gpt-image-1'
         }),
