@@ -1,6 +1,5 @@
-
 import { useRef } from 'react';
-import { Upload, X, Image as ImageIcon, Palette, Gallery } from 'lucide-react';
+import { Upload, X, Image as ImageIcon, Palette, Images } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -60,7 +59,7 @@ export const MultiImageUpload = ({
 
   const getSourceIcon = (source?: string) => {
     switch (source) {
-      case 'gallery': return <Gallery className="w-3 h-3" />;
+      case 'gallery': return <Images className="w-3 h-3" />;
       case 'mim-asset': return <Palette className="w-3 h-3" />;
       default: return <Upload className="w-3 h-3" />;
     }
