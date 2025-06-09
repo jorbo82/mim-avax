@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useJobTracking } from './useJobTracking';
 
@@ -142,6 +143,13 @@ const MIM_CHARACTER_ASSETS: MimAsset[] = [
     id: 'mim-defi-pepe',
     name: 'DeFi Pepe',
     url: '/lovable-uploads/72a1654f-9437-4826-9ee1-5ad8340dedf5.png',
+    type: 'mim-character',
+    category: 'characters'
+  },
+  {
+    id: 'mim-blue-cat-warrior',
+    name: 'Blue Cat Warrior',
+    url: '/lovable-uploads/1efc08fe-13c3-43b5-9a4b-8d6d9c1ac9af.png',
     type: 'mim-character',
     category: 'characters'
   }
