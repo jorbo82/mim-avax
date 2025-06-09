@@ -102,8 +102,9 @@ export const useJobTracking = () => {
           ? { 
               ...job, 
               ...updateData,
+              job_type: job.job_type, // Keep original typed value
               status: status as 'pending' | 'processing' | 'completed' | 'failed'
-            }
+            } as ImageGenerationJob
           : job
       ));
     } catch (error: any) {
@@ -183,9 +184,17 @@ export const useJobTracking = () => {
       
       // Type the data properly
       const typedJobs: ImageGenerationJob[] = (data || []).map(job => ({
-        ...job,
+        id: job.id,
+        user_id: job.user_id,
+        prompt: job.prompt,
+        size: job.size,
+        quality: job.quality,
         job_type: job.job_type as 'text_to_image' | 'image_edit',
-        status: job.status as 'pending' | 'processing' | 'completed' | 'failed'
+        status: job.status as 'pending' | 'processing' | 'completed' | 'failed',
+        error_message: job.error_message || undefined,
+        openai_response: job.openai_response || undefined,
+        created_at: job.created_at,
+        completed_at: job.completed_at || undefined
       }));
       
       setJobs(typedJobs);
