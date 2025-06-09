@@ -11,7 +11,7 @@ const MimeMeButton = () => {
     <>
       <Button 
         onClick={() => setIsOpen(true)}
-        className="bg-gradient-to-r from-yellow-500 via-orange-500 to-pink-500 hover:from-yellow-600 hover:via-orange-600 hover:to-pink-600 text-white font-bold px-6 py-3 rounded-full transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-yellow-500/25 border-2 border-yellow-400/50 animate-pulse"
+        className="bg-gradient-to-r from-mim-teal to-mim-gold hover:from-mim-teal-dark hover:to-mim-orange text-white font-bold px-6 py-3 rounded-full transform hover:scale-105 transition-all duration-200 cute-shadow border-2 border-mim-teal-light animate-pulse"
       >
         <Wand2 className="mr-2 w-5 h-5" />
         MIM-ME

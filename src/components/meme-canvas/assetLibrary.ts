@@ -15,6 +15,32 @@ export const ASSET_LIBRARY = [
     name: 'Magic Internet Money',
     url: '/lovable-uploads/54df4878-e5b3-4038-87d6-6a1a01dda5b7.png'
   },
+  // New cute wizard assets
+  {
+    id: 'cute-wizard-avalanche',
+    name: 'Cute Wizard with Avalanche',
+    url: '/lovable-uploads/ac743a27-5073-4c2a-a3a5-064e31fcfe01.png'
+  },
+  {
+    id: 'mim-text-logo',
+    name: 'MIM Text Logo',
+    url: '/lovable-uploads/d75131e0-9cec-4b62-b6da-4aafe384800e.png'
+  },
+  {
+    id: 'happy-wizard-coins',
+    name: 'Happy Wizard with Coins',
+    url: '/lovable-uploads/21460dcc-742c-4d8c-851f-b7524728600c.png'
+  },
+  {
+    id: 'side-view-wizard',
+    name: 'Side View Wizard',
+    url: '/lovable-uploads/9ad2ff42-7419-461e-b228-a44c10268970.png'
+  },
+  {
+    id: 'magic-internet-money-text',
+    name: 'Magic Internet Money Text',
+    url: '/lovable-uploads/8da86d43-778a-4863-94ce-15f97282b975.png'
+  },
   {
     id: 'mim-wizard-happy-alt',
     name: 'MIM Wizard Happy Alt',

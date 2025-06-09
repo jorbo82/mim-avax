@@ -23,9 +23,9 @@ const AssetLibrary = ({ assets, onAssetSelect }: AssetLibraryProps) => {
       <CollapsibleTrigger asChild>
         <Button
           variant="outline"
-          className="w-full justify-between bg-purple-800/30 border-purple-500/30 text-purple-300 hover:bg-purple-700/50"
+          className="w-full justify-between bg-mim-teal/20 border-mim-teal/50 text-mim-teal hover:bg-mim-teal/30 cute-border"
         >
-          <span className="text-sm font-medium">Transparent Assets</span>
+          <span className="text-sm font-medium">Cute MIM Assets</span>
           {isOpen ? (
             <ChevronUp className="h-4 w-4" />
           ) : (
@@ -34,30 +34,30 @@ const AssetLibrary = ({ assets, onAssetSelect }: AssetLibraryProps) => {
         </Button>
       </CollapsibleTrigger>
       <CollapsibleContent className="space-y-2 mt-2">
-        <div className="max-h-64 overflow-y-auto scrollbar-thin scrollbar-thumb-purple-500/50 scrollbar-track-purple-900/30">
+        <div className="max-h-64 overflow-y-auto scrollbar-thin scrollbar-thumb-mim-teal/50 scrollbar-track-mim-cream/30">
           <div className="grid grid-cols-2 gap-2 pr-2">
             {assets.map((asset) => (
               <Button
                 key={asset.id}
                 onClick={() => onAssetSelect(asset.url)}
-                className="h-16 p-2 bg-purple-800/30 hover:bg-purple-700/50 border border-purple-500/30 flex flex-col items-center justify-center text-xs"
+                className="h-16 p-2 bg-mim-cream/50 hover:bg-mim-teal/20 border border-mim-teal/30 flex flex-col items-center justify-center text-xs cute-border transition-all duration-200 hover:scale-105"
                 variant="outline"
               >
                 <img 
                   src={asset.url} 
                   alt={asset.name}
                   className="w-8 h-8 object-contain mb-1"
-                  style={{ filter: 'drop-shadow(0 0 2px rgba(255,255,255,0.5))' }}
+                  style={{ filter: 'drop-shadow(0 0 2px rgba(52, 152, 219, 0.5))' }}
                 />
-                <span className="text-purple-200 truncate w-full text-center">
+                <span className="text-mim-teal truncate w-full text-center font-medium">
                   {asset.name}
                 </span>
               </Button>
             ))}
           </div>
         </div>
-        <p className="text-xs text-purple-400">
-          Click to add asset to canvas
+        <p className="text-xs text-mim-teal/70 text-center">
+          Click to add cute asset to canvas ✨
         </p>
       </CollapsibleContent>
     </Collapsible>
