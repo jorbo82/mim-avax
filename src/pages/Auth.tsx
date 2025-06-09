@@ -114,7 +114,7 @@ const Auth = () => {
             </div>
             <div>
               <h1 className="text-4xl font-bold bg-gradient-to-r from-mim-teal to-mim-gold bg-clip-text text-transparent">
-                JORBO AI
+                AI Magic
               </h1>
               <p className="text-muted-foreground">Join the magical community</p>
             </div>
@@ -124,7 +124,7 @@ const Auth = () => {
         <div className="max-w-md mx-auto">
           <Card className="cute-border cute-shadow">
             <CardHeader className="text-center">
-              <CardTitle className="text-2xl font-bold text-mim-teal">Welcome to JORBO AI</CardTitle>
+              <CardTitle className="text-2xl font-bold text-mim-teal">Welcome to AI Magic</CardTitle>
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="signin" className="w-full">

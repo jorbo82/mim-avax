@@ -1,11 +1,9 @@
-
 import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search, Check } from 'lucide-react';
 import { useMimAssetLibrary } from '@/hooks/useMimAssetLibrary';
 
@@ -22,9 +20,17 @@ export const MimAssetSelector = ({
   onSelectAssets, 
   maxSelections = 10 
 }: MimAssetSelectorProps) => {
-  const { filteredAssets, selectedCategory, setSelectedCategory, searchTerm, setSearchTerm, categories } = useMimAssetLibrary();
+  const { mimAssets, loading } = useMimAssetLibrary();
   const [selectedAssetIds, setSelectedAssetIds] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isConverting, setIsConverting] = useState(false);
+
+  const filteredAssets = mimAssets.filter(asset => {
+    const searchMatch = asset.prompt.toLowerCase().includes(searchTerm.toLowerCase());
+    const categoryMatch = selectedCategory ? asset.category === selectedCategory : true;
+    return searchMatch && categoryMatch;
+  });
 
   const toggleSelection = (assetId: string) => {
     setSelectedAssetIds(prev => {
@@ -37,9 +43,9 @@ export const MimAssetSelector = ({
     });
   };
 
-  const convertAssetToFile = async (assetUrl: string, filename: string): Promise<File | null> => {
+  const convertUrlToFile = async (imageUrl: string, filename: string): Promise<File | null> => {
     try {
-      const response = await fetch(assetUrl);
+      const response = await fetch(imageUrl);
       const blob = await response.blob();
       
       if (blob.size > 10 * 1024 * 1024) {
@@ -49,7 +55,7 @@ export const MimAssetSelector = ({
       
       return new File([blob], filename, { type: blob.type || 'image/png' });
     } catch (error) {
-      console.error(`Failed to convert asset ${filename}:`, error);
+      console.error(`Failed to convert ${filename}:`, error);
       return null;
     }
   };
@@ -63,10 +69,10 @@ export const MimAssetSelector = ({
       const assetFiles: File[] = [];
       
       for (const assetId of selectedAssetIds) {
-        const asset = filteredAssets.find(a => a.id === assetId);
+        const asset = mimAssets.find(asset => asset.id === assetId);
         if (asset) {
           const filename = `mim_asset_${asset.id}.png`;
-          const file = await convertAssetToFile(asset.url, filename);
+          const file = await convertUrlToFile(asset.image_url, filename);
           if (file) {
             assetFiles.push(file);
           }
@@ -77,7 +83,7 @@ export const MimAssetSelector = ({
       setSelectedAssetIds([]);
       onClose();
     } catch (error) {
-      console.error('Error converting MIM-ME assets:', error);
+      console.error('Error converting MIM assets:', error);
     } finally {
       setIsConverting(false);
     }
@@ -86,16 +92,12 @@ export const MimAssetSelector = ({
   const resetAndClose = () => {
     setSelectedAssetIds([]);
     setSearchTerm('');
-    setSelectedCategory('all');
+    setSelectedCategory(null);
     onClose();
   };
 
-  const getCategoryDisplayName = (category: string) => {
-    switch (category) {
-      case 'mim-character': return 'MIM Characters';
-      case 'background': return 'Backgrounds';
-      default: return 'All Assets';
-    }
+  const handleCategoryClick = (category: string | null) => {
+    setSelectedCategory(category);
   };
 
   return (
@@ -103,41 +105,54 @@ export const MimAssetSelector = ({
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
-            Select MIM-ME Assets
+            Select MIM Assets
             <Badge variant="secondary">
               {selectedAssetIds.length}/{maxSelections} selected
             </Badge>
           </DialogTitle>
+          <DialogDescription>
+            Choose up to {maxSelections} MIM assets to use as reference images for AI generation.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-              <Input
-                placeholder="Search MIM-ME assets..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger className="w-full sm:w-48">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map(category => (
-                  <SelectItem key={category} value={category}>
-                    {getCategoryDisplayName(category)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+            <Input
+              placeholder="Search by prompt..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
           </div>
 
-          {filteredAssets.length === 0 ? (
+          <div className="flex items-center gap-2 overflow-x-auto pb-2">
+            <Button
+              variant={selectedCategory === null ? 'default' : 'outline'}
+              onClick={() => handleCategoryClick(null)}
+              className="whitespace-nowrap"
+            >
+              All
+            </Button>
+            {[...new Set(mimAssets.map(asset => asset.category))].map(category => (
+              <Button
+                key={category}
+                variant={selectedCategory === category ? 'default' : 'outline'}
+                onClick={() => handleCategoryClick(category)}
+                className="whitespace-nowrap"
+              >
+                {category}
+              </Button>
+            ))}
+          </div>
+
+          {loading ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="animate-spin w-8 h-8 border-2 border-mim-teal border-t-transparent rounded-full" />
+            </div>
+          ) : filteredAssets.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
-              {searchTerm ? 'No assets match your search' : 'No assets available'}
+              {searchTerm ? 'No assets match your search' : 'No assets in library yet'}
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -154,8 +169,8 @@ export const MimAssetSelector = ({
                   <CardContent className="p-0">
                     <div className="aspect-square relative">
                       <img
-                        src={asset.url}
-                        alt={asset.name}
+                        src={asset.image_url}
+                        alt="MIM Asset"
                         className="w-full h-full object-cover rounded-t-lg"
                       />
                       {selectedAssetIds.includes(asset.id) && (
@@ -165,19 +180,12 @@ export const MimAssetSelector = ({
                       )}
                     </div>
                     <div className="p-3">
-                      <p className="text-sm font-medium line-clamp-1 mb-2">
-                        {asset.name}
+                      <p className="text-xs text-muted-foreground line-clamp-2">
+                        {asset.prompt}
                       </p>
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <Badge variant="outline" className="text-xs">
-                          {asset.type === 'mim-character' ? 'Character' : 'Background'}
-                        </Badge>
-                        {asset.category && (
-                          <Badge variant="secondary" className="text-xs">
-                            {asset.category}
-                          </Badge>
-                        )}
-                      </div>
+                      <Badge variant="outline" className="text-xs mt-2">
+                        {asset.category}
+                      </Badge>
                     </div>
                   </CardContent>
                 </Card>
@@ -186,14 +194,14 @@ export const MimAssetSelector = ({
           )}
         </div>
 
-        <DialogFooter className="flex-col sm:flex-row gap-2">
-          <Button variant="outline" onClick={resetAndClose} className="w-full sm:w-auto">
+        <DialogFooter>
+          <Button variant="outline" onClick={resetAndClose}>
             Cancel
           </Button>
           <Button
             onClick={handleSelectAssets}
             disabled={selectedAssetIds.length === 0 || isConverting}
-            className="bg-mim-teal hover:bg-mim-teal-dark w-full sm:w-auto"
+            className="bg-mim-teal hover:bg-mim-teal-dark"
           >
             {isConverting ? (
               <>

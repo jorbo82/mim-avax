@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -104,6 +104,9 @@ export const GallerySelector = ({
               {selectedUrls.length}/{maxSelections} selected
             </Badge>
           </DialogTitle>
+          <DialogDescription>
+            Choose up to {maxSelections} images from your gallery to use as reference images for AI generation.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
