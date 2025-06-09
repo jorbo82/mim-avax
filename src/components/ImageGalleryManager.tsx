@@ -1,204 +1,192 @@
 
 import { useState } from 'react';
-import { Trash2, AlertTriangle, Heart, Download } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Heart, Download, Trash2, RefreshCw, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { useJobTracking } from '@/hooks/useJobTracking';
+import { downloadImage } from '@/utils/imageUtils';
+import { formatDistanceToNow } from 'date-fns';
 
 const ImageGalleryManager = () => {
-  const { userImages, loading, deleteImage, clearAllImages, toggleFavorite } = useJobTracking();
-  const [isDeleting, setIsDeleting] = useState<string | null>(null);
-  const [isClearing, setIsClearing] = useState(false);
-
-  const handleDeleteImage = async (imageId: string) => {
-    setIsDeleting(imageId);
-    try {
-      await deleteImage(imageId);
-    } finally {
-      setIsDeleting(null);
-    }
-  };
-
-  const handleClearAll = async () => {
-    setIsClearing(true);
-    try {
-      await clearAllImages();
-    } finally {
-      setIsClearing(false);
-    }
-  };
+  const { userImages, loading, toggleFavorite, deleteImage, clearAllImages, refetchImages } = useJobTracking();
+  const [deletingImageId, setDeletingImageId] = useState<string | null>(null);
+  const [clearingAll, setClearingAll] = useState(false);
 
   const handleToggleFavorite = async (imageId: string, currentFavorite: boolean) => {
     await toggleFavorite(imageId, !currentFavorite);
   };
 
-  const handleDownload = async (imageUrl: string, prompt: string) => {
-    try {
-      const response = await fetch(imageUrl);
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `jorbo-ai-${prompt.substring(0, 30).replace(/[^a-zA-Z0-9]/g, '-')}.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('Download failed:', error);
-    }
+  const handleDeleteImage = async (imageId: string) => {
+    setDeletingImageId(imageId);
+    await deleteImage(imageId);
+    setDeletingImageId(null);
+  };
+
+  const handleDownloadImage = (imageUrl: string, imageId: string) => {
+    downloadImage(imageUrl, `jorbo-ai-${imageId}.png`);
+  };
+
+  const handleClearAll = async () => {
+    setClearingAll(true);
+    await clearAllImages();
+    setClearingAll(false);
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <div className="animate-spin w-8 h-8 border-2 border-mim-teal border-t-transparent rounded-full" />
-      </div>
+      <Card className="cute-border cute-shadow">
+        <CardContent className="flex items-center justify-center py-8">
+          <div className="animate-spin w-8 h-8 border-2 border-mim-teal border-t-transparent rounded-full" />
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <Card className="cute-border cute-shadow">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-mim-teal">Gallery Management</CardTitle>
-          {userImages.length > 0 && (
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button 
-                  variant="destructive" 
-                  size="sm"
-                  disabled={isClearing}
-                >
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  {isClearing ? 'Clearing...' : 'Clear All'}
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle className="flex items-center gap-2">
-                    <AlertTriangle className="w-5 h-5 text-orange-500" />
-                    Clear All Images
-                  </AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This will permanently delete all your generated images from both the gallery and storage. This action cannot be undone.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleClearAll}
-                    className="bg-red-600 hover:bg-red-700"
-                  >
-                    Clear All Images
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          )}
-        </div>
-      </CardHeader>
-      <CardContent>
-        {userImages.length === 0 ? (
-          <p className="text-muted-foreground text-center py-4">
-            No images in gallery yet. Start generating with JORBO AI!
-          </p>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {userImages.map((image) => (
-              <div key={image.id} className="border rounded-lg overflow-hidden">
-                <div className="aspect-square relative">
-                  <img
-                    src={image.image_url}
-                    alt="Generated"
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute top-2 right-2 flex gap-2">
+    <div className="space-y-6">
+      <Card className="cute-border cute-shadow">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2 text-mim-teal">
+                <ImageIcon className="w-5 h-5" />
+                JORBO AI Gallery
+              </CardTitle>
+              <CardDescription>
+                Your collection of AI-generated masterpieces
+              </CardDescription>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={refetchImages}
+                className="border-mim-teal text-mim-teal hover:bg-mim-teal hover:text-white"
+              >
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Refresh
+              </Button>
+              {userImages.length > 0 && (
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
                     <Button
-                      variant={image.is_favorite ? "default" : "secondary"}
+                      variant="outline"
                       size="sm"
-                      onClick={() => handleToggleFavorite(image.id, image.is_favorite)}
-                      className="w-8 h-8 p-0"
+                      className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
                     >
-                      <Heart 
-                        className={`w-4 h-4 ${image.is_favorite ? 'fill-current' : ''}`} 
-                      />
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Clear All
                     </Button>
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => handleDownload(image.image_url, image.prompt)}
-                      className="w-8 h-8 p-0"
-                    >
-                      <Download className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-                <div className="p-3 space-y-2">
-                  <p className="text-sm line-clamp-2">{image.prompt}</p>
-                  <div className="flex flex-wrap gap-1">
-                    <Badge variant="outline" className="text-xs">{image.size}</Badge>
-                    <Badge variant="outline" className="text-xs">{image.quality}</Badge>
-                    <Badge variant="secondary" className="text-xs">
-                      {image.job_type.replace('_', '-to-')}
-                    </Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground">
-                      {new Date(image.created_at).toLocaleDateString()}
-                    </span>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          disabled={isDeleting === image.id}
-                          className="text-red-600 hover:text-red-700"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle className="flex items-center gap-2">
-                            <AlertTriangle className="w-5 h-5 text-orange-500" />
-                            Delete Image
-                          </AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This will permanently delete this image from your gallery and storage. This action cannot be undone.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction
-                            onClick={() => handleDeleteImage(image.id)}
-                            className="bg-red-600 hover:bg-red-700"
-                          >
-                            Delete Image
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </div>
-                </div>
-              </div>
-            ))}
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Clear All Images?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This will permanently delete all your generated images. This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={handleClearAll}
+                        disabled={clearingAll}
+                        className="bg-red-500 hover:bg-red-600"
+                      >
+                        {clearingAll ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Clearing...
+                          </>
+                        ) : (
+                          'Clear All'
+                        )}
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
+            </div>
           </div>
-        )}
-      </CardContent>
-    </Card>
+        </CardHeader>
+        <CardContent>
+          {userImages.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              <ImageIcon className="w-12 h-12 mx-auto mb-3 opacity-50" />
+              <p className="font-medium">No images generated yet</p>
+              <p className="text-sm mt-1">Create your first AI masterpiece to start building your gallery</p>
+            </div>
+          ) : (
+            <ScrollArea className="h-[600px] pr-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {userImages.map((image) => (
+                  <Card key={image.id} className="border border-muted overflow-hidden">
+                    <div className="relative group">
+                      <img
+                        src={image.image_url}
+                        alt={image.prompt}
+                        className="w-full h-48 object-cover"
+                      />
+                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={() => handleToggleFavorite(image.id, image.is_favorite)}
+                        >
+                          <Heart 
+                            className={`w-4 h-4 ${image.is_favorite ? 'fill-red-500 text-red-500' : ''}`} 
+                          />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={() => handleDownloadImage(image.image_url, image.id)}
+                        >
+                          <Download className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={() => handleDeleteImage(image.id)}
+                          disabled={deletingImageId === image.id}
+                        >
+                          {deletingImageId === image.id ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <Trash2 className="w-4 h-4" />
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                    <CardContent className="p-3">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Badge variant="outline" className="text-xs">
+                          {image.job_type === 'text_to_image' ? 'Text-to-Image' : 'Image Edit'}
+                        </Badge>
+                        <Badge variant="secondary" className="text-xs">
+                          {image.size}
+                        </Badge>
+                        {image.is_favorite && (
+                          <Heart className="w-3 h-3 fill-red-500 text-red-500" />
+                        )}
+                      </div>
+                      <p className="text-sm font-medium text-foreground line-clamp-2 mb-2">
+                        {image.prompt}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {formatDistanceToNow(new Date(image.created_at), { addSuffix: true })}
+                      </p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </ScrollArea>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

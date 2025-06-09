@@ -1,187 +1,200 @@
 
-import { useState } from "react";
-import { Trash2, AlertTriangle } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { useJobTracking } from "@/hooks/useJobTracking";
+import { useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Trash2, RefreshCw, Clock, CheckCircle, XCircle, Loader2, History } from 'lucide-react';
+import { useJobTracking } from '@/hooks/useJobTracking';
+import { formatDistanceToNow } from 'date-fns';
 
 const JobManager = () => {
-  const { jobs, loading, deleteJob, clearAllJobs } = useJobTracking();
-  const [isDeleting, setIsDeleting] = useState<string | null>(null);
-  const [isClearing, setIsClearing] = useState(false);
+  const { jobs, loading, deleteJob, clearAllJobs, refetchJobs } = useJobTracking();
+  const [deletingJobId, setDeletingJobId] = useState<string | null>(null);
+  const [clearingAll, setClearingAll] = useState(false);
 
   const handleDeleteJob = async (jobId: string) => {
-    setIsDeleting(jobId);
-    try {
-      await deleteJob(jobId);
-    } finally {
-      setIsDeleting(null);
-    }
+    setDeletingJobId(jobId);
+    await deleteJob(jobId);
+    setDeletingJobId(null);
   };
 
   const handleClearAll = async () => {
-    setIsClearing(true);
-    try {
-      await clearAllJobs();
-    } finally {
-      setIsClearing(false);
+    setClearingAll(true);
+    await clearAllJobs();
+    setClearingAll(false);
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'pending':
+        return <Clock className="w-4 h-4 text-yellow-500" />;
+      case 'processing':
+        return <Loader2 className="w-4 h-4 text-blue-500 animate-spin" />;
+      case 'completed':
+        return <CheckCircle className="w-4 h-4 text-green-500" />;
+      case 'failed':
+        return <XCircle className="w-4 h-4 text-red-500" />;
+      default:
+        return <Clock className="w-4 h-4 text-gray-500" />;
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
       case 'processing':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
+        return 'bg-blue-100 text-blue-800 border-blue-200';
       case 'completed':
-        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+        return 'bg-green-100 text-green-800 border-green-200';
       case 'failed':
-        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+        return 'bg-red-100 text-red-800 border-red-200';
       default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <div className="animate-spin w-8 h-8 border-2 border-mim-teal border-t-transparent rounded-full" />
-      </div>
+      <Card className="cute-border cute-shadow">
+        <CardContent className="flex items-center justify-center py-8">
+          <div className="animate-spin w-8 h-8 border-2 border-mim-teal border-t-transparent rounded-full" />
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <Card className="cute-border cute-shadow">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-mim-teal">Job Management</CardTitle>
-          {jobs.length > 0 && (
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button 
-                  variant="destructive" 
-                  size="sm"
-                  disabled={isClearing}
-                >
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  {isClearing ? 'Clearing...' : 'Clear All'}
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle className="flex items-center gap-2">
-                    <AlertTriangle className="w-5 h-5 text-orange-500" />
-                    Clear All Jobs
-                  </AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This will permanently delete all your generation jobs. This action cannot be undone.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleClearAll}
-                    className="bg-red-600 hover:bg-red-700"
-                  >
-                    Clear All Jobs
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          )}
-        </div>
-      </CardHeader>
-      <CardContent>
-        {jobs.length === 0 ? (
-          <p className="text-muted-foreground text-center py-4">
-            No generation jobs yet. Start creating with JORBO AI!
-          </p>
-        ) : (
-          <div className="space-y-4">
-            {jobs.map((job) => (
-              <div key={job.id} className="border rounded-lg p-4 space-y-3">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium line-clamp-2 mb-1">
-                      {job.prompt}
-                    </p>
-                    <div className="flex flex-wrap gap-2 mb-2">
-                      <Badge variant="outline">{job.size}</Badge>
-                      <Badge variant="outline">{job.quality}</Badge>
-                      <Badge variant="secondary">
-                        {job.job_type.replace('_', '-to-')}
-                      </Badge>
-                      <Badge className={getStatusColor(job.status)}>
-                        {job.status}
-                      </Badge>
-                    </div>
-                  </div>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        disabled={isDeleting === job.id}
+    <div className="space-y-6">
+      <Card className="cute-border cute-shadow">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2 text-mim-teal">
+                <History className="w-5 h-5" />
+                JORBO AI Generation Jobs
+              </CardTitle>
+              <CardDescription>
+                Track your AI image generation jobs and their status
+              </CardDescription>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={refetchJobs}
+                className="border-mim-teal text-mim-teal hover:bg-mim-teal hover:text-white"
+              >
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Refresh
+              </Button>
+              {jobs.length > 0 && (
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Clear All
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Clear All Jobs?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This will permanently delete all your generation jobs. This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={handleClearAll}
+                        disabled={clearingAll}
+                        className="bg-red-500 hover:bg-red-600"
                       >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle className="flex items-center gap-2">
-                          <AlertTriangle className="w-5 h-5 text-orange-500" />
-                          Delete Job
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This will permanently delete this generation job and any associated images. This action cannot be undone.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={() => handleDeleteJob(job.id)}
-                          className="bg-red-600 hover:bg-red-700"
-                        >
-                          Delete Job
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </div>
-                
-                <div className="text-xs text-muted-foreground">
-                  Created: {new Date(job.created_at).toLocaleString()}
-                  {job.completed_at && (
-                    <span className="ml-4">
-                      Completed: {new Date(job.completed_at).toLocaleString()}
-                    </span>
-                  )}
-                </div>
-                
-                {job.error_message && (
-                  <div className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 p-2 rounded">
-                    Error: {job.error_message}
-                  </div>
-                )}
-              </div>
-            ))}
+                        {clearingAll ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Clearing...
+                          </>
+                        ) : (
+                          'Clear All'
+                        )}
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
+            </div>
           </div>
-        )}
-      </CardContent>
-    </Card>
+        </CardHeader>
+        <CardContent>
+          {jobs.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              <History className="w-12 h-12 mx-auto mb-3 opacity-50" />
+              <p className="font-medium">No generation jobs yet</p>
+              <p className="text-sm mt-1">Start generating images to see your job history here</p>
+            </div>
+          ) : (
+            <ScrollArea className="h-[400px] pr-4">
+              <div className="space-y-3">
+                {jobs.map((job) => (
+                  <Card key={job.id} className="border border-muted">
+                    <CardContent className="p-4">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-2">
+                            {getStatusIcon(job.status)}
+                            <Badge className={getStatusColor(job.status)}>
+                              {job.status.toUpperCase()}
+                            </Badge>
+                            <Badge variant="outline">
+                              {job.job_type === 'text_to_image' ? 'Text-to-Image' : 'Image Edit'}
+                            </Badge>
+                          </div>
+                          <p className="text-sm font-medium text-foreground truncate mb-1">
+                            {job.prompt}
+                          </p>
+                          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                            <span>{job.size}</span>
+                            <span>{job.quality} quality</span>
+                            <span>
+                              {formatDistanceToNow(new Date(job.created_at), { addSuffix: true })}
+                            </span>
+                          </div>
+                          {job.error_message && (
+                            <p className="text-xs text-red-600 mt-2 bg-red-50 p-2 rounded">
+                              {job.error_message}
+                            </p>
+                          )}
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteJob(job.id)}
+                          disabled={deletingJobId === job.id}
+                          className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                        >
+                          {deletingJobId === job.id ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <Trash2 className="w-4 h-4" />
+                          )}
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </ScrollArea>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

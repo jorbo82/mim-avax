@@ -16,6 +16,7 @@ import UserGallery from "@/components/UserGallery";
 import JobStatus from "@/components/JobStatus";
 import { MultiImageUpload } from "@/components/MultiImageUpload";
 import { GallerySelector } from "@/components/GallerySelector";
+import MagicalImageSkeleton from "@/components/MagicalImageSkeleton";
 
 const JorboAI = () => {
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ const JorboAI = () => {
   const [selectedQuality, setSelectedQuality] = useState("high");
   const [showGallerySelector, setShowGallerySelector] = useState(false);
   
-  const { isGenerating, generatedImageUrl, generateImage, resetGeneration } = useEnhancedImageGeneration();
+  const { isGenerating, generatedImageUrl, generationPhase, generateImage, resetGeneration } = useEnhancedImageGeneration();
 
   // Redirect to auth if not logged in
   useEffect(() => {
@@ -98,7 +99,7 @@ const JorboAI = () => {
                 <h1 className="text-4xl font-bold bg-gradient-to-r from-mim-teal to-mim-gold bg-clip-text text-transparent">
                   JORBO AI
                 </h1>
-                <p className="text-muted-foreground">AI Image Generator with GPT-Image-1</p>
+                <p className="text-muted-foreground">Advanced AI Image Generator</p>
                 <p className="text-sm text-muted-foreground">Welcome back, {user.email}</p>
               </div>
             </div>
@@ -224,7 +225,7 @@ const JorboAI = () => {
                   {isGenerating ? (
                     <>
                       <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full mr-3" />
-                      Generating with GPT-Image-1...
+                      JORBO AI is Creating...
                     </>
                   ) : (
                     <>
@@ -240,7 +241,7 @@ const JorboAI = () => {
                       🎨 Using {selectedImages.length} reference image{selectedImages.length !== 1 ? 's' : ''} for image-to-image editing
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      GPT-Image-1 will intelligently blend and edit your reference images
+                      JORBO AI will intelligently blend and edit your reference images
                     </p>
                   </div>
                 )}
@@ -256,7 +257,9 @@ const JorboAI = () => {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {generatedImageUrl ? (
+                    {isGenerating ? (
+                      <MagicalImageSkeleton phase={generationPhase} />
+                    ) : generatedImageUrl ? (
                       <div className="space-y-4">
                         <img
                           src={generatedImageUrl}
@@ -292,7 +295,7 @@ const JorboAI = () => {
                               : "✨ Text-to-image generation mode"}
                           </p>
                           <p className="text-xs mt-2 opacity-75">
-                            Powered by OpenAI's GPT-Image-1
+                            Powered by JORBO AI Engine
                           </p>
                         </div>
                       </div>
@@ -307,7 +310,7 @@ const JorboAI = () => {
                       <div className="grid grid-cols-2 gap-2 text-sm text-muted-foreground">
                         <div className="flex items-center gap-2">
                           <span>✨</span>
-                          <span>GPT-Image-1 Model</span>
+                          <span>Advanced AI Engine</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <span>🖼️</span>

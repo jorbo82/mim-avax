@@ -18,6 +18,7 @@ export const useEnhancedImageGeneration = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null);
   const [currentJobId, setCurrentJobId] = useState<string | null>(null);
+  const [generationPhase, setGenerationPhase] = useState<'connecting' | 'generating' | 'finalizing'>('connecting');
 
   const convertFileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -45,21 +46,29 @@ export const useEnhancedImageGeneration = () => {
     setIsGenerating(true);
     setGeneratedImageUrl(null);
     setCurrentJobId(null);
+    setGenerationPhase('connecting');
 
     try {
-      console.log('Starting image generation with params:', {
+      console.log('Starting JORBO AI image generation with params:', {
         ...params,
         inputImagesCount: params.inputImages?.length || 0,
         hasMask: !!params.maskImage
       });
 
+      // Phase 1: Connecting
+      setGenerationPhase('connecting');
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
       // Convert input images to base64 if provided
       let inputImagesBase64: string[] = [];
       if (params.inputImages?.length) {
+        setGenerationPhase('generating');
         inputImagesBase64 = await Promise.all(
           params.inputImages.map(file => convertFileToBase64(file))
         );
         console.log(`Converted ${inputImagesBase64.length} input images to base64`);
+      } else {
+        setGenerationPhase('generating');
       }
 
       // Convert mask to base64 if provided
@@ -68,6 +77,9 @@ export const useEnhancedImageGeneration = () => {
         maskBase64 = await convertFileToBase64(params.maskImage);
         console.log('Converted mask image to base64');
       }
+
+      // Phase 2: Generating
+      await new Promise(resolve => setTimeout(resolve, 500));
 
       // Call the edge function
       const { data, error } = await supabase.functions.invoke('openai-image-generator', {
@@ -82,29 +94,33 @@ export const useEnhancedImageGeneration = () => {
       });
 
       if (error) {
-        console.error('Edge function error:', error);
+        console.error('JORBO AI generation error:', error);
         throw new Error(error.message || 'Generation failed');
       }
+
+      // Phase 3: Finalizing
+      setGenerationPhase('finalizing');
+      await new Promise(resolve => setTimeout(resolve, 800));
 
       if (data?.success && data?.imageUrl) {
         setGeneratedImageUrl(data.imageUrl);
         setCurrentJobId(data.jobId);
         
         const jobTypeText = params.jobType === 'image_edit' ? 'image editing' : 'text-to-image';
-        toast.success(`Successfully generated image using ${jobTypeText} with GPT-Image-1!`);
+        toast.success(`🎨 JORBO AI successfully created your ${jobTypeText} masterpiece!`);
         
-        console.log('Generation successful:', {
+        console.log('JORBO AI generation successful:', {
           imageUrl: data.imageUrl,
           jobId: data.jobId,
-          modelUsed: data.modelUsed
+          engine: 'JORBO AI Engine'
         });
       } else {
-        throw new Error('No image returned from generation');
+        throw new Error('No image returned from JORBO AI');
       }
 
     } catch (error: any) {
-      console.error('Image generation error:', error);
-      toast.error(error.message || 'Failed to generate image');
+      console.error('JORBO AI image generation error:', error);
+      toast.error(error.message || 'Failed to generate image with JORBO AI');
     } finally {
       setIsGenerating(false);
     }
@@ -113,12 +129,14 @@ export const useEnhancedImageGeneration = () => {
   const resetGeneration = () => {
     setGeneratedImageUrl(null);
     setCurrentJobId(null);
+    setGenerationPhase('connecting');
   };
 
   return {
     isGenerating,
     generatedImageUrl,
     currentJobId,
+    generationPhase,
     generateImage,
     resetGeneration
   };
