@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -20,17 +21,21 @@ export const MimAssetSelector = ({
   onSelectAssets, 
   maxSelections = 10 
 }: MimAssetSelectorProps) => {
-  const { mimAssets, loading } = useMimAssetLibrary();
+  const { 
+    allAssets, 
+    filteredAssets, 
+    selectedCategory, 
+    setSelectedCategory, 
+    searchTerm, 
+    setSearchTerm,
+    categories 
+  } = useMimAssetLibrary();
+  
   const [selectedAssetIds, setSelectedAssetIds] = useState<string[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isConverting, setIsConverting] = useState(false);
 
-  const filteredAssets = mimAssets.filter(asset => {
-    const searchMatch = asset.prompt.toLowerCase().includes(searchTerm.toLowerCase());
-    const categoryMatch = selectedCategory ? asset.category === selectedCategory : true;
-    return searchMatch && categoryMatch;
-  });
+  // Use filteredAssets or allAssets based on search/category filtering
+  const assetsToShow = searchTerm || selectedCategory !== 'all' ? filteredAssets : allAssets;
 
   const toggleSelection = (assetId: string) => {
     setSelectedAssetIds(prev => {
@@ -69,10 +74,10 @@ export const MimAssetSelector = ({
       const assetFiles: File[] = [];
       
       for (const assetId of selectedAssetIds) {
-        const asset = mimAssets.find(asset => asset.id === assetId);
+        const asset = allAssets.find(asset => asset.id === assetId);
         if (asset) {
           const filename = `mim_asset_${asset.id}.png`;
-          const file = await convertUrlToFile(asset.image_url, filename);
+          const file = await convertUrlToFile(asset.url, filename);
           if (file) {
             assetFiles.push(file);
           }
@@ -92,11 +97,11 @@ export const MimAssetSelector = ({
   const resetAndClose = () => {
     setSelectedAssetIds([]);
     setSearchTerm('');
-    setSelectedCategory(null);
+    setSelectedCategory('all');
     onClose();
   };
 
-  const handleCategoryClick = (category: string | null) => {
+  const handleCategoryClick = (category: string) => {
     setSelectedCategory(category);
   };
 
@@ -119,7 +124,7 @@ export const MimAssetSelector = ({
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
-              placeholder="Search by prompt..."
+              placeholder="Search by name..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -127,36 +132,28 @@ export const MimAssetSelector = ({
           </div>
 
           <div className="flex items-center gap-2 overflow-x-auto pb-2">
-            <Button
-              variant={selectedCategory === null ? 'default' : 'outline'}
-              onClick={() => handleCategoryClick(null)}
-              className="whitespace-nowrap"
-            >
-              All
-            </Button>
-            {[...new Set(mimAssets.map(asset => asset.category))].map(category => (
+            {categories.map(category => (
               <Button
                 key={category}
                 variant={selectedCategory === category ? 'default' : 'outline'}
                 onClick={() => handleCategoryClick(category)}
                 className="whitespace-nowrap"
               >
-                {category}
+                {category === 'all' ? 'All' : 
+                 category === 'mim-character' ? 'Characters' : 
+                 category === 'background' ? 'Backgrounds' : 
+                 category}
               </Button>
             ))}
           </div>
 
-          {loading ? (
-            <div className="flex items-center justify-center py-8">
-              <div className="animate-spin w-8 h-8 border-2 border-mim-teal border-t-transparent rounded-full" />
-            </div>
-          ) : filteredAssets.length === 0 ? (
+          {assetsToShow.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               {searchTerm ? 'No assets match your search' : 'No assets in library yet'}
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {filteredAssets.map((asset) => (
+              {assetsToShow.map((asset) => (
                 <Card
                   key={asset.id}
                   className={`cursor-pointer transition-all ${
@@ -169,7 +166,7 @@ export const MimAssetSelector = ({
                   <CardContent className="p-0">
                     <div className="aspect-square relative">
                       <img
-                        src={asset.image_url}
+                        src={asset.url}
                         alt="MIM Asset"
                         className="w-full h-full object-cover rounded-t-lg"
                       />
@@ -181,11 +178,13 @@ export const MimAssetSelector = ({
                     </div>
                     <div className="p-3">
                       <p className="text-xs text-muted-foreground line-clamp-2">
-                        {asset.prompt}
+                        {asset.name}
                       </p>
-                      <Badge variant="outline" className="text-xs mt-2">
-                        {asset.category}
-                      </Badge>
+                      {asset.category && (
+                        <Badge variant="outline" className="text-xs mt-2">
+                          {asset.category}
+                        </Badge>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
