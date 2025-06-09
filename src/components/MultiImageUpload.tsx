@@ -1,13 +1,17 @@
 
 import { useRef } from 'react';
-import { Upload, X, Image as ImageIcon } from 'lucide-react';
+import { Upload, X, Image as ImageIcon, Palette, Gallery } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
+interface ImageWithSource extends File {
+  source?: 'upload' | 'gallery' | 'mim-asset';
+}
+
 interface MultiImageUploadProps {
-  images: File[];
-  onImagesChange: (images: File[]) => void;
+  images: ImageWithSource[];
+  onImagesChange: (images: ImageWithSource[]) => void;
   maxImages?: number;
   disabled?: boolean;
 }
@@ -24,12 +28,14 @@ export const MultiImageUpload = ({
     const files = event.target.files;
     if (!files) return;
 
-    const validFiles: File[] = [];
+    const validFiles: ImageWithSource[] = [];
     
     Array.from(files).forEach(file => {
       if (file.type.startsWith('image/')) {
         if (file.size <= 10 * 1024 * 1024) { // 10MB limit
-          validFiles.push(file);
+          const fileWithSource = file as ImageWithSource;
+          fileWithSource.source = 'upload';
+          validFiles.push(fileWithSource);
         } else {
           console.warn(`File ${file.name} is too large (max 10MB)`);
         }
@@ -52,6 +58,22 @@ export const MultiImageUpload = ({
     onImagesChange(newImages);
   };
 
+  const getSourceIcon = (source?: string) => {
+    switch (source) {
+      case 'gallery': return <Gallery className="w-3 h-3" />;
+      case 'mim-asset': return <Palette className="w-3 h-3" />;
+      default: return <Upload className="w-3 h-3" />;
+    }
+  };
+
+  const getSourceLabel = (source?: string) => {
+    switch (source) {
+      case 'gallery': return 'Gallery';
+      case 'mim-asset': return 'MIM-ME';
+      default: return 'Upload';
+    }
+  };
+
   const canAddMore = images.length < maxImages && !disabled;
 
   return (
@@ -72,7 +94,7 @@ export const MultiImageUpload = ({
             className="flex items-center gap-2"
           >
             <Upload className="w-4 h-4" />
-            Add Images
+            Upload
           </Button>
         )}
       </div>
@@ -106,6 +128,12 @@ export const MultiImageUpload = ({
                     >
                       <X className="w-4 h-4" />
                     </Button>
+                  </div>
+                  <div className="absolute top-2 left-2">
+                    <Badge variant="secondary" className="text-xs flex items-center gap-1">
+                      {getSourceIcon(image.source)}
+                      {getSourceLabel(image.source)}
+                    </Badge>
                   </div>
                 </div>
                 <div className="p-2">

@@ -1,7 +1,6 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Sparkles, Image, Wand2, Download, LogOut, History, ImageIcon, Palette } from "lucide-react";
+import { ArrowLeft, Sparkles, Image, Wand2, Download, LogOut, History, ImageIcon, Palette, Brush } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,16 +15,22 @@ import UserGallery from "@/components/UserGallery";
 import JobStatus from "@/components/JobStatus";
 import { MultiImageUpload } from "@/components/MultiImageUpload";
 import { GallerySelector } from "@/components/GallerySelector";
+import { MimAssetSelector } from "@/components/MimAssetSelector";
 import MagicalImageSkeleton from "@/components/MagicalImageSkeleton";
+
+interface ImageWithSource extends File {
+  source?: 'upload' | 'gallery' | 'mim-asset';
+}
 
 const JorboAI = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading, signOut } = useAuth();
   const [prompt, setPrompt] = useState("");
-  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [selectedImages, setSelectedImages] = useState<ImageWithSource[]>([]);
   const [selectedSize, setSelectedSize] = useState("1024x1024");
   const [selectedQuality, setSelectedQuality] = useState("high");
   const [showGallerySelector, setShowGallerySelector] = useState(false);
+  const [showMimAssetSelector, setShowMimAssetSelector] = useState(false);
   
   const { isGenerating, generatedImageUrl, generationPhase, generateImage, resetGeneration } = useEnhancedImageGeneration();
 
@@ -60,8 +65,23 @@ const JorboAI = () => {
   };
 
   const handleGalleryImagesSelected = (imageFiles: File[]) => {
-    setSelectedImages(prev => [...prev, ...imageFiles].slice(0, 10));
+    const filesWithSource: ImageWithSource[] = imageFiles.map(file => {
+      const fileWithSource = file as ImageWithSource;
+      fileWithSource.source = 'gallery';
+      return fileWithSource;
+    });
+    setSelectedImages(prev => [...prev, ...filesWithSource].slice(0, 10));
     toast.success(`Added ${imageFiles.length} image${imageFiles.length !== 1 ? 's' : ''} from gallery`);
+  };
+
+  const handleMimAssetsSelected = (assetFiles: File[]) => {
+    const filesWithSource: ImageWithSource[] = assetFiles.map(file => {
+      const fileWithSource = file as ImageWithSource;
+      fileWithSource.source = 'mim-asset';
+      return fileWithSource;
+    });
+    setSelectedImages(prev => [...prev, ...filesWithSource].slice(0, 10));
+    toast.success(`Added ${assetFiles.length} MIM-ME asset${assetFiles.length !== 1 ? 's' : ''}`);
   };
 
   if (authLoading) {
@@ -159,7 +179,7 @@ const JorboAI = () => {
                       Reference Images
                       <Badge variant="secondary">{selectedImages.length}/10</Badge>
                     </CardTitle>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 flex-wrap">
                       <Button
                         variant="outline"
                         size="sm"
@@ -168,6 +188,15 @@ const JorboAI = () => {
                       >
                         <Palette className="w-4 h-4" />
                         From Gallery
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowMimAssetSelector(true)}
+                        className="flex items-center gap-2"
+                      >
+                        <Brush className="w-4 h-4" />
+                        From MIM-ME
                       </Button>
                     </div>
                   </CardHeader>
@@ -346,6 +375,13 @@ const JorboAI = () => {
         isOpen={showGallerySelector}
         onClose={() => setShowGallerySelector(false)}
         onSelectImages={handleGalleryImagesSelected}
+        maxSelections={5}
+      />
+
+      <MimAssetSelector
+        isOpen={showMimAssetSelector}
+        onClose={() => setShowMimAssetSelector(false)}
+        onSelectAssets={handleMimAssetsSelected}
         maxSelections={5}
       />
     </div>
