@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -128,11 +129,8 @@ const MemeEditor = ({ onClose, initialBackgroundImage }: MemeEditorProps) => {
                   onBackgroundSelect={handleBackgroundSelect}
                 />
 
-                {/* Asset Library */}
-                <AssetLibrary 
-                  assets={canvasRef.current?.assets || []}
-                  onAssetSelect={handleAssetSelect}
-                />
+                {/* Asset Library - now uses the unified system */}
+                <AssetLibrary onAssetSelect={handleAssetSelect} />
 
                 <TextControls 
                   topText={topText}

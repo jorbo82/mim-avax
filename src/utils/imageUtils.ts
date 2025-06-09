@@ -59,13 +59,28 @@ export const resizeImage = (file: File, maxWidth: number, maxHeight: number): Pr
   });
 };
 
-export const downloadImage = (imageUrl: string, filename: string = 'jorbo-ai-generated.png') => {
+export const downloadImage = (imageUrl: string, filename?: string, format: 'png' | 'jpeg' | 'webp' = 'png') => {
+  // Generate filename if not provided
+  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const defaultFilename = `jorbo-ai-${timestamp}.${format}`;
+  const finalFilename = filename || defaultFilename;
+
+  // Create download link
   const link = document.createElement('a');
   link.href = imageUrl;
-  link.download = filename;
+  link.download = finalFilename;
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer';
+  
+  // Append to body, click, and remove
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+  
+  // Clean up object URL if it was created locally
+  if (imageUrl.startsWith('blob:')) {
+    setTimeout(() => URL.revokeObjectURL(imageUrl), 100);
+  }
 };
 
 export const formatFileSize = (bytes: number): string => {
