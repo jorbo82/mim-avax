@@ -62,25 +62,51 @@ export const resizeImage = (file: File, maxWidth: number, maxHeight: number): Pr
 export const downloadImage = (imageUrl: string, filename?: string, format: 'png' | 'jpeg' | 'webp' = 'png') => {
   // Generate filename if not provided
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const defaultFilename = `jorbo-ai-${timestamp}.${format}`;
+  const defaultFilename = `mim-me-${timestamp}.${format}`;
   const finalFilename = filename || defaultFilename;
 
-  // Create download link
-  const link = document.createElement('a');
-  link.href = imageUrl;
-  link.download = finalFilename;
-  link.target = '_blank';
-  link.rel = 'noopener noreferrer';
-  
-  // Append to body, click, and remove
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  
-  // Clean up object URL if it was created locally
-  if (imageUrl.startsWith('blob:')) {
-    setTimeout(() => URL.revokeObjectURL(imageUrl), 100);
+  // For data URLs, we can download directly
+  if (imageUrl.startsWith('data:')) {
+    const link = document.createElement('a');
+    link.href = imageUrl;
+    link.download = finalFilename;
+    link.style.display = 'none';
+    
+    // Append to body, click, and remove
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    return;
   }
+
+  // For other URLs, we need to fetch and convert to blob
+  fetch(imageUrl)
+    .then(response => response.blob())
+    .then(blob => {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = finalFilename;
+      link.style.display = 'none';
+      
+      // Append to body, click, and remove
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Clean up object URL
+      setTimeout(() => URL.revokeObjectURL(url), 100);
+    })
+    .catch(error => {
+      console.error('Download failed:', error);
+      // Fallback: try opening in new tab with download attribute
+      const link = document.createElement('a');
+      link.href = imageUrl;
+      link.download = finalFilename;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.click();
+    });
 };
 
 export const formatFileSize = (bytes: number): string => {
