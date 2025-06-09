@@ -15,9 +15,13 @@ const DownloadButton = ({ onDownload }: DownloadButtonProps) => {
     onDownload(selectedFormat);
   };
 
+  const handleFormatChange = (value: string) => {
+    setSelectedFormat(value as 'png' | 'jpeg' | 'webp');
+  };
+
   return (
     <div className="space-y-2">
-      <Select value={selectedFormat} onValueChange={setSelectedFormat}>
+      <Select value={selectedFormat} onValueChange={handleFormatChange}>
         <SelectTrigger className="border-mim-gold/30 focus:border-mim-gold text-sm">
           <SelectValue />
         </SelectTrigger>

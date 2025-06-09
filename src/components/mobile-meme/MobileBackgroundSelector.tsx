@@ -33,6 +33,10 @@ const MobileBackgroundSelector = ({ onBackgroundSelect }: MobileBackgroundSelect
     return type === 'user-generated' ? '🎨' : '🖼️';
   };
 
+  const handleBackgroundTypeChange = (value: string) => {
+    setBackgroundType(value as 'all' | 'background' | 'user-generated');
+  };
+
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <CollapsibleTrigger asChild>
@@ -61,7 +65,7 @@ const MobileBackgroundSelector = ({ onBackgroundSelect }: MobileBackgroundSelect
             />
           </div>
           
-          <Select value={backgroundType} onValueChange={setBackgroundType}>
+          <Select value={backgroundType} onValueChange={handleBackgroundTypeChange}>
             <SelectTrigger className="bg-blue-800/20 border-blue-500/30 text-blue-100 text-sm h-10">
               <SelectValue />
             </SelectTrigger>

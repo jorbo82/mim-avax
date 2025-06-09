@@ -33,6 +33,10 @@ const MobileAssetLibrary = ({ onAssetSelect }: MobileAssetLibraryProps) => {
     return type === 'user-generated' ? '🎨' : '🧙';
   };
 
+  const handleAssetTypeChange = (value: string) => {
+    setAssetType(value as 'all' | 'mim-character' | 'user-generated');
+  };
+
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <CollapsibleTrigger asChild>
@@ -61,7 +65,7 @@ const MobileAssetLibrary = ({ onAssetSelect }: MobileAssetLibraryProps) => {
             />
           </div>
           
-          <Select value={assetType} onValueChange={setAssetType}>
+          <Select value={assetType} onValueChange={handleAssetTypeChange}>
             <SelectTrigger className="border-mim-teal/30 text-sm h-10">
               <SelectValue />
             </SelectTrigger>

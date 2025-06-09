@@ -20,7 +20,6 @@ interface MobileEditorTabsProps {
   onBottomTextChange: (value: string) => void;
   
   // Assets props
-  assets: Array<{ id: string; name: string; url: string; }>;
   onAssetSelect: (assetUrl: string) => void;
   
   // Tools props
@@ -44,7 +43,6 @@ const MobileEditorTabs = ({
   bottomText,
   onTopTextChange,
   onBottomTextChange,
-  assets,
   onAssetSelect,
   onRotate,
   onFlipHorizontal,
@@ -111,7 +109,6 @@ const MobileEditorTabs = ({
           
           <TabsContent value="assets" className="m-0 p-4">
             <MobileAssetLibrary 
-              assets={assets}
               onAssetSelect={onAssetSelect}
             />
           </TabsContent>

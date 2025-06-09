@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import MobileEditorHeader from "./mobile-meme/MobileEditorHeader";
@@ -250,7 +249,6 @@ const MobileOptimizedMemeEditor = ({ onClose, initialBackgroundImage }: MobileOp
           bottomText={bottomText}
           onTopTextChange={setTopText}
           onBottomTextChange={setBottomText}
-          assets={ASSET_LIBRARY}
           onAssetSelect={handleAssetSelect}
           onRotate={handleRotate}
           onFlipHorizontal={handleFlipHorizontal}
