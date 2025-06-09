@@ -94,7 +94,6 @@ export const MimAssetSelector = ({
     switch (category) {
       case 'mim-character': return 'MIM Characters';
       case 'background': return 'Backgrounds';
-      case 'user-generated': return 'Gallery';
       default: return 'All Assets';
     }
   };
@@ -112,7 +111,7 @@ export const MimAssetSelector = ({
         </DialogHeader>
 
         <div className="space-y-4">
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
@@ -123,7 +122,7 @@ export const MimAssetSelector = ({
               />
             </div>
             <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger className="w-48">
+              <SelectTrigger className="w-full sm:w-48">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -166,12 +165,12 @@ export const MimAssetSelector = ({
                       )}
                     </div>
                     <div className="p-3">
-                      <p className="text-sm font-medium line-clamp-1">
+                      <p className="text-sm font-medium line-clamp-1 mb-2">
                         {asset.name}
                       </p>
-                      <div className="flex items-center gap-2 mt-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <Badge variant="outline" className="text-xs">
-                          {asset.type}
+                          {asset.type === 'mim-character' ? 'Character' : 'Background'}
                         </Badge>
                         {asset.category && (
                           <Badge variant="secondary" className="text-xs">
@@ -187,14 +186,14 @@ export const MimAssetSelector = ({
           )}
         </div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={resetAndClose}>
+        <DialogFooter className="flex-col sm:flex-row gap-2">
+          <Button variant="outline" onClick={resetAndClose} className="w-full sm:w-auto">
             Cancel
           </Button>
           <Button
             onClick={handleSelectAssets}
             disabled={selectedAssetIds.length === 0 || isConverting}
-            className="bg-mim-teal hover:bg-mim-teal-dark"
+            className="bg-mim-teal hover:bg-mim-teal-dark w-full sm:w-auto"
           >
             {isConverting ? (
               <>

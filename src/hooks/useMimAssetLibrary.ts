@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useJobTracking } from './useJobTracking';
 
@@ -81,6 +80,70 @@ const MIM_CHARACTER_ASSETS: MimAsset[] = [
     url: '/lovable-uploads/4180231f-60f8-4690-995f-92ddfd1fcc8d.png',
     type: 'mim-character',
     category: 'characters'
+  },
+  // New uploaded MIM assets
+  {
+    id: 'mim-wizard-staff',
+    name: 'MIM Wizard with Staff',
+    url: '/lovable-uploads/1f57fa3a-dd7e-431f-ad9f-72b6ce19f17f.png',
+    type: 'mim-character',
+    category: 'characters'
+  },
+  {
+    id: 'mim-magical-creature',
+    name: 'Magical Creature',
+    url: '/lovable-uploads/9a47cbe4-dff4-4adf-9c3e-cadc9e5d16a4.png',
+    type: 'mim-character',
+    category: 'characters'
+  },
+  {
+    id: 'mim-green-coffee',
+    name: 'Green MIM with Coffee',
+    url: '/lovable-uploads/cbe3577c-34e8-4aff-8b58-8b1e68af7370.png',
+    type: 'mim-character',
+    category: 'characters'
+  },
+  {
+    id: 'mim-wise-owl',
+    name: 'Wise Owl',
+    url: '/lovable-uploads/c42985cf-358a-42a7-99bb-d6129ac0f560.png',
+    type: 'mim-character',
+    category: 'characters'
+  },
+  {
+    id: 'mim-bartender-fish',
+    name: 'Bartender Fish',
+    url: '/lovable-uploads/02fa9994-9e9a-432f-9b0f-c7ce5e64cd11.png',
+    type: 'mim-character',
+    category: 'characters'
+  },
+  {
+    id: 'mim-city-cat',
+    name: 'City Cat',
+    url: '/lovable-uploads/d0d82955-fe79-47bb-889b-f7f0eb04c75f.png',
+    type: 'mim-character',
+    category: 'characters'
+  },
+  {
+    id: 'mim-money-octopus',
+    name: 'Money Octopus',
+    url: '/lovable-uploads/34bf31a1-dfa5-4910-9fd6-9e4340819ccd.png',
+    type: 'mim-character',
+    category: 'characters'
+  },
+  {
+    id: 'mim-king-chicken',
+    name: 'King Chicken',
+    url: '/lovable-uploads/966cf004-a4aa-4ae2-8b7a-5acc39cb90df.png',
+    type: 'mim-character',
+    category: 'characters'
+  },
+  {
+    id: 'mim-defi-pepe',
+    name: 'DeFi Pepe',
+    url: '/lovable-uploads/72a1654f-9437-4826-9ee1-5ad8340dedf5.png',
+    type: 'mim-character',
+    category: 'characters'
   }
 ];
 
@@ -152,23 +215,14 @@ export const useMimAssetLibrary = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    // Combine MIM assets, backgrounds, and user gallery images
-    const userGeneratedAssets: MimAsset[] = userImages.map(img => ({
-      id: `user-${img.id}`,
-      name: img.prompt.slice(0, 30) + (img.prompt.length > 30 ? '...' : ''),
-      url: img.image_url,
-      type: 'user-generated' as const,
-      category: 'gallery'
-    }));
-
+    // Only include MIM assets and backgrounds, NOT user gallery images
     const combined = [
       ...MIM_CHARACTER_ASSETS,
-      ...BACKGROUND_ASSETS,
-      ...userGeneratedAssets
+      ...BACKGROUND_ASSETS
     ];
 
     setAllAssets(combined);
-  }, [userImages]);
+  }, []); // Remove userImages dependency to keep gallery separate
 
   useEffect(() => {
     let filtered = allAssets;
@@ -194,7 +248,8 @@ export const useMimAssetLibrary = () => {
     return allAssets.filter(asset => asset.type === type);
   };
 
-  const categories = ['all', 'mim-character', 'background', 'user-generated'];
+  // Remove 'user-generated' from categories since we're keeping gallery separate
+  const categories = ['all', 'mim-character', 'background'];
 
   return {
     allAssets,
@@ -207,6 +262,6 @@ export const useMimAssetLibrary = () => {
     categories,
     mimCharacters: getAssetsByType('mim-character'),
     backgrounds: getAssetsByType('background'),
-    userGenerated: getAssetsByType('user-generated')
+    userGenerated: [] // Empty since we're keeping gallery separate
   };
 };
