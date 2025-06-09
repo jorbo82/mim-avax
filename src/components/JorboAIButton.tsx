@@ -30,7 +30,6 @@ const JorboAIButton = () => {
         </div>
         <div className="text-left">
           <div className="font-bold text-lg">AI MAGIC</div>
-          <div className="text-sm opacity-90">Image Generator</div>
         </div>
       </div>
       

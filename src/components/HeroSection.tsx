@@ -6,15 +6,6 @@ import JorboAIButton from "./JorboAIButton";
 const HeroSection = () => {
   return (
     <section className="relative py-24 md:py-32 bg-mim-cream/30 dark:bg-gray-900/30 overflow-hidden">
-      <div className="absolute inset-0 opacity-50 dark:opacity-70">
-        <img
-          src="/images/mim-stars-bg.webp"
-          alt="Background Stars"
-          className="w-full h-full object-cover animate-fade-in"
-          style={{ animationDuration: '2s' }}
-        />
-      </div>
-
       <div className="container mx-auto px-4">
         <div className="text-center space-y-8 relative z-10">
           <div className="space-y-4">
