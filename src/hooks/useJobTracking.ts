@@ -65,8 +65,15 @@ export const useJobTracking = () => {
 
       if (error) throw error;
       
-      setJobs(prev => [data, ...prev]);
-      return data;
+      // Type assertion to ensure the data matches our interface
+      const typedJob: ImageGenerationJob = {
+        ...data,
+        job_type: data.job_type as 'text_to_image' | 'image_edit',
+        status: data.status as 'pending' | 'processing' | 'completed' | 'failed'
+      };
+      
+      setJobs(prev => [typedJob, ...prev]);
+      return typedJob;
     } catch (error: any) {
       console.error('Error creating job:', error);
       toast.error('Failed to create generation job');
@@ -92,7 +99,11 @@ export const useJobTracking = () => {
 
       setJobs(prev => prev.map(job => 
         job.id === jobId 
-          ? { ...job, ...updateData }
+          ? { 
+              ...job, 
+              ...updateData,
+              status: status as 'pending' | 'processing' | 'completed' | 'failed'
+            }
           : job
       ));
     } catch (error: any) {
@@ -169,7 +180,15 @@ export const useJobTracking = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setJobs(data || []);
+      
+      // Type the data properly
+      const typedJobs: ImageGenerationJob[] = (data || []).map(job => ({
+        ...job,
+        job_type: job.job_type as 'text_to_image' | 'image_edit',
+        status: job.status as 'pending' | 'processing' | 'completed' | 'failed'
+      }));
+      
+      setJobs(typedJobs);
     } catch (error: any) {
       console.error('Error fetching jobs:', error);
     } finally {

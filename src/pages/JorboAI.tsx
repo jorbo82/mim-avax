@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Sparkles, Upload, Image, Wand2, Download, Save, User, LogOut, History, Gallery } from "lucide-react";
+import { ArrowLeft, Sparkles, Upload, Image, Wand2, Download, Save, User, LogOut, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -137,7 +137,7 @@ const JorboAI = () => {
               Generate
             </TabsTrigger>
             <TabsTrigger value="gallery" className="flex items-center gap-2">
-              <Gallery className="w-4 h-4" />
+              <Image className="w-4 h-4" />
               My Gallery
             </TabsTrigger>
             <TabsTrigger value="jobs" className="flex items-center gap-2">
