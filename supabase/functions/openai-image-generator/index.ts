@@ -16,6 +16,41 @@ interface GenerationRequest {
   mask?: string;
 }
 
+const checkGenerationLimit = async (supabase: any, userId: string) => {
+  const today = new Date().toISOString().split('T')[0];
+  const DAILY_LIMIT = 5;
+
+  // Get today's usage
+  const { data: limitData, error: limitError } = await supabase
+    .from('user_generation_limits')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('date', today)
+    .maybeSingle();
+
+  if (limitError) {
+    console.error('Error checking generation limits:', limitError);
+    throw new Error('Failed to check generation limits');
+  }
+
+  // If no record exists, user can generate (first generation of the day)
+  if (!limitData) {
+    return { canGenerate: true, isOverrideUsed: false };
+  }
+
+  // If override is used, allow unlimited generations
+  if (limitData.override_used) {
+    return { canGenerate: true, isOverrideUsed: true };
+  }
+
+  // Check if user has exceeded daily limit
+  if (limitData.generation_count >= DAILY_LIMIT) {
+    return { canGenerate: false, isOverrideUsed: false };
+  }
+
+  return { canGenerate: true, isOverrideUsed: false };
+};
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
@@ -43,6 +78,25 @@ serve(async (req) => {
     const { prompt, size, quality, jobType, inputImages, mask }: GenerationRequest = await req.json()
 
     console.log('Received request:', { prompt, size, quality, jobType, hasInputImages: !!inputImages?.length, inputImagesCount: inputImages?.length })
+
+    // Check generation limits before proceeding
+    const { canGenerate, isOverrideUsed } = await checkGenerationLimit(supabase, user.id);
+    
+    if (!canGenerate) {
+      return new Response(
+        JSON.stringify({
+          error: 'Daily generation limit exceeded',
+          code: 'LIMIT_EXCEEDED',
+          message: 'You have reached your daily limit of 5 generations. Please try again tomorrow or use an override code.'
+        }),
+        {
+          status: 429,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      )
+    }
+
+    console.log('Generation limit check passed:', { canGenerate, isOverrideUsed });
 
     // Create job record
     const { data: job, error: jobError } = await supabase
@@ -73,22 +127,18 @@ serve(async (req) => {
         // Image editing with GPT-Image-1
         const formData = new FormData()
         
-        // Add multiple input images using image[] parameter for GPT-Image-1
         inputImages.forEach((imageBase64, index) => {
           const imageByteArray = Uint8Array.from(atob(imageBase64), c => c.charCodeAt(0))
           const imageBlob = new Blob([imageByteArray], { type: 'image/png' })
-          // Use image[] for multiple images
           formData.append('image[]', imageBlob, `input_${index}.png`)
         })
 
-        // Add mask if provided
         if (mask) {
           const maskBytes = Uint8Array.from(atob(mask), c => c.charCodeAt(0))
           const maskBlob = new Blob([maskBytes], { type: 'image/png' })
           formData.append('mask', maskBlob, 'mask.png')
         }
 
-        // Add parameters - GPT-Image-1 specific
         formData.append('model', 'gpt-image-1')
         formData.append('prompt', prompt)
         formData.append('n', '1')
@@ -122,7 +172,6 @@ serve(async (req) => {
           n: 1,
           size: size,
           quality: quality
-          // Note: response_format is NOT supported by gpt-image-1
         }
 
         console.log('Making OpenAI generation request:', { ...requestBody, prompt: prompt.substring(0, 50) + '...' })
@@ -154,13 +203,10 @@ serve(async (req) => {
 
       const imageData = openaiResponse.data[0]
       
-      // Handle both base64 and URL responses
       if (imageData.b64_json) {
-        // Base64 response
         console.log('Processing base64 response')
         imageBytes = Uint8Array.from(atob(imageData.b64_json), c => c.charCodeAt(0))
       } else if (imageData.url) {
-        // URL response - download the image
         console.log('Processing URL response, downloading image')
         const imageResponse = await fetch(imageData.url)
         if (!imageResponse.ok) {
@@ -190,7 +236,6 @@ serve(async (req) => {
 
       console.log('Upload successful:', uploadData.path)
 
-      // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('generated-images')
         .getPublicUrl(uploadData.path)

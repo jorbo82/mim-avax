@@ -105,6 +105,39 @@ export type Database = {
         }
         Relationships: []
       }
+      user_generation_limits: {
+        Row: {
+          created_at: string
+          date: string
+          generation_count: number
+          id: string
+          override_timestamp: string | null
+          override_used: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date?: string
+          generation_count?: number
+          id?: string
+          override_timestamp?: string | null
+          override_used?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          generation_count?: number
+          id?: string
+          override_timestamp?: string | null
+          override_used?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_images: {
         Row: {
           created_at: string

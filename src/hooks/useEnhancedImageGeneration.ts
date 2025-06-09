@@ -19,6 +19,7 @@ export const useEnhancedImageGeneration = () => {
   const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null);
   const [currentJobId, setCurrentJobId] = useState<string | null>(null);
   const [generationPhase, setGenerationPhase] = useState<'connecting' | 'generating' | 'finalizing'>('connecting');
+  const [limitExceeded, setLimitExceeded] = useState(false);
 
   const convertFileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -46,6 +47,7 @@ export const useEnhancedImageGeneration = () => {
     setIsGenerating(true);
     setGeneratedImageUrl(null);
     setCurrentJobId(null);
+    setLimitExceeded(false);
     setGenerationPhase('connecting');
 
     try {
@@ -95,6 +97,14 @@ export const useEnhancedImageGeneration = () => {
 
       if (error) {
         console.error('JORBO AI generation error:', error);
+        
+        // Check if it's a limit exceeded error
+        if (error.message?.includes('Daily generation limit exceeded') || 
+            error.context?.res?.status === 429) {
+          setLimitExceeded(true);
+          return;
+        }
+        
         throw new Error(error.message || 'Generation failed');
       }
 
@@ -130,6 +140,7 @@ export const useEnhancedImageGeneration = () => {
     setGeneratedImageUrl(null);
     setCurrentJobId(null);
     setGenerationPhase('connecting');
+    setLimitExceeded(false);
   };
 
   return {
@@ -137,6 +148,7 @@ export const useEnhancedImageGeneration = () => {
     generatedImageUrl,
     currentJobId,
     generationPhase,
+    limitExceeded,
     generateImage,
     resetGeneration
   };

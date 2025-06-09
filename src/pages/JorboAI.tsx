@@ -10,12 +10,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEnhancedImageGeneration } from "@/hooks/useEnhancedImageGeneration";
+import { useGenerationLimits } from "@/hooks/useGenerationLimits";
 import { downloadImage } from "@/utils/imageUtils";
 import UserGallery from "@/components/UserGallery";
 import JobStatus from "@/components/JobStatus";
 import { MultiImageUpload } from "@/components/MultiImageUpload";
 import { GallerySelector } from "@/components/GallerySelector";
 import { MimAssetSelector } from "@/components/MimAssetSelector";
+import { GenerationLimitModal } from "@/components/GenerationLimitModal";
+import { GenerationStatus } from "@/components/GenerationStatus";
 import MagicalImageSkeleton from "@/components/MagicalImageSkeleton";
 import DarkModeToggle from "@/components/DarkModeToggle";
 
@@ -32,8 +35,19 @@ const JorboAI = () => {
   const [selectedQuality, setSelectedQuality] = useState("high");
   const [showGallerySelector, setShowGallerySelector] = useState(false);
   const [showMimAssetSelector, setShowMimAssetSelector] = useState(false);
+  const [showLimitModal, setShowLimitModal] = useState(false);
   
-  const { isGenerating, generatedImageUrl, generationPhase, generateImage, resetGeneration } = useEnhancedImageGeneration();
+  const { isGenerating, generatedImageUrl, generationPhase, limitExceeded, generateImage, resetGeneration } = useEnhancedImageGeneration();
+  const { 
+    remainingGenerations, 
+    canGenerate, 
+    isOverrideUsed, 
+    incrementGenerationCount, 
+    useOverride, 
+    refetch: refetchLimits,
+    loading: limitsLoading,
+    DAILY_LIMIT 
+  } = useGenerationLimits();
 
   // Redirect to auth if not logged in
   useEffect(() => {
@@ -42,8 +56,30 @@ const JorboAI = () => {
     }
   }, [user, authLoading, navigate]);
 
+  // Show limit modal when limit is exceeded
+  useEffect(() => {
+    if (limitExceeded) {
+      setShowLimitModal(true);
+    }
+  }, [limitExceeded]);
+
   const handleGeneration = async () => {
+    // Check limits before generating
+    if (!canGenerate()) {
+      setShowLimitModal(true);
+      return;
+    }
+
     const jobType = selectedImages.length > 0 ? 'image_edit' : 'text_to_image';
+    
+    // Increment count if not using override (the edge function will also check)
+    if (!isOverrideUsed()) {
+      const success = await incrementGenerationCount();
+      if (!success) {
+        toast.error('Failed to update generation count');
+        return;
+      }
+    }
     
     await generateImage({
       prompt,
@@ -52,6 +88,17 @@ const JorboAI = () => {
       jobType,
       inputImages: selectedImages,
     });
+
+    // Refetch limits after successful generation
+    refetchLimits();
+  };
+
+  const handleOverride = async (password: string) => {
+    const success = await useOverride(password);
+    if (success) {
+      refetchLimits();
+    }
+    return success;
   };
 
   const handleDownload = () => {
@@ -159,6 +206,14 @@ const JorboAI = () => {
             <div className="grid lg:grid-cols-2 gap-8">
               {/* Controls Panel */}
               <div className="space-y-6">
+                {/* Generation Status */}
+                <GenerationStatus
+                  remainingGenerations={remainingGenerations}
+                  dailyLimit={DAILY_LIMIT}
+                  isOverrideUsed={isOverrideUsed()}
+                  loading={limitsLoading}
+                />
+
                 <Card className="cute-border cute-shadow">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-mim-teal">
@@ -252,13 +307,18 @@ const JorboAI = () => {
 
                 <Button
                   onClick={handleGeneration}
-                  disabled={isGenerating || !prompt.trim()}
+                  disabled={isGenerating || !prompt.trim() || (!canGenerate() && !isOverrideUsed())}
                   className="w-full bg-gradient-to-r from-mim-teal to-mim-gold hover:from-mim-teal-dark hover:to-mim-orange text-white font-semibold py-6 text-lg"
                 >
                   {isGenerating ? (
                     <>
                       <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full mr-3" />
                       JORBO AI is Creating...
+                    </>
+                  ) : !canGenerate() && !isOverrideUsed() ? (
+                    <>
+                      <Sparkles className="w-5 h-5 mr-2" />
+                      Daily Limit Reached
                     </>
                   ) : (
                     <>
@@ -387,6 +447,14 @@ const JorboAI = () => {
         onClose={() => setShowMimAssetSelector(false)}
         onSelectAssets={handleMimAssetsSelected}
         maxSelections={5}
+      />
+
+      <GenerationLimitModal
+        isOpen={showLimitModal}
+        onClose={() => setShowLimitModal(false)}
+        onOverride={handleOverride}
+        remainingGenerations={remainingGenerations}
+        dailyLimit={DAILY_LIMIT}
       />
     </div>
   );
