@@ -1,7 +1,6 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Sparkles, Upload, Gallery, Wand2, Download, Save } from "lucide-react";
+import { ArrowLeft, Sparkles, Upload, Image, Wand2, Download, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -230,7 +229,7 @@ const JorboAI = () => {
             <Card className="cute-border cute-shadow">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-mim-teal">
-                  <Gallery className="w-5 h-5" />
+                  <Image className="w-5 h-5" />
                   Generated Image
                 </CardTitle>
               </CardHeader>
