@@ -73,13 +73,11 @@ serve(async (req) => {
         // Image editing with GPT-Image-1
         const formData = new FormData()
         
-        // Add each input image
-        for (let i = 0; i < inputImages.length; i++) {
-          const imageBase64 = inputImages[i]
-          const imageBytes = Uint8Array.from(atob(imageBase64), c => c.charCodeAt(0))
-          const imageBlob = new Blob([imageBytes], { type: 'image/png' })
-          formData.append('image', imageBlob, `input_${i}.png`)
-        }
+        // Add the first input image (GPT-Image-1 takes one image for edits)
+        const imageBase64 = inputImages[0]
+        const imageBytes = Uint8Array.from(atob(imageBase64), c => c.charCodeAt(0))
+        const imageBlob = new Blob([imageBytes], { type: 'image/png' })
+        formData.append('image', imageBlob, 'input.png')
 
         // Add mask if provided
         if (mask) {
@@ -88,13 +86,12 @@ serve(async (req) => {
           formData.append('mask', maskBlob, 'mask.png')
         }
 
-        // Add parameters
+        // Add parameters - GPT-Image-1 specific
         formData.append('model', 'gpt-image-1')
         formData.append('prompt', prompt)
         formData.append('n', '1')
         formData.append('size', size)
         formData.append('quality', quality)
-        formData.append('response_format', 'b64_json')
 
         const response = await fetch('https://api.openai.com/v1/images/edits', {
           method: 'POST',
@@ -120,8 +117,8 @@ serve(async (req) => {
           prompt: prompt,
           n: 1,
           size: size,
-          quality: quality,
-          response_format: 'b64_json'
+          quality: quality
+          // Note: response_format is NOT supported by gpt-image-1
         }
 
         console.log('Making OpenAI request:', { ...requestBody, prompt: prompt.substring(0, 50) + '...' })
@@ -145,13 +142,18 @@ serve(async (req) => {
         console.log('OpenAI generation response received')
       }
 
-      if (!openaiResponse?.data?.[0]?.b64_json) {
+      // GPT-Image-1 returns URLs by default, not base64
+      if (!openaiResponse?.data?.[0]?.url) {
         throw new Error('No image data received from OpenAI')
       }
 
-      // Convert base64 to blob and upload to Supabase Storage
-      const imageBase64 = openaiResponse.data[0].b64_json
-      const imageBytes = Uint8Array.from(atob(imageBase64), c => c.charCodeAt(0))
+      // Download the image from OpenAI's URL
+      const imageResponse = await fetch(openaiResponse.data[0].url)
+      if (!imageResponse.ok) {
+        throw new Error('Failed to download generated image')
+      }
+
+      const imageBytes = new Uint8Array(await imageResponse.arrayBuffer())
       
       const fileName = `${user.id}/${job.id}_${Date.now()}.png`
       
