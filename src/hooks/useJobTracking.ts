@@ -65,7 +65,6 @@ export const useJobTracking = () => {
 
       if (error) throw error;
       
-      // Type assertion to ensure the data matches our interface
       const typedJob: ImageGenerationJob = {
         ...data,
         job_type: data.job_type as 'text_to_image' | 'image_edit',
@@ -102,13 +101,133 @@ export const useJobTracking = () => {
           ? { 
               ...job, 
               ...updateData,
-              job_type: job.job_type, // Keep original typed value
+              job_type: job.job_type,
               status: status as 'pending' | 'processing' | 'completed' | 'failed'
             } as ImageGenerationJob
           : job
       ));
     } catch (error: any) {
       console.error('Error updating job status:', error);
+    }
+  };
+
+  const deleteJob = async (jobId: string) => {
+    if (!user) return false;
+
+    try {
+      const { error } = await supabase
+        .from('image_generation_jobs')
+        .delete()
+        .eq('id', jobId)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      setJobs(prev => prev.filter(job => job.id !== jobId));
+      toast.success('Job deleted successfully');
+      return true;
+    } catch (error: any) {
+      console.error('Error deleting job:', error);
+      toast.error('Failed to delete job');
+      return false;
+    }
+  };
+
+  const clearAllJobs = async () => {
+    if (!user) return false;
+
+    try {
+      const { error } = await supabase
+        .from('image_generation_jobs')
+        .delete()
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      setJobs([]);
+      toast.success('All jobs cleared successfully');
+      return true;
+    } catch (error: any) {
+      console.error('Error clearing jobs:', error);
+      toast.error('Failed to clear jobs');
+      return false;
+    }
+  };
+
+  const deleteImage = async (imageId: string) => {
+    if (!user) return false;
+
+    try {
+      // Find the image to get storage path
+      const image = userImages.find(img => img.id === imageId);
+      if (!image) {
+        toast.error('Image not found');
+        return false;
+      }
+
+      // Delete from storage first
+      const { error: storageError } = await supabase.storage
+        .from('generated-images')
+        .remove([image.storage_path]);
+
+      if (storageError) {
+        console.warn('Storage deletion warning:', storageError);
+        // Continue with database deletion even if storage fails
+      }
+
+      // Delete from database
+      const { error: dbError } = await supabase
+        .from('user_images')
+        .delete()
+        .eq('id', imageId)
+        .eq('user_id', user.id);
+
+      if (dbError) throw dbError;
+
+      setUserImages(prev => prev.filter(img => img.id !== imageId));
+      toast.success('Image deleted successfully');
+      return true;
+    } catch (error: any) {
+      console.error('Error deleting image:', error);
+      toast.error('Failed to delete image');
+      return false;
+    }
+  };
+
+  const clearAllImages = async () => {
+    if (!user) return false;
+
+    try {
+      // Get all storage paths for deletion
+      const storagePaths = userImages.map(img => img.storage_path);
+
+      // Delete all files from storage
+      if (storagePaths.length > 0) {
+        const { error: storageError } = await supabase.storage
+          .from('generated-images')
+          .remove(storagePaths);
+
+        if (storageError) {
+          console.warn('Storage deletion warning:', storageError);
+          // Continue with database deletion even if storage fails
+        }
+      }
+
+      // Delete all from database
+      const { error: dbError } = await supabase
+        .from('user_images')
+        .delete()
+        .eq('user_id', user.id);
+
+      if (dbError) throw dbError;
+
+      setUserImages([]);
+      toast.success('All images cleared successfully');
+      return true;
+    } catch (error: any) {
+      console.error('Error clearing images:', error);
+      toast.error('Failed to clear images');
+      return false;
     }
   };
 
@@ -182,7 +301,6 @@ export const useJobTracking = () => {
 
       if (error) throw error;
       
-      // Type the data properly
       const typedJobs: ImageGenerationJob[] = (data || []).map(job => ({
         id: job.id,
         user_id: job.user_id,
@@ -243,6 +361,10 @@ export const useJobTracking = () => {
     updateJobStatus,
     saveGeneratedImage,
     toggleFavorite,
+    deleteJob,
+    clearAllJobs,
+    deleteImage,
+    clearAllImages,
     refetchJobs: fetchJobs,
     refetchImages: fetchUserImages
   };
