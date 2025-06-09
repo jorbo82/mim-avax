@@ -70,22 +70,22 @@ const JobManager = () => {
     <div className="space-y-6">
       <Card className="cute-border cute-shadow">
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
+          <div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
+            <div className="flex-1 min-w-0">
               <CardTitle className="flex items-center gap-2 text-mim-teal">
-                <History className="w-5 h-5" />
-                JORBO AI Generation Jobs
+                <History className="w-5 h-5 flex-shrink-0" />
+                <span className="truncate">JORBO AI Generation Jobs</span>
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="mt-1">
                 Track your AI image generation jobs and their status
               </CardDescription>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-col gap-2 sm:flex-row sm:gap-2">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={refetchJobs}
-                className="border-mim-teal text-mim-teal hover:bg-mim-teal hover:text-white"
+                className="border-mim-teal text-mim-teal hover:bg-mim-teal hover:text-white flex-shrink-0"
               >
                 <RefreshCw className="w-4 h-4 mr-2" />
                 Refresh
@@ -96,7 +96,7 @@ const JobManager = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                      className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white flex-shrink-0"
                     >
                       <Trash2 className="w-4 h-4 mr-2" />
                       Clear All
@@ -177,7 +177,7 @@ const JobManager = () => {
                           size="sm"
                           onClick={() => handleDeleteJob(job.id)}
                           disabled={deletingJobId === job.id}
-                          className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                          className="text-red-500 hover:text-red-700 hover:bg-red-50 flex-shrink-0"
                         >
                           {deletingJobId === job.id ? (
                             <Loader2 className="w-4 h-4 animate-spin" />
