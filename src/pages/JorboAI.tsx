@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Sparkles, Image, Wand2, Download, LogOut, History, ImageIcon, Palette, Brush } from "lucide-react";
@@ -52,7 +53,7 @@ const JorboAI = () => {
   // Redirect to auth if not logged in
   useEffect(() => {
     if (!authLoading && !user) {
-      navigate("/auth");
+      navigate("/auth?redirect=/jorbo-ai");
     }
   }, [user, authLoading, navigate]);
 
@@ -439,14 +440,14 @@ const JorboAI = () => {
         isOpen={showGallerySelector}
         onClose={() => setShowGallerySelector(false)}
         onSelectImages={handleGalleryImagesSelected}
-        maxSelections={5}
+        maxSelections={10}
       />
 
       <MimAssetSelector
         isOpen={showMimAssetSelector}
         onClose={() => setShowMimAssetSelector(false)}
         onSelectAssets={handleMimAssetsSelected}
-        maxSelections={5}
+        maxSelections={10}
       />
 
       <GenerationLimitModal

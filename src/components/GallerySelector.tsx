@@ -19,7 +19,7 @@ export const GallerySelector = ({
   isOpen, 
   onClose, 
   onSelectImages, 
-  maxSelections = 5 
+  maxSelections = 10 
 }: GallerySelectorProps) => {
   const { userImages, loading } = useJobTracking();
   const [selectedUrls, setSelectedUrls] = useState<string[]>([]);

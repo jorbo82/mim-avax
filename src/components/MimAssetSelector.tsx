@@ -20,7 +20,7 @@ export const MimAssetSelector = ({
   isOpen, 
   onClose, 
   onSelectAssets, 
-  maxSelections = 5 
+  maxSelections = 10 
 }: MimAssetSelectorProps) => {
   const { filteredAssets, selectedCategory, setSelectedCategory, searchTerm, setSearchTerm, categories } = useMimAssetLibrary();
   const [selectedAssetIds, setSelectedAssetIds] = useState<string[]>([]);

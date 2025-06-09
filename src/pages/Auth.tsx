@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Mail, Lock, User, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,15 +13,17 @@ import { useEffect } from "react";
 
 const Auth = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get('redirect') || '/';
   const { signIn, signUp, user, loading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
   // Redirect authenticated users
   useEffect(() => {
     if (user && !loading) {
-      navigate("/");
+      navigate(redirectTo);
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, navigate, redirectTo]);
 
   const [signInData, setSignInData] = useState({
     email: "",
@@ -45,7 +47,7 @@ const Auth = () => {
         toast.error(error.message || "Failed to sign in");
       } else {
         toast.success("Signed in successfully!");
-        navigate("/");
+        navigate(redirectTo);
       }
     } catch (error) {
       toast.error("An unexpected error occurred");
