@@ -29,7 +29,7 @@ const JorboAIButton = () => {
           <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-mim-gold to-mim-orange rounded-full animate-pulse" />
         </div>
         <div className="text-left">
-          <div className="font-bold text-lg">JORBO AI</div>
+          <div className="font-bold text-lg">AI MAGIC</div>
           <div className="text-sm opacity-90">Image Generator</div>
         </div>
       </div>
