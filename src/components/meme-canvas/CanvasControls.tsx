@@ -28,7 +28,7 @@ const CanvasControls = ({
     <div className="space-y-4">
       {/* Canvas Setup */}
       <div>
-        <label className="block text-sm font-medium text-purple-300 mb-2">
+        <label className="block text-sm font-medium text-mim-purple mb-2">
           Canvas Setup
         </label>
         <div className="grid grid-cols-1 gap-2">
@@ -41,16 +41,16 @@ const CanvasControls = ({
           />
           <Button
             onClick={() => fileInputRef.current?.click()}
-            className="w-full bg-blue-600 hover:bg-blue-700"
+            className="w-full bg-gradient-to-r from-mim-pink to-mim-purple hover:from-mim-pink-dark hover:to-mim-purple-dark cute-border"
           >
             <Upload className="mr-2 w-4 h-4" />
             Upload Background
           </Button>
           
           <div className="space-y-2">
-            <label className="block text-xs text-purple-300">Blank Canvas</label>
+            <label className="block text-xs text-mim-purple">Blank Canvas</label>
             <Select onValueChange={handleBlankCanvas}>
-              <SelectTrigger className="w-full bg-gray-600 hover:bg-gray-700 border-gray-500">
+              <SelectTrigger className="w-full bg-mim-cream/80 hover:bg-mim-cream border-mim-pink/50 cute-border">
                 <SelectValue placeholder="Choose aspect ratio" />
               </SelectTrigger>
               <SelectContent>
@@ -71,7 +71,7 @@ const CanvasControls = ({
           </div>
         </div>
         {backgroundImage && (
-          <p className="text-xs text-green-400 mt-1">
+          <p className="text-xs text-mim-teal mt-1">
             Background image loaded
           </p>
         )}

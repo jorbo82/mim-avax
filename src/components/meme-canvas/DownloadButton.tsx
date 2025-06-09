@@ -10,7 +10,7 @@ const DownloadButton = ({ onDownload }: DownloadButtonProps) => {
   return (
     <Button
       onClick={onDownload}
-      className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
+      className="w-full bg-gradient-to-r from-mim-gold to-mim-orange hover:from-mim-gold/80 hover:to-mim-orange/80 cute-border"
     >
       <Download className="mr-2 w-4 h-4" />
       Download Meme

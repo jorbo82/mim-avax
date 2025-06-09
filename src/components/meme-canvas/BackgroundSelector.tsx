@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -113,7 +114,7 @@ const BackgroundSelector = ({ onBackgroundSelect }: BackgroundSelectorProps) => 
       <CollapsibleTrigger asChild>
         <Button
           variant="outline"
-          className="w-full justify-between bg-blue-800/30 border-blue-500/30 text-blue-300 hover:bg-blue-700/50"
+          className="w-full justify-between bg-mim-mint/20 border-mim-mint/50 text-mim-purple hover:bg-mim-mint/30 cute-border"
         >
           <span className="text-sm font-medium">Background Memes</span>
           {isOpen ? (
@@ -124,29 +125,30 @@ const BackgroundSelector = ({ onBackgroundSelect }: BackgroundSelectorProps) => 
         </Button>
       </CollapsibleTrigger>
       <CollapsibleContent className="space-y-2 mt-2">
-        <div className="max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500/50 scrollbar-track-blue-900/30">
+        <div className="max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-mim-teal/50 scrollbar-track-mim-cream/30">
           <div className="grid grid-cols-2 gap-2 pr-2">
             {BACKGROUND_MEMES.map((meme) => (
               <Button
                 key={meme.id}
                 onClick={() => onBackgroundSelect(meme.url)}
-                className="h-16 p-2 bg-blue-800/30 hover:bg-blue-700/50 border border-blue-500/30 flex flex-col items-center justify-center text-xs"
+                className="h-16 p-2 bg-mim-cream/80 hover:bg-mim-pink/20 border border-mim-pink/30 flex flex-col items-center justify-center text-xs cute-border transition-all duration-200 hover:scale-105"
                 variant="outline"
               >
                 <img 
                   src={meme.url} 
                   alt={meme.name}
                   className="w-8 h-8 object-contain mb-1"
+                  style={{ filter: 'drop-shadow(0 0 2px rgba(255, 107, 157, 0.5))' }}
                 />
-                <span className="text-blue-200 truncate w-full text-center">
+                <span className="text-mim-purple truncate w-full text-center font-medium">
                   {meme.name}
                 </span>
               </Button>
             ))}
           </div>
         </div>
-        <p className="text-xs text-blue-400">
-          Click to use as background
+        <p className="text-xs text-mim-purple/70 text-center">
+          Click to use as background ✨
         </p>
       </CollapsibleContent>
     </Collapsible>

@@ -22,7 +22,7 @@ const ObjectControls = ({
 }: ObjectControlsProps) => {
   return (
     <div>
-      <label className="block text-sm font-medium text-purple-300 mb-2">
+      <label className="block text-sm font-medium text-mim-purple mb-2">
         Selected Object Controls
       </label>
       <div className="grid grid-cols-2 gap-2">
@@ -31,7 +31,7 @@ const ObjectControls = ({
             <Button
               onClick={onRotate}
               size="sm"
-              className="bg-green-600 hover:bg-green-700"
+              className="bg-mim-teal hover:bg-mim-teal-dark cute-border"
             >
               <RotateCw className="w-4 h-4" />
             </Button>
@@ -46,7 +46,7 @@ const ObjectControls = ({
             <Button
               onClick={onFlipHorizontal}
               size="sm"
-              className="bg-orange-600 hover:bg-orange-700"
+              className="bg-mim-gold hover:bg-mim-gold/80 cute-border"
             >
               <FlipHorizontal className="w-4 h-4" />
             </Button>
@@ -61,7 +61,7 @@ const ObjectControls = ({
             <Button
               onClick={onFlipVertical}
               size="sm"
-              className="bg-pink-600 hover:bg-pink-700"
+              className="bg-mim-pink hover:bg-mim-pink-dark cute-border"
             >
               <FlipVertical className="w-4 h-4" />
             </Button>
@@ -76,7 +76,7 @@ const ObjectControls = ({
             <Button
               onClick={onDelete}
               size="sm"
-              className="bg-red-600 hover:bg-red-700"
+              className="bg-red-400 hover:bg-red-500 cute-border"
             >
               <Trash2 className="w-4 h-4" />
             </Button>
@@ -91,7 +91,7 @@ const ObjectControls = ({
             <Button
               onClick={onBringForward}
               size="sm"
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-mim-purple hover:bg-mim-purple-dark cute-border"
             >
               <ArrowUp className="w-4 h-4" />
             </Button>
@@ -106,7 +106,7 @@ const ObjectControls = ({
             <Button
               onClick={onSendBackward}
               size="sm"
-              className="bg-indigo-600 hover:bg-indigo-700"
+              className="bg-mim-mint hover:bg-mim-mint/80 cute-border"
             >
               <ArrowDown className="w-4 h-4" />
             </Button>
