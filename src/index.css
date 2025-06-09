@@ -52,6 +52,10 @@
     --mim-orange: 23 83% 62%;
     --mim-cream: 45 50% 95%;
     --mim-brown: 25 40% 35%;
+    --mim-pink: 330 70% 85%;
+    --mim-pink-light: 330 80% 92%;
+    --mim-pink-dark: 330 60% 70%;
+    --mim-purple: 270 50% 40%;
   }
 
   .dark {
@@ -100,6 +104,10 @@
     --mim-orange: 23 75% 60%;
     --mim-cream: 45 30% 15%;
     --mim-brown: 25 30% 25%;
+    --mim-pink: 330 60% 70%;
+    --mim-pink-light: 330 70% 80%;
+    --mim-pink-dark: 330 50% 50%;
+    --mim-purple: 270 60% 60%;
   }
 }
 
@@ -137,6 +145,22 @@
   .bg-mim-cream {
     background-color: hsl(var(--mim-cream));
   }
+
+  .bg-mim-pink {
+    background-color: hsl(var(--mim-pink));
+  }
+  
+  .bg-mim-pink-light {
+    background-color: hsl(var(--mim-pink-light));
+  }
+  
+  .bg-mim-pink-dark {
+    background-color: hsl(var(--mim-pink-dark));
+  }
+
+  .bg-mim-purple {
+    background-color: hsl(var(--mim-purple));
+  }
   
   .text-mim-teal {
     color: hsl(var(--mim-teal));
@@ -149,9 +173,21 @@
   .text-mim-orange {
     color: hsl(var(--mim-orange));
   }
+
+  .text-mim-pink {
+    color: hsl(var(--mim-pink));
+  }
+
+  .text-mim-purple {
+    color: hsl(var(--mim-purple));
+  }
   
   .border-mim-teal {
     border-color: hsl(var(--mim-teal));
+  }
+
+  .border-mim-pink {
+    border-color: hsl(var(--mim-pink));
   }
   
   .cute-shadow {

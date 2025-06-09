@@ -1,4 +1,3 @@
-
 import { TrendingUp, Zap, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -41,7 +40,7 @@ const StatsSection = () => {
           </CardHeader>
           <CardContent className="text-center">
             <p className="text-3xl font-bold text-white">Arena</p>
-            <p className="text-purple-300">Bonding Phase</p>
+            <p className="text-purple-300">Building Phase</p>
           </CardContent>
         </Card>
       </div>

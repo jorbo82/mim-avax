@@ -118,7 +118,7 @@ const MemeEditor = ({ onClose, initialBackgroundImage }: MemeEditorProps) => {
 
         <div className="flex-1 flex flex-col lg:flex-row">
           {/* Controls Panel with ScrollArea */}
-          <div className="w-full lg:w-80 border-r border-purple-500/30 bg-purple-900/20">
+          <div className="w-full lg:w-80 border-r border-mim-teal/30 bg-mim-cream/20 dark:bg-mim-brown/20">
             <ScrollArea className="h-full">
               <div className="p-4 space-y-4">
                 <CanvasControls 
