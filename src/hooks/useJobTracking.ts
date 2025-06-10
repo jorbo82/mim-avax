@@ -9,7 +9,10 @@ export const useJobTracking = () => {
   return {
     ...jobsHook,
     ...imagesHook,
-    loading: jobsHook.loading || imagesHook.loading
+    loading: jobsHook.loading || imagesHook.loading,
+    // Ensure we have proper refetch methods
+    refetchJobs: jobsHook.refetchJobs,
+    refetchImages: imagesHook.refetchImages
   };
 };
 

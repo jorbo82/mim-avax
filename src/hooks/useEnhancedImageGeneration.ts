@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { useJobTracking } from './useJobTracking';
 
 export interface GenerationParams {
   prompt: string;
@@ -15,6 +16,7 @@ export interface GenerationParams {
 
 export const useEnhancedImageGeneration = () => {
   const { user } = useAuth();
+  const { refetchJobs, refetchImages } = useJobTracking();
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null);
   const [currentJobId, setCurrentJobId] = useState<string | null>(null);
@@ -119,9 +121,16 @@ export const useEnhancedImageGeneration = () => {
         const jobTypeText = params.jobType === 'image_edit' ? 'image editing' : 'text-to-image';
         toast.success(`🎨 JORBO AI successfully created your ${jobTypeText} masterpiece!`);
         
+        // Refresh both jobs and images to update the UI
+        setTimeout(() => {
+          refetchJobs();
+          refetchImages();
+        }, 1000);
+        
         console.log('JORBO AI generation successful:', {
           imageUrl: data.imageUrl,
           jobId: data.jobId,
+          imageId: data.imageId,
           engine: 'JORBO AI Engine'
         });
       } else {
@@ -131,6 +140,11 @@ export const useEnhancedImageGeneration = () => {
     } catch (error: any) {
       console.error('JORBO AI image generation error:', error);
       toast.error(error.message || 'Failed to generate image with JORBO AI');
+      
+      // Refresh jobs to show failed status
+      setTimeout(() => {
+        refetchJobs();
+      }, 1000);
     } finally {
       setIsGenerating(false);
     }

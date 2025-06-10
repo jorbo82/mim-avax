@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -242,7 +243,7 @@ serve(async (req) => {
       console.log('Public URL generated:', publicUrl)
 
       // Update job status to completed
-      await supabase
+      const { error: jobUpdateError } = await supabase
         .from('image_generation_jobs')
         .update({
           status: 'completed',
@@ -251,8 +252,12 @@ serve(async (req) => {
         })
         .eq('id', job.id)
 
-      // Save to user_images table
-      const { error: imageError } = await supabase
+      if (jobUpdateError) {
+        console.error('Job update error:', jobUpdateError)
+      }
+
+      // Save to user_images table - this is crucial for the gallery to work
+      const { data: savedImage, error: imageError } = await supabase
         .from('user_images')
         .insert({
           user_id: user.id,
@@ -264,9 +269,14 @@ serve(async (req) => {
           quality,
           job_type: jobType
         })
+        .select()
+        .single()
 
       if (imageError) {
         console.error('Error saving to user_images:', imageError)
+        // Don't throw here as the image was generated successfully
+      } else {
+        console.log('Image saved to user_images:', savedImage.id)
       }
 
       console.log('Job completed successfully')
@@ -276,7 +286,8 @@ serve(async (req) => {
           success: true,
           imageUrl: publicUrl,
           jobId: job.id,
-          modelUsed: 'gpt-image-1'
+          modelUsed: 'gpt-image-1',
+          imageId: savedImage?.id
         }),
         {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
