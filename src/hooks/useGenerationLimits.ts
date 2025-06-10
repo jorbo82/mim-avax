@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -17,9 +16,9 @@ export const useGenerationLimits = () => {
   const { user } = useAuth();
   const [todayLimit, setTodayLimit] = useState<GenerationLimit | null>(null);
   const [loading, setLoading] = useState(false);
-  const [remainingGenerations, setRemainingGenerations] = useState(5);
+  const [remainingGenerations, setRemainingGenerations] = useState(15);
 
-  const DAILY_LIMIT = 5;
+  const DAILY_LIMIT = 15;
   const OVERRIDE_PASSWORD = "Zoo1ander";
 
   const fetchTodayLimit = async () => {

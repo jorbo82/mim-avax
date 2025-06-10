@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -18,7 +17,7 @@ interface GenerationRequest {
 
 const checkGenerationLimit = async (supabase: any, userId: string) => {
   const today = new Date().toISOString().split('T')[0];
-  const DAILY_LIMIT = 5;
+  const DAILY_LIMIT = 15;
 
   // Get today's usage
   const { data: limitData, error: limitError } = await supabase
@@ -87,7 +86,7 @@ serve(async (req) => {
         JSON.stringify({
           error: 'Daily generation limit exceeded',
           code: 'LIMIT_EXCEEDED',
-          message: 'You have reached your daily limit of 5 generations. Please try again tomorrow or use an override code.'
+          message: 'You have reached your daily limit of 15 generations. Please try again tomorrow or use an override code.'
         }),
         {
           status: 429,
