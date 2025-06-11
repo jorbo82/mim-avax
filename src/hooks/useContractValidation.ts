@@ -6,7 +6,7 @@ export const useContractValidation = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const validateContract = async (contractAddress: string, checkWrapper: boolean = false) => {
+  const discoverPools = async (contractAddress: string, protocols: string[] = ['apex-defi', 'pharaoh', 'lfj', 'benqi']) => {
     setLoading(true);
     setError(null);
 
@@ -14,7 +14,7 @@ export const useContractValidation = () => {
       const { data, error } = await supabase.functions.invoke('validate-contract', {
         body: {
           contractAddress,
-          checkWrapper
+          protocols
         }
       });
 
@@ -30,7 +30,7 @@ export const useContractValidation = () => {
   };
 
   return {
-    validateContract,
+    discoverPools,
     loading,
     error
   };

@@ -1,7 +1,7 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { WrapperValidationService } from './WrapperValidationService.ts'
+import { MultiProtocolValidationService } from './MultiProtocolValidationService.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -14,7 +14,7 @@ serve(async (req) => {
   }
 
   try {
-    const { contractAddress, checkWrapper = false } = await req.json()
+    const { contractAddress, protocols = ['apex-defi', 'pharaoh', 'lfj', 'benqi'] } = await req.json()
     
     if (!contractAddress) {
       return new Response(
@@ -30,8 +30,8 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const supabase = createClient(supabaseUrl, supabaseKey)
 
-    const validationService = new WrapperValidationService(supabase)
-    const result = await validationService.validateContract(contractAddress, checkWrapper)
+    const validationService = new MultiProtocolValidationService(supabase)
+    const result = await validationService.discoverPools(contractAddress, protocols)
 
     return new Response(
       JSON.stringify(result),
@@ -40,7 +40,7 @@ serve(async (req) => {
       }
     )
   } catch (error) {
-    console.error('Validation error:', error)
+    console.error('Pool discovery error:', error)
     return new Response(
       JSON.stringify({ error: error.message }),
       { 
