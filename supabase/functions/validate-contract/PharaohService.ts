@@ -1,55 +1,84 @@
 
+import { DexScreenerService } from './DexScreenerService.ts'
+
 export class PharaohService {
   private supabase: any
+  private dexScreener: DexScreenerService
 
   constructor(supabase: any) {
     this.supabase = supabase
+    this.dexScreener = new DexScreenerService()
   }
 
   async findPools(tokenAddress: string) {
-    console.log(`Pharaoh: Finding pools for ${tokenAddress}`)
+    console.log(`Pharaoh: Finding pools for ERC20 token ${tokenAddress}`)
 
-    // Mock implementation - In production, this would query Pharaoh's contracts
-    const knownPharaohPools: { [key: string]: any } = {
-      '0x8D8B084269f4b2Ad111b60793e9f3577A7795605': { // MIM
-        hasPool: true,
-        contractAddress: '0x1234567890abcdef1234567890abcdef12345678',
-        tvl: 850000,
-        apyBase: 12.5,
-        apyReward: 8.2
+    try {
+      // Get real market data from DexScreener for the ERC20 token
+      const dexScreenerData = await this.dexScreener.searchTokenPairs(tokenAddress)
+      
+      if (!dexScreenerData) {
+        return {
+          hasPool: false,
+          message: 'No Pharaoh pools found for this ERC20 token on DexScreener'
+        }
       }
-    }
 
-    const poolInfo = knownPharaohPools[tokenAddress.toLowerCase()]
-    
-    if (!poolInfo) {
+      // Get AVAX price for USD calculations
+      const avaxPrice = await this.dexScreener.getAVAXPrice()
+
+      // Calculate metrics from real data
+      const tvl = dexScreenerData.liquidity.usd || 0
+      const volume24h = dexScreenerData.volume24h || 0
+      const fees24h = volume24h * 0.003 // 0.3% typical DEX fee
+      
+      // Estimate APY based on fees and TVL
+      const dailyYield = tvl > 0 ? (fees24h / tvl) * 100 : 0
+      const baseAPY = dailyYield * 365
+      const rewardAPY = baseAPY * 0.5 // Additional 50% in protocol rewards (estimated)
+
+      const pool = {
+        contractAddress: dexScreenerData.pairAddress,
+        name: `${dexScreenerData.baseToken.symbol}/AVAX Pharaoh Pool`,
+        type: 'liquidity',
+        baseTokenAddress: tokenAddress,
+        baseTokenSymbol: dexScreenerData.baseToken.symbol,
+        quoteTokenAddress: dexScreenerData.quoteToken.address,
+        quoteTokenSymbol: dexScreenerData.quoteToken.symbol,
+        tvl: tvl,
+        apyBase: baseAPY,
+        apyReward: rewardAPY,
+        volume24h: volume24h,
+        fees24h: fees24h,
+        metadata: {
+          platform: 'pharaoh',
+          poolType: 'liquidity',
+          tokenPrice: dexScreenerData.priceUsd,
+          avaxPrice: avaxPrice,
+          dexScreenerUrl: dexScreenerData.url,
+          pairAddress: dexScreenerData.pairAddress,
+          dataSource: 'dexscreener',
+          calculatedAt: new Date().toISOString(),
+          priceChange24h: dexScreenerData.priceChange24h,
+          tokenInfo: {
+            name: dexScreenerData.baseToken.name,
+            symbol: dexScreenerData.baseToken.symbol,
+            address: dexScreenerData.baseToken.address
+          }
+        }
+      }
+
+      return {
+        hasPool: true,
+        pools: [pool]
+      }
+      
+    } catch (error) {
+      console.error('Error in Pharaoh pool discovery:', error)
       return {
         hasPool: false,
-        message: 'No Pharaoh pools found for this token'
+        message: `Error discovering Pharaoh pools: ${error.message}`
       }
-    }
-
-    const pool = {
-      contractAddress: poolInfo.contractAddress,
-      name: `Pharaoh LP Pool`,
-      type: 'liquidity',
-      baseTokenAddress: tokenAddress,
-      baseTokenSymbol: 'TOKEN',
-      quoteTokenAddress: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7', // WAVAX
-      quoteTokenSymbol: 'AVAX',
-      tvl: poolInfo.tvl,
-      apyBase: poolInfo.apyBase,
-      apyReward: poolInfo.apyReward,
-      volume24h: poolInfo.tvl * 0.1, // Mock 10% daily volume
-      fees24h: poolInfo.tvl * 0.001, // Mock 0.1% daily fees
-      metadata: {
-        platform: 'pharaoh'
-      }
-    }
-
-    return {
-      hasPool: true,
-      pools: [pool]
     }
   }
 }
