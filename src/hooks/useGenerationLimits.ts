@@ -1,6 +1,8 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useStorageStats } from '@/hooks/useStorageStats';
 import { toast } from 'sonner';
 
 export interface GenerationLimit {
@@ -14,6 +16,7 @@ export interface GenerationLimit {
 
 export const useGenerationLimits = () => {
   const { user } = useAuth();
+  const { stats, refetchStats } = useStorageStats();
   const [todayLimit, setTodayLimit] = useState<GenerationLimit | null>(null);
   const [loading, setLoading] = useState(false);
   const [remainingGenerations, setRemainingGenerations] = useState(15);
@@ -40,6 +43,9 @@ export const useGenerationLimits = () => {
       setTodayLimit(data);
       const remaining = data ? Math.max(0, DAILY_LIMIT - data.generation_count) : DAILY_LIMIT;
       setRemainingGenerations(remaining);
+      
+      // Also refresh storage stats when fetching limits
+      refetchStats();
     } catch (error: any) {
       console.error('Error fetching generation limits:', error);
     } finally {
@@ -83,6 +89,12 @@ export const useGenerationLimits = () => {
       }
 
       setRemainingGenerations(prev => Math.max(0, prev - 1));
+      
+      // Refresh storage stats after generation
+      setTimeout(() => {
+        refetchStats();
+      }, 1000);
+      
       return true;
     } catch (error: any) {
       console.error('Error incrementing generation count:', error);
@@ -143,6 +155,12 @@ export const useGenerationLimits = () => {
 
   const canGenerate = () => {
     if (!todayLimit) return true;
+    
+    // Check storage limit
+    if (stats.remainingSlots <= 0) {
+      return true; // Allow generation, old images will be auto-deleted
+    }
+    
     return todayLimit.override_used || todayLimit.generation_count < DAILY_LIMIT;
   };
 
@@ -160,6 +178,7 @@ export const useGenerationLimits = () => {
     todayLimit,
     loading,
     remainingGenerations,
+    storageStats: stats,
     canGenerate,
     isOverrideUsed,
     incrementGenerationCount,

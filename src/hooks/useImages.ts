@@ -5,10 +5,14 @@ import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { UserImage, SaveImageParams } from '@/types/jobTracking';
 
+const IMAGES_PER_PAGE = 20;
+
 export const useImages = () => {
   const { user } = useAuth();
   const [userImages, setUserImages] = useState<UserImage[]>([]);
   const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(0);
 
   const saveGeneratedImage = async (params: SaveImageParams) => {
     if (!user) return null;
@@ -119,6 +123,8 @@ export const useImages = () => {
       if (dbError) throw dbError;
 
       setUserImages([]);
+      setPage(0);
+      setHasMore(true);
       toast.success('All images cleared successfully');
       return true;
     } catch (error: any) {
@@ -128,19 +134,33 @@ export const useImages = () => {
     }
   };
 
-  const fetchUserImages = async () => {
+  const fetchUserImages = async (pageNum: number = 0, append: boolean = false) => {
     if (!user) return;
 
     setLoading(true);
     try {
+      const from = pageNum * IMAGES_PER_PAGE;
+      const to = from + IMAGES_PER_PAGE - 1;
+
       const { data, error } = await supabase
         .from('user_images')
         .select('*')
         .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .range(from, to);
 
       if (error) throw error;
-      setUserImages(data || []);
+
+      const newImages = data || [];
+      
+      if (append) {
+        setUserImages(prev => [...prev, ...newImages]);
+      } else {
+        setUserImages(newImages);
+      }
+      
+      setHasMore(newImages.length === IMAGES_PER_PAGE);
+      setPage(pageNum);
     } catch (error: any) {
       console.error('Error fetching user images:', error);
     } finally {
@@ -148,21 +168,31 @@ export const useImages = () => {
     }
   };
 
+  const loadMoreImages = async () => {
+    if (!loading && hasMore) {
+      await fetchUserImages(page + 1, true);
+    }
+  };
+
   useEffect(() => {
     if (user) {
-      fetchUserImages();
+      fetchUserImages(0, false);
     } else {
       setUserImages([]);
+      setPage(0);
+      setHasMore(true);
     }
   }, [user]);
 
   return {
     userImages,
     loading,
+    hasMore,
     saveGeneratedImage,
     toggleFavorite,
     deleteImage,
     clearAllImages,
-    refetchImages: fetchUserImages
+    loadMoreImages,
+    refetchImages: () => fetchUserImages(0, false)
   };
 };

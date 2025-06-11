@@ -5,10 +5,14 @@ import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { ImageGenerationJob, CreateJobParams } from '@/types/jobTracking';
 
+const JOBS_PER_PAGE = 20;
+
 export const useJobs = () => {
   const { user } = useAuth();
   const [jobs, setJobs] = useState<ImageGenerationJob[]>([]);
   const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(0);
 
   const createJob = async (params: CreateJobParams) => {
     if (!user) {
@@ -112,6 +116,8 @@ export const useJobs = () => {
       if (error) throw error;
 
       setJobs([]);
+      setPage(0);
+      setHasMore(true);
       toast.success('All jobs cleared successfully');
       return true;
     } catch (error: any) {
@@ -121,20 +127,24 @@ export const useJobs = () => {
     }
   };
 
-  const fetchJobs = async () => {
+  const fetchJobs = async (pageNum: number = 0, append: boolean = false) => {
     if (!user) return;
 
     setLoading(true);
     try {
+      const from = pageNum * JOBS_PER_PAGE;
+      const to = from + JOBS_PER_PAGE - 1;
+
       const { data, error } = await supabase
         .from('image_generation_jobs')
         .select('*')
         .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .range(from, to);
 
       if (error) throw error;
       
-      const typedJobs: ImageGenerationJob[] = (data || []).map(job => ({
+      const newJobs = (data || []).map(job => ({
         id: job.id,
         user_id: job.user_id,
         prompt: job.prompt,
@@ -148,7 +158,14 @@ export const useJobs = () => {
         completed_at: job.completed_at || undefined
       }));
       
-      setJobs(typedJobs);
+      if (append) {
+        setJobs(prev => [...prev, ...newJobs]);
+      } else {
+        setJobs(newJobs);
+      }
+      
+      setHasMore(newJobs.length === JOBS_PER_PAGE);
+      setPage(pageNum);
     } catch (error: any) {
       console.error('Error fetching jobs:', error);
     } finally {
@@ -156,21 +173,31 @@ export const useJobs = () => {
     }
   };
 
+  const loadMoreJobs = async () => {
+    if (!loading && hasMore) {
+      await fetchJobs(page + 1, true);
+    }
+  };
+
   useEffect(() => {
     if (user) {
-      fetchJobs();
+      fetchJobs(0, false);
     } else {
       setJobs([]);
+      setPage(0);
+      setHasMore(true);
     }
   }, [user]);
 
   return {
     jobs,
     loading,
+    hasMore,
     createJob,
     updateJobStatus,
     deleteJob,
     clearAllJobs,
-    refetchJobs: fetchJobs
+    loadMoreJobs,
+    refetchJobs: () => fetchJobs(0, false)
   };
 };

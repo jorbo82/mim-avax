@@ -193,7 +193,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_storage_stats: {
+        Args: { user_uuid: string }
+        Returns: {
+          image_count: number
+          storage_limit: number
+          remaining_slots: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
