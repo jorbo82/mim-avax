@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Search, AlertCircle, CheckCircle, Loader2, TrendingUp } from 'lucide-react';
+import { Search, AlertCircle, CheckCircle, Loader2, TrendingUp, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -37,6 +37,11 @@ const TokenDiscovery = () => {
       'benqi': 'bg-green-500/20 text-green-400 border-green-500/30'
     };
     return colors[protocol] || 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+  };
+
+  const formatAddress = (address: string) => {
+    if (!address) return '';
+    return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
 
   return (
@@ -128,16 +133,58 @@ const TokenDiscovery = () => {
                                 {pool.type}
                               </Badge>
                             </div>
-                            <div className="grid grid-cols-2 gap-2 text-xs">
+                            
+                            {/* Pool metrics */}
+                            <div className="grid grid-cols-2 gap-2 text-xs mb-2">
                               <div>
                                 <span className="text-purple-300">TVL:</span>
-                                <span className="text-green-400 ml-1">${pool.tvl?.toLocaleString()}</span>
+                                <span className="text-green-400 ml-1">
+                                  ${pool.tvl > 0 ? pool.tvl.toLocaleString() : 'N/A'}
+                                </span>
                               </div>
                               <div>
                                 <span className="text-purple-300">APY:</span>
-                                <span className="text-yellow-400 ml-1">{((pool.apyBase || 0) + (pool.apyReward || 0)).toFixed(2)}%</span>
+                                <span className="text-yellow-400 ml-1">
+                                  {((pool.apyBase || 0) + (pool.apyReward || 0)).toFixed(2)}%
+                                </span>
                               </div>
                             </div>
+
+                            {/* Enhanced Apex DeFi details */}
+                            {protocol.protocol === 'apex-defi' && pool.metadata && (
+                              <div className="space-y-1 text-xs border-t border-purple-500/20 pt-2">
+                                {pool.metadata.erc314Address && (
+                                  <div className="flex justify-between">
+                                    <span className="text-purple-300">ERC314:</span>
+                                    <span className="text-blue-400 font-mono">
+                                      {formatAddress(pool.metadata.erc314Address)}
+                                    </span>
+                                  </div>
+                                )}
+                                {pool.metadata.wrapperAddress && (
+                                  <div className="flex justify-between">
+                                    <span className="text-purple-300">Wrapper:</span>
+                                    <span className="text-blue-400 font-mono">
+                                      {formatAddress(pool.metadata.wrapperAddress)}
+                                    </span>
+                                  </div>
+                                )}
+                                {pool.metadata.lpContract && (
+                                  <div className="flex justify-between">
+                                    <span className="text-purple-300">LP Pool:</span>
+                                    <span className="text-green-400 font-mono">
+                                      {formatAddress(pool.metadata.lpContract)}
+                                    </span>
+                                  </div>
+                                )}
+                                <div className="flex justify-between">
+                                  <span className="text-purple-300">Liquidity:</span>
+                                  <span className={pool.metadata.hasLiquidityData ? 'text-green-400' : 'text-red-400'}>
+                                    {pool.metadata.hasLiquidityData ? 'Active' : 'No LP Found'}
+                                  </span>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         ))}
                       </div>
@@ -150,6 +197,31 @@ const TokenDiscovery = () => {
                 </Card>
               ))}
             </div>
+
+            {/* Discovery details */}
+            {discoveryResult.totalPoolsFound > 0 && (
+              <Card className="bg-gradient-to-r from-blue-900/20 to-purple-900/20 border-blue-500/30">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-blue-400 text-sm">Discovery Details</CardTitle>
+                </CardHeader>
+                <CardContent className="text-xs space-y-1">
+                  <div className="flex justify-between">
+                    <span className="text-purple-300">Token Address:</span>
+                    <span className="text-white font-mono">{formatAddress(contractAddress)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-purple-300">Total Pools:</span>
+                    <span className="text-green-400">{discoveryResult.totalPoolsFound}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-purple-300">Active Protocols:</span>
+                    <span className="text-yellow-400">
+                      {discoveryResult.protocols.filter((p: any) => p.hasPool).length} / {discoveryResult.protocols.length}
+                    </span>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         )}
       </CardContent>

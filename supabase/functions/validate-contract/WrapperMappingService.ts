@@ -23,6 +23,12 @@ export class WrapperMappingService {
     'function name() view returns (string)'
   ]
 
+  private erc20ABI = [
+    'function symbol() view returns (string)',
+    'function name() view returns (string)',
+    'function decimals() view returns (uint8)'
+  ]
+
   async findWrapper(erc20Address: string) {
     console.log(`Finding wrapper for ERC20: ${erc20Address}`)
 
@@ -42,25 +48,69 @@ export class WrapperMappingService {
   private async checkWrapperWithRPC(erc20Address: string, rpcUrl: string) {
     console.log(`Checking wrapper with RPC: ${rpcUrl}`)
 
-    // For demo purposes, return mock data for known addresses
-    const knownMappings: { [key: string]: any } = {
-      '0x8D8B084269f4b2Ad111b60793e9f3577A7795605': { // MIM
-        hasWrapper: true,
-        wrapperAddress: '0x1C7B3Fc72018AD4688AE7a20f949e8c681aaD39A',
-        erc314Address: '0x1C7B3Fc72018AD4688AE7a20f949e8c681aaD39A',
-        tokenSymbol: 'MIM',
-        tokenName: 'Magic Internet Money'
+    try {
+      // Dynamic import of ethers
+      const { ethers } = await import('https://esm.sh/ethers@6.13.0')
+      
+      // Create provider
+      const provider = new ethers.JsonRpcProvider(rpcUrl)
+      
+      // Get router contract
+      const routerContract = new ethers.Contract(this.routerAddress, this.routerABI, provider)
+      
+      // Get wrapper factory address
+      const wrapperFactoryAddress = await routerContract.wrapperFactory()
+      console.log(`Wrapper factory address: ${wrapperFactoryAddress}`)
+      
+      // Get wrapper factory contract
+      const wrapperFactoryContract = new ethers.Contract(wrapperFactoryAddress, this.wrapperFactoryABI, provider)
+      
+      // Check if wrapper exists
+      const hasWrapper = await wrapperFactoryContract.hasWrappedToken(erc20Address)
+      
+      if (!hasWrapper) {
+        console.log(`No wrapper found for ${erc20Address}`)
+        return null
       }
+      
+      // Get wrapper address
+      const wrapperAddress = await wrapperFactoryContract.erc20ToWrapper(erc20Address)
+      
+      if (wrapperAddress === '0x0000000000000000000000000000000000000000') {
+        console.log(`Wrapper address is zero for ${erc20Address}`)
+        return null
+      }
+      
+      console.log(`Found wrapper at ${wrapperAddress}`)
+      
+      // Get wrapper contract
+      const wrapperContract = new ethers.Contract(wrapperAddress, this.wrapperABI, provider)
+      
+      // Get ERC314 address
+      const erc314Address = await wrapperContract.wrappedToken()
+      
+      // Get token information
+      const erc20Contract = new ethers.Contract(erc20Address, this.erc20ABI, provider)
+      
+      const [tokenSymbol, tokenName] = await Promise.all([
+        erc20Contract.symbol(),
+        erc20Contract.name()
+      ])
+      
+      console.log(`Wrapper discovery successful: ${tokenSymbol} (${tokenName})`)
+      
+      return {
+        hasWrapper: true,
+        wrapperAddress,
+        erc314Address,
+        tokenSymbol,
+        tokenName,
+        erc20Address
+      }
+      
+    } catch (error) {
+      console.error(`Error checking wrapper with RPC ${rpcUrl}:`, error)
+      return null
     }
-
-    const mapping = knownMappings[erc20Address.toLowerCase()]
-    if (mapping) {
-      console.log(`Found known mapping for ${erc20Address}`)
-      return mapping
-    }
-
-    // In a real implementation, this would make actual RPC calls
-    // For now, return no wrapper found for unknown addresses
-    return null
   }
 }

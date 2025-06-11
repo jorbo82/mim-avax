@@ -1,25 +1,125 @@
 
 export class PoolDataService {
-  private knownLPPairs: { [key: string]: string } = {
-    '0x1C7B3Fc72018AD4688AE7a20f949e8c681aaD39A': '0x518e443a079C64E787ceA7FB3B1EFDB999D908f7' // aMIM
-  }
+  private pairFactoryABI = [
+    'function getPair(address tokenA, address tokenB) view returns (address)',
+    'function allPairs(uint256) view returns (address)',
+    'function allPairsLength() view returns (uint256)'
+  ]
+
+  private pairABI = [
+    'function getReserves() view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast)',
+    'function totalSupply() view returns (uint256)',
+    'function token0() view returns (address)',
+    'function token1() view returns (address)'
+  ]
+
+  private erc20ABI = [
+    'function balanceOf(address) view returns (uint256)',
+    'function totalSupply() view returns (uint256)',
+    'function decimals() view returns (uint8)'
+  ]
+
+  // Common DEX factory addresses on Avalanche
+  private dexFactories = [
+    '0x9Ad6C38BE94206cA50bb0d90783181662f0Cfa10', // Trader Joe V1
+    '0x60aE616a2155Ee3d9A68541Ba4544862310933d4', // Trader Joe V2
+    '0xefa94DE7a203D8C5E2cE98e0EC4A1f0dB2e0f2A0'  // Pangolin
+  ]
+
+  private rpcUrls = [
+    'https://api.avax.network/ext/bc/C/rpc',
+    'https://avalanche-c-chain.publicnode.com',
+    'https://rpc.ankr.com/avalanche'
+  ]
 
   async getPoolData(erc314Address: string, wrapperAddress: string) {
     console.log(`Getting pool data for ERC314: ${erc314Address}, Wrapper: ${wrapperAddress}`)
 
-    const lpContract = this.knownLPPairs[erc314Address]
-    
-    // For demo purposes, return mock pool data
+    for (const rpcUrl of this.rpcUrls) {
+      try {
+        const result = await this.findLiquidityPools(erc314Address, rpcUrl)
+        if (result.hasLiquidityData) {
+          return result
+        }
+      } catch (error) {
+        console.error(`RPC ${rpcUrl} failed for pool data:`, error)
+        continue
+      }
+    }
+
+    // Return default data if no pools found
     return {
-      lpContract,
-      reserves: {
-        token0: '1000000',
-        token1: '2000000'
-      },
-      totalSupply: '1414213',
-      volume24h: '500000',
-      fees24h: '1500',
-      hasLiquidityData: !!lpContract
+      lpContract: null,
+      reserves: { token0: '0', token1: '0' },
+      totalSupply: '0',
+      volume24h: '0',
+      fees24h: '0',
+      hasLiquidityData: false
+    }
+  }
+
+  private async findLiquidityPools(erc314Address: string, rpcUrl: string) {
+    try {
+      // Dynamic import of ethers
+      const { ethers } = await import('https://esm.sh/ethers@6.13.0')
+      
+      const provider = new ethers.JsonRpcProvider(rpcUrl)
+      const wavaxAddress = '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7' // WAVAX
+
+      // Try to find liquidity pools for the ERC314 token
+      for (const factoryAddress of this.dexFactories) {
+        try {
+          const factoryContract = new ethers.Contract(factoryAddress, this.pairFactoryABI, provider)
+          
+          // Check for ERC314/WAVAX pair
+          const pairAddress = await factoryContract.getPair(erc314Address, wavaxAddress)
+          
+          if (pairAddress !== '0x0000000000000000000000000000000000000000') {
+            console.log(`Found LP pair at ${pairAddress}`)
+            
+            // Get pair contract
+            const pairContract = new ethers.Contract(pairAddress, this.pairABI, provider)
+            
+            // Get reserves and other data
+            const [reserves, totalSupply, token0, token1] = await Promise.all([
+              pairContract.getReserves(),
+              pairContract.totalSupply(),
+              pairContract.token0(),
+              pairContract.token1()
+            ])
+            
+            return {
+              lpContract: pairAddress,
+              reserves: {
+                token0: reserves.reserve0.toString(),
+                token1: reserves.reserve1.toString()
+              },
+              totalSupply: totalSupply.toString(),
+              volume24h: '0', // Would need additional API calls to get this
+              fees24h: '0',   // Would need additional API calls to get this
+              hasLiquidityData: true,
+              token0Address: token0,
+              token1Address: token1
+            }
+          }
+        } catch (error) {
+          console.log(`No pair found in factory ${factoryAddress}:`, error.message)
+          continue
+        }
+      }
+      
+      return {
+        lpContract: null,
+        reserves: { token0: '0', token1: '0' },
+        totalSupply: '0',
+        volume24h: '0',
+        fees24h: '0',
+        hasLiquidityData: false
+      }
+      
+    } catch (error) {
+      console.error(`Error finding liquidity pools:`, error)
+      throw error
     }
   }
 }
