@@ -1,5 +1,12 @@
+import { DexScreenerService } from './DexScreenerService.ts'
 
 export class PoolDataService {
+  private dexScreener: DexScreenerService
+
+  constructor() {
+    this.dexScreener = new DexScreenerService()
+  }
+
   private pairFactoryABI = [
     'function getPair(address tokenA, address tokenB) view returns (address)',
     'function allPairs(uint256) view returns (address)',
@@ -35,11 +42,14 @@ export class PoolDataService {
   async getPoolData(erc314Address: string, wrapperAddress: string) {
     console.log(`Getting pool data for ERC314: ${erc314Address}, Wrapper: ${wrapperAddress}`)
 
+    // First try to find liquidity via on-chain DEX contracts
+    let onChainResult = null
     for (const rpcUrl of this.rpcUrls) {
       try {
-        const result = await this.findLiquidityPools(erc314Address, rpcUrl)
-        if (result.hasLiquidityData) {
-          return result
+        onChainResult = await this.findLiquidityPools(erc314Address, rpcUrl)
+        if (onChainResult.hasLiquidityData) {
+          console.log(`Found on-chain liquidity: ${onChainResult.lpContract}`)
+          break
         }
       } catch (error) {
         console.error(`RPC ${rpcUrl} failed for pool data:`, error)
@@ -47,14 +57,39 @@ export class PoolDataService {
       }
     }
 
-    // Return default data if no pools found
-    return {
+    // If no on-chain pools found, try DexScreener for the ERC20 token
+    if (!onChainResult?.hasLiquidityData) {
+      console.log('No on-chain LP found, checking DexScreener for ERC20 token')
+      const dexScreenerData = await this.dexScreener.searchTokenPairs(wrapperAddress)
+      
+      if (dexScreenerData) {
+        return {
+          lpContract: dexScreenerData.pairAddress,
+          reserves: {
+            token0: dexScreenerData.liquidity.base.toString(),
+            token1: dexScreenerData.liquidity.quote.toString()
+          },
+          totalSupply: '0', // Not available from DexScreener
+          volume24h: dexScreenerData.volume24h.toString(),
+          fees24h: (dexScreenerData.volume24h * 0.003).toString(), // Estimate 0.3% fee
+          hasLiquidityData: true,
+          dataSource: 'dexscreener',
+          dexScreenerUrl: dexScreenerData.url,
+          token0Address: dexScreenerData.baseToken.address,
+          token1Address: dexScreenerData.quoteToken.address
+        }
+      }
+    }
+
+    // Return on-chain result or default
+    return onChainResult || {
       lpContract: null,
       reserves: { token0: '0', token1: '0' },
       totalSupply: '0',
       volume24h: '0',
       fees24h: '0',
-      hasLiquidityData: false
+      hasLiquidityData: false,
+      dataSource: 'none'
     }
   }
 

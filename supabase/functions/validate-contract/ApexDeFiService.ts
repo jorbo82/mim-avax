@@ -32,10 +32,10 @@ export class ApexDeFiService {
 
       console.log(`Wrapper found: ${wrapperInfo.wrapperAddress} -> ${wrapperInfo.erc314Address}`)
 
-      // Get real pool data
+      // Get real pool data (now includes DexScreener integration)
       const poolData = await this.poolData.getPoolData(wrapperInfo.erc314Address, wrapperInfo.wrapperAddress)
       
-      // Calculate real metrics
+      // Calculate real metrics with external pricing
       const metrics = await this.metricsCalculator.calculateMetrics(poolData, wrapperInfo)
 
       const pool = {
@@ -59,7 +59,12 @@ export class ApexDeFiService {
             name: wrapperInfo.tokenName,
             symbol: wrapperInfo.tokenSymbol
           },
-          hasLiquidityData: poolData.hasLiquidityData
+          hasLiquidityData: poolData.hasLiquidityData,
+          dataSource: poolData.dataSource || metrics.dataSource,
+          tokenPrice: metrics.tokenPrice,
+          avaxPrice: metrics.avaxPrice,
+          dexScreenerUrl: poolData.dexScreenerUrl || metrics.dexScreenerUrl,
+          calculatedAt: metrics.calculatedAt
         }
       }
 

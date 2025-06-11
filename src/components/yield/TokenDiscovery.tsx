@@ -1,6 +1,5 @@
-
 import { useState } from 'react';
-import { Search, AlertCircle, CheckCircle, Loader2, TrendingUp, ExternalLink } from 'lucide-react';
+import { Search, AlertCircle, CheckCircle, Loader2, TrendingUp, ExternalLink, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -44,6 +43,16 @@ const TokenDiscovery = () => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
 
+  const formatPrice = (price: number) => {
+    if (!price || price === 0) return 'N/A';
+    if (price < 0.01) return `$${price.toFixed(6)}`;
+    return `$${price.toFixed(4)}`;
+  };
+
+  const openExternalLink = (url: string) => {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
   return (
     <Card className="bg-black/20 backdrop-blur-md border-purple-500/30">
       <CardHeader>
@@ -52,7 +61,7 @@ const TokenDiscovery = () => {
           Multi-Protocol Pool Discovery
         </CardTitle>
         <CardDescription className="text-purple-300">
-          Enter a token address to discover yield opportunities across all supported protocols
+          Enter a token address to discover yield opportunities with real-time pricing from DexScreener
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -134,7 +143,7 @@ const TokenDiscovery = () => {
                               </Badge>
                             </div>
                             
-                            {/* Pool metrics */}
+                            {/* Enhanced pool metrics with real data */}
                             <div className="grid grid-cols-2 gap-2 text-xs mb-2">
                               <div>
                                 <span className="text-purple-300">TVL:</span>
@@ -148,9 +157,21 @@ const TokenDiscovery = () => {
                                   {((pool.apyBase || 0) + (pool.apyReward || 0)).toFixed(2)}%
                                 </span>
                               </div>
+                              <div>
+                                <span className="text-purple-300">Volume 24h:</span>
+                                <span className="text-blue-400 ml-1">
+                                  ${pool.volume24h > 0 ? pool.volume24h.toLocaleString() : 'N/A'}
+                                </span>
+                              </div>
+                              <div>
+                                <span className="text-purple-300">Token Price:</span>
+                                <span className="text-cyan-400 ml-1">
+                                  {formatPrice(pool.metadata?.tokenPrice)}
+                                </span>
+                              </div>
                             </div>
 
-                            {/* Enhanced Apex DeFi details */}
+                            {/* Enhanced Apex DeFi details with external links */}
                             {protocol.protocol === 'apex-defi' && pool.metadata && (
                               <div className="space-y-1 text-xs border-t border-purple-500/20 pt-2">
                                 {pool.metadata.erc314Address && (
@@ -177,12 +198,27 @@ const TokenDiscovery = () => {
                                     </span>
                                   </div>
                                 )}
-                                <div className="flex justify-between">
-                                  <span className="text-purple-300">Liquidity:</span>
-                                  <span className={pool.metadata.hasLiquidityData ? 'text-green-400' : 'text-red-400'}>
-                                    {pool.metadata.hasLiquidityData ? 'Active' : 'No LP Found'}
+                                <div className="flex justify-between items-center">
+                                  <span className="text-purple-300">Data Source:</span>
+                                  <span className={`text-xs ${pool.metadata.dataSource === 'dexscreener' ? 'text-green-400' : 'text-yellow-400'}`}>
+                                    {pool.metadata.dataSource || 'on-chain'}
                                   </span>
                                 </div>
+                                
+                                {/* External links */}
+                                {pool.metadata.dexScreenerUrl && (
+                                  <div className="flex justify-center pt-2">
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      onClick={() => openExternalLink(pool.metadata.dexScreenerUrl)}
+                                      className="text-xs border-blue-500/30 text-blue-300 hover:bg-blue-500/20"
+                                    >
+                                      <ExternalLink className="w-3 h-3 mr-1" />
+                                      View on DexScreener
+                                    </Button>
+                                  </div>
+                                )}
                               </div>
                             )}
                           </div>
@@ -198,11 +234,14 @@ const TokenDiscovery = () => {
               ))}
             </div>
 
-            {/* Discovery details */}
+            {/* Enhanced discovery details */}
             {discoveryResult.totalPoolsFound > 0 && (
               <Card className="bg-gradient-to-r from-blue-900/20 to-purple-900/20 border-blue-500/30">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-blue-400 text-sm">Discovery Details</CardTitle>
+                  <CardTitle className="text-blue-400 text-sm flex items-center gap-2">
+                    <DollarSign className="w-4 h-4" />
+                    Discovery Summary
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="text-xs space-y-1">
                   <div className="flex justify-between">
@@ -217,6 +256,12 @@ const TokenDiscovery = () => {
                     <span className="text-purple-300">Active Protocols:</span>
                     <span className="text-yellow-400">
                       {discoveryResult.protocols.filter((p: any) => p.hasPool).length} / {discoveryResult.protocols.length}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-purple-300">Data Updated:</span>
+                    <span className="text-cyan-400">
+                      {new Date().toLocaleTimeString()}
                     </span>
                   </div>
                 </CardContent>
