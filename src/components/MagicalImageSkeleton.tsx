@@ -1,6 +1,6 @@
 
 import { Sparkles, Wand2, Stars } from "lucide-react";
-import { MagicalSkeleton } from "./ui/skeleton";
+import { Skeleton } from "./ui/skeleton";
 
 interface MagicalImageSkeletonProps {
   phase?: 'connecting' | 'generating' | 'finalizing';
@@ -23,7 +23,7 @@ const MagicalImageSkeleton = ({ phase = 'generating' }: MagicalImageSkeletonProp
 
   return (
     <div className="space-y-4">
-      <MagicalSkeleton className="w-full aspect-square relative overflow-hidden border-2 border-mim-teal/30">
+      <Skeleton className="w-full aspect-square relative overflow-hidden border-2 border-mim-teal/30">
         {/* Floating particles */}
         <div className="absolute inset-0">
           <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-mim-gold rounded-full animate-[float_3s_ease-in-out_infinite]" />
@@ -49,7 +49,7 @@ const MagicalImageSkeleton = ({ phase = 'generating' }: MagicalImageSkeletonProp
         <div className="absolute bottom-2 left-2">
           <Sparkles className="w-3 h-3 text-mim-orange animate-pulse" style={{ animationDelay: '1s' }} />
         </div>
-      </MagicalSkeleton>
+      </Skeleton>
       
       {/* Status message */}
       <div className="text-center space-y-2">
