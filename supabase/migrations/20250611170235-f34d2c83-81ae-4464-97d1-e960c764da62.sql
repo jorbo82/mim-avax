@@ -75,7 +75,7 @@ CREATE POLICY "Users can create discovery requests" ON public.pool_discovery_req
 INSERT INTO public.protocols (name, slug, protocol_type, website_url) VALUES
   ('Apex DeFi', 'apex-defi', 'dex', 'https://apexdefi.xyz'),
   ('Pharaoh Exchange', 'pharaoh', 'dex', 'https://pharaoh.exchange'),
-  ('Liquity Finance (LFJ)', 'lfj', 'lending', 'https://lfj.gg'),
+  ('Arena.trade', 'arena', 'dex', 'https://arena.trade'),
   ('BENQI', 'benqi', 'lending', 'https://benqi.fi')
 ON CONFLICT (slug) DO NOTHING;
 

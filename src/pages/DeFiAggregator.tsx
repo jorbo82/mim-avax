@@ -70,7 +70,7 @@ const DeFiAggregator = () => {
             </CardHeader>
             <CardContent>
               <CardDescription className="text-blue-200">
-                Discover meme coin opportunities on Arena.trade and ERC314 wrappers through Apex DeFi.
+                Discover meme coin opportunities on Arena.trade with social trading features and community-driven yields.
               </CardDescription>
             </CardContent>
           </Card>
@@ -139,8 +139,8 @@ const DeFiAggregator = () => {
           </CardHeader>
           <CardContent>
             <CardDescription className="text-yellow-200">
-              This yield farming aggregator is currently in beta. Data is simulated for demonstration purposes. 
-              Arena.trade integration focuses on meme token trading with social features and community-driven yields.
+              This yield farming aggregator is currently in beta. Arena.trade integration specializes in meme token 
+              trading with social features, community-driven yields, and volatility bonuses for high-risk/high-reward opportunities.
             </CardDescription>
           </CardContent>
         </Card>
