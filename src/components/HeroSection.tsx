@@ -1,7 +1,6 @@
 
 import MimeMeButton from "./MimeMeButton";
 import DeFiAggregatorButton from "./DeFiAggregatorButton";
-import JorboAIButton from "./JorboAIButton";
 
 const HeroSection = () => {
   return (
@@ -30,7 +29,6 @@ const HeroSection = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <MimeMeButton />
             <DeFiAggregatorButton />
-            <JorboAIButton />
           </div>
         </div>
       </div>
