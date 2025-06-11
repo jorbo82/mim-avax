@@ -38,6 +38,21 @@ const YieldOpportunities = ({ selectedProtocol }: YieldOpportunitiesProps) => {
     return { level: 'High', color: 'bg-red-500/20 text-red-400' };
   };
 
+  const getPoolTypeDisplay = (pool: any) => {
+    const poolType = pool.pool_type;
+    const protocolSlug = pool.protocol_slug;
+    
+    if (protocolSlug === 'arena') {
+      return 'Meme Trading';
+    } else if (protocolSlug === 'pharaoh' && poolType === 'concentrated_liquidity') {
+      return 'Concentrated Liquidity';
+    } else if (protocolSlug === 'pharaoh') {
+      return 'AMM Pool';
+    } else {
+      return poolType.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+    }
+  };
+
   return (
     <Card className="bg-black/20 backdrop-blur-md border-purple-500/30">
       <CardHeader>
@@ -62,12 +77,16 @@ const YieldOpportunities = ({ selectedProtocol }: YieldOpportunitiesProps) => {
             {pools.map((pool) => {
               const totalAPY = pool.apy_base + pool.apy_reward;
               const risk = getRiskLevel(totalAPY);
+              const poolTypeDisplay = getPoolTypeDisplay(pool);
               
               return (
                 <Card key={pool.id} className="bg-gradient-to-r from-purple-900/20 to-blue-900/20 border-purple-500/20 hover:border-yellow-400/50 transition-all duration-300">
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
-                      <CardTitle className="text-white text-lg">{pool.pool_name}</CardTitle>
+                      <CardTitle className="text-white text-lg">
+                        {pool.pool_name}
+                        <span className="text-sm text-purple-300 ml-2">({poolTypeDisplay})</span>
+                      </CardTitle>
                       <div className="flex items-center gap-2">
                         <Badge className={risk.color}>
                           {risk.level} Risk
@@ -113,7 +132,9 @@ const YieldOpportunities = ({ selectedProtocol }: YieldOpportunitiesProps) => {
                       <div className="text-center">
                         <div className="flex items-center justify-center gap-2 mb-2">
                           <Shield className="w-4 h-4 text-purple-400" />
-                          <span className="text-sm text-purple-300">Rewards</span>
+                          <span className="text-sm text-purple-300">
+                            {pool.protocol_slug === 'arena' ? 'Meme Bonus' : 'Rewards'}
+                          </span>
                         </div>
                         <div className="text-lg font-bold text-purple-400">
                           {pool.apy_reward.toFixed(2)}%
@@ -133,10 +154,24 @@ const YieldOpportunities = ({ selectedProtocol }: YieldOpportunitiesProps) => {
                           <span>24h Volume:</span>
                           <span>${pool.volume_24h_usd.toLocaleString()}</span>
                         </div>
-                        <div className="flex justify-between items-center">
+                        <div className="flex justify-between items-center mb-1">
                           <span>24h Fees:</span>
                           <span>${pool.fees_24h_usd.toLocaleString()}</span>
                         </div>
+                        {pool.pool_metadata?.arenaSpecific && (
+                          <div className="flex justify-between items-center">
+                            <span>Social Score:</span>
+                            <span>{pool.pool_metadata.socialMetrics?.socialScore?.toFixed(1) || 'N/A'}</span>
+                          </div>
+                        )}
+                        {pool.contract_address && pool.contract_address !== '0x0000000000000000000000000000000000000000' && (
+                          <div className="flex justify-between items-center mt-2">
+                            <span>Contract:</span>
+                            <span className="font-mono text-xs">
+                              {pool.contract_address.slice(0, 6)}...{pool.contract_address.slice(-4)}
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </CardContent>
