@@ -7,12 +7,45 @@ export class DataSourceDebugger {
       timestamp: new Date().toISOString(),
       source,
       action,
-      data,
+      data: this.sanitizeData(data),
       id: Math.random().toString(36).substr(2, 9)
     }
     
     this.logs.push(logEntry)
-    console.log(`[${source}] ${action}:`, JSON.stringify(data, null, 2))
+    console.log(`[${source}] ${action}:`, JSON.stringify(this.sanitizeData(data), null, 2))
+  }
+
+  private sanitizeData(data: any): any {
+    if (data === null || data === undefined) {
+      return data
+    }
+
+    if (typeof data === 'string' || typeof data === 'number' || typeof data === 'boolean') {
+      return data
+    }
+
+    if (Array.isArray(data)) {
+      return data.map(item => this.sanitizeData(item))
+    }
+
+    if (typeof data === 'object') {
+      const sanitized: any = {}
+      for (const [key, value] of Object.entries(data)) {
+        // Skip circular references and complex objects that can't be serialized
+        if (key === 'debugSummary' || key === 'logs' || key === 'debugLogger') {
+          continue
+        }
+        
+        try {
+          sanitized[key] = this.sanitizeData(value)
+        } catch (error) {
+          sanitized[key] = '[Circular or Non-serializable]'
+        }
+      }
+      return sanitized
+    }
+
+    return '[Non-serializable]'
   }
 
   getDebugSummary() {
@@ -20,7 +53,12 @@ export class DataSourceDebugger {
       totalLogs: this.logs.length,
       sources: [...new Set(this.logs.map(log => log.source))],
       actions: [...new Set(this.logs.map(log => log.action))],
-      logs: this.logs
+      // Don't include the actual logs array to avoid circular references
+      lastActions: this.logs.slice(-5).map(log => ({
+        source: log.source,
+        action: log.action,
+        timestamp: log.timestamp
+      }))
     }
   }
 
