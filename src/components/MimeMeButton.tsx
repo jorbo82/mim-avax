@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Sparkles, Wand2, Image } from "lucide-react";
+import { Wand2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import MimeMeModal from "./MimeMeModal";
 
@@ -11,11 +11,11 @@ const MimeMeButton = () => {
     <>
       <Button 
         onClick={() => setIsOpen(true)}
-        className="bg-gradient-to-r from-mim-pink to-mim-purple hover:from-mim-pink-dark hover:to-mim-purple-dark text-white font-bold px-6 py-3 rounded-full transform hover:scale-105 transition-all duration-200 cute-shadow border-2 border-mim-pink-light"
+        className="bg-brand-primary text-white hover:opacity-90 font-medium py-2 px-6 rounded-md transition-all duration-200 modern-shadow hover:modern-shadow-lg active:scale-95"
       >
-        <Wand2 className="mr-2 w-5 h-5" />
-        MIM-ME
-        <Sparkles className="ml-2 w-4 h-4 animate-bounce" />
+        <Wand2 className="mr-2 w-4 h-4" />
+        Create Meme
+        <Sparkles className="ml-2 w-4 h-4" />
       </Button>
       
       <MimeMeModal isOpen={isOpen} onClose={() => setIsOpen(false)} />

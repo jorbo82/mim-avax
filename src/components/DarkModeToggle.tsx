@@ -39,14 +39,14 @@ const DarkModeToggle = () => {
   return (
     <Button
       onClick={toggleDarkMode}
-      variant="outline"
+      variant="ghost"
       size="icon"
-      className="fixed top-4 right-4 z-50 bg-mim-cream/80 dark:bg-gray-800/80 backdrop-blur-sm border-mim-teal/30 hover:bg-mim-teal/20 dark:hover:bg-mim-teal/20 transition-all duration-200"
+      className="h-9 w-9 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
     >
       {isDark ? (
-        <Sun className="h-5 w-5 text-mim-gold" />
+        <Sun className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
       ) : (
-        <Moon className="h-5 w-5 text-mim-teal" />
+        <Moon className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
       )}
       <span className="sr-only">Toggle dark mode</span>
     </Button>

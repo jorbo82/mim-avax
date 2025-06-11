@@ -1,5 +1,4 @@
 
-import { useState } from "react";
 import JorboAIButton from "./JorboAIButton";
 import DarkModeToggle from "./DarkModeToggle";
 import TokenPriceWidget from "./TokenPriceWidget";
@@ -11,19 +10,19 @@ const Header = () => {
       <TokenPriceWidget />
       
       {/* Main Header */}
-      <div className="relative bg-mim-cream/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-mim-teal/20 dark:border-mim-teal-light/20">
+      <div className="relative bg-background/95 backdrop-blur-md border-b border-neutral-200 dark:border-neutral-800">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             {/* Logo/Brand Section */}
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-gradient-to-r from-mim-teal to-mim-gold rounded-full">
+              <div className="p-2 bg-brand-primary rounded-lg">
                 <img
                   src="/lovable-uploads/2b4c14a4-f9f0-41fa-8dfd-84538e909268.png"
                   alt="MIM Logo"
-                  className="w-8 h-8"
+                  className="w-6 h-6"
                 />
               </div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-mim-teal to-mim-gold bg-clip-text text-transparent">
+              <h1 className="text-xl font-semibold text-foreground">
                 $MIM
               </h1>
             </div>

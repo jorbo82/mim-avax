@@ -7,9 +7,10 @@ const DeFiAggregatorButton = () => {
   return (
     <Link to="/defi-aggregator">
       <Button 
-        className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold px-6 py-3 rounded-full transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-green-500/25 border-2 border-green-400/50"
+        variant="outline"
+        className="border-neutral-300 text-foreground hover:bg-neutral-100 font-medium py-2 px-6 rounded-md transition-all duration-200 modern-shadow hover:modern-shadow-lg active:scale-95"
       >
-        <TrendingUp className="mr-2 w-5 h-5" />
+        <TrendingUp className="mr-2 w-4 h-4" />
         Yield Farming
       </Button>
     </Link>
