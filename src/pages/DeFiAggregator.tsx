@@ -4,14 +4,22 @@ import { ArrowLeft, TrendingUp, Zap, Shield, DollarSign } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BackgroundSparkles from "@/components/BackgroundSparkles";
-import SwapInterface from "@/components/defi/SwapInterface";
-import ExchangeComparison from "@/components/defi/ExchangeComparison";
 import TokenPriceWidget from "@/components/TokenPriceWidget";
+import TokenDiscovery from "@/components/yield/TokenDiscovery";
+import YieldOpportunities from "@/components/yield/YieldOpportunities";
 
 const DeFiAggregator = () => {
-  const [selectedFromToken, setSelectedFromToken] = useState<string>('AVAX');
-  const [selectedToToken, setSelectedToToken] = useState<string>('USDC');
+  const [selectedProtocol, setSelectedProtocol] = useState<string>('');
+
+  const protocols = [
+    { name: 'All Protocols', slug: '' },
+    { name: 'Apex DeFi', slug: 'apex-defi' },
+    { name: 'Pharaoh', slug: 'pharaoh' },
+    { name: 'LFJ', slug: 'lfj' },
+    { name: 'BENQI', slug: 'benqi' }
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 text-white overflow-hidden relative">
@@ -29,10 +37,10 @@ const DeFiAggregator = () => {
           </Link>
           <div>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
-              DeFi Aggregator
+              Yield Farming Aggregator
             </h1>
             <p className="text-purple-300 mt-2">
-              Find the best rates across multiple DEX platforms
+              Discover and compare yield farming opportunities across DeFi protocols
             </p>
           </div>
         </div>
@@ -43,12 +51,12 @@ const DeFiAggregator = () => {
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-green-400" />
-                <CardTitle className="text-green-400">Best Rates</CardTitle>
+                <CardTitle className="text-green-400">Best Yields</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
               <CardDescription className="text-green-200">
-                Compare rates across multiple exchanges to get the best deal for your swaps.
+                Compare APY rates across multiple protocols to maximize your yield farming returns.
               </CardDescription>
             </CardContent>
           </Card>
@@ -57,12 +65,12 @@ const DeFiAggregator = () => {
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
                 <Zap className="w-5 h-5 text-blue-400" />
-                <CardTitle className="text-blue-400">Lightning Fast</CardTitle>
+                <CardTitle className="text-blue-400">Token Discovery</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
               <CardDescription className="text-blue-200">
-                Execute trades quickly with real-time rate updates and instant comparisons.
+                Discover ERC314 wrapper opportunities for any ERC20 token through Apex DeFi.
               </CardDescription>
             </CardContent>
           </Card>
@@ -71,39 +79,55 @@ const DeFiAggregator = () => {
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
                 <Shield className="w-5 h-5 text-purple-400" />
-                <CardTitle className="text-purple-400">Secure</CardTitle>
+                <CardTitle className="text-purple-400">Risk Analysis</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
               <CardDescription className="text-purple-200">
-                Trade with confidence using secure, audited smart contracts and protocols.
+                Understand risks and rewards with detailed analytics and impermanent loss calculations.
               </CardDescription>
             </CardContent>
           </Card>
         </div>
 
-        {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Swap Interface */}
-          <div className="lg:col-span-2">
-            <SwapInterface 
-              selectedFromToken={selectedFromToken}
-              selectedToToken={selectedToToken}
-              onTokenChange={(from, to) => {
-                setSelectedFromToken(from);
-                setSelectedToToken(to);
-              }}
-            />
-          </div>
-
-          {/* Exchange Comparison */}
-          <div className="lg:col-span-1">
-            <ExchangeComparison 
-              fromToken={selectedFromToken}
-              toToken={selectedToToken}
-            />
+        {/* Protocol Filter */}
+        <div className="mb-8">
+          <div className="flex flex-wrap gap-2">
+            {protocols.map((protocol) => (
+              <Button
+                key={protocol.slug}
+                variant={selectedProtocol === protocol.slug ? "default" : "outline"}
+                onClick={() => setSelectedProtocol(protocol.slug)}
+                className={selectedProtocol === protocol.slug 
+                  ? "bg-gradient-to-r from-purple-500 to-blue-500" 
+                  : "border-purple-500/30 text-purple-300 hover:bg-purple-500/20"
+                }
+              >
+                {protocol.name}
+              </Button>
+            ))}
           </div>
         </div>
+
+        {/* Main Content */}
+        <Tabs defaultValue="opportunities" className="space-y-6">
+          <TabsList className="bg-black/20 border border-purple-500/30">
+            <TabsTrigger value="opportunities" className="data-[state=active]:bg-purple-500/30">
+              Yield Opportunities
+            </TabsTrigger>
+            <TabsTrigger value="discovery" className="data-[state=active]:bg-purple-500/30">
+              Token Discovery
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="opportunities">
+            <YieldOpportunities selectedProtocol={selectedProtocol} />
+          </TabsContent>
+
+          <TabsContent value="discovery">
+            <TokenDiscovery />
+          </TabsContent>
+        </Tabs>
 
         {/* Beta Warning */}
         <Card className="mt-8 bg-gradient-to-r from-yellow-900/50 to-orange-900/50 border-yellow-500/30">
@@ -115,8 +139,8 @@ const DeFiAggregator = () => {
           </CardHeader>
           <CardContent>
             <CardDescription className="text-yellow-200">
-              This DeFi aggregator is currently in beta. All trades are simulated for demonstration purposes. 
-              In a production environment, this would connect to real DEX protocols for actual trading.
+              This yield farming aggregator is currently in beta. Data is simulated for demonstration purposes. 
+              In production, this would connect to live smart contracts for real-time yield farming data.
             </CardDescription>
           </CardContent>
         </Card>

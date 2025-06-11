@@ -292,6 +292,42 @@ export type Database = {
         }
         Relationships: []
       }
+      pool_discovery_requests: {
+        Row: {
+          contract_address: string
+          created_at: string
+          discovery_method: string
+          error_message: string | null
+          id: string
+          pools_discovered: number | null
+          user_id: string | null
+          validation_data: Json | null
+          validation_status: string
+        }
+        Insert: {
+          contract_address: string
+          created_at?: string
+          discovery_method?: string
+          error_message?: string | null
+          id?: string
+          pools_discovered?: number | null
+          user_id?: string | null
+          validation_data?: Json | null
+          validation_status?: string
+        }
+        Update: {
+          contract_address?: string
+          created_at?: string
+          discovery_method?: string
+          error_message?: string | null
+          id?: string
+          pools_discovered?: number | null
+          user_id?: string | null
+          validation_data?: Json | null
+          validation_status?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -313,6 +349,42 @@ export type Database = {
           id?: string
           updated_at?: string
           username?: string | null
+        }
+        Relationships: []
+      }
+      protocols: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          logo_url: string | null
+          name: string
+          protocol_type: string
+          slug: string
+          updated_at: string
+          website_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          logo_url?: string | null
+          name: string
+          protocol_type?: string
+          slug: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          logo_url?: string | null
+          name?: string
+          protocol_type?: string
+          slug?: string
+          updated_at?: string
+          website_url?: string | null
         }
         Relationships: []
       }
@@ -425,6 +497,83 @@ export type Database = {
             columns: ["job_id"]
             isOneToOne: false
             referencedRelation: "image_generation_jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      yield_pools: {
+        Row: {
+          apy_base: number | null
+          apy_reward: number | null
+          base_token_address: string | null
+          base_token_symbol: string | null
+          contract_address: string
+          created_at: string
+          fees_24h_usd: number | null
+          id: string
+          is_active: boolean
+          last_updated: string | null
+          pool_identifier: string
+          pool_metadata: Json | null
+          pool_name: string
+          pool_type: string
+          protocol_id: string
+          quote_token_address: string | null
+          quote_token_symbol: string | null
+          tvl_usd: number | null
+          updated_at: string
+          volume_24h_usd: number | null
+        }
+        Insert: {
+          apy_base?: number | null
+          apy_reward?: number | null
+          base_token_address?: string | null
+          base_token_symbol?: string | null
+          contract_address: string
+          created_at?: string
+          fees_24h_usd?: number | null
+          id?: string
+          is_active?: boolean
+          last_updated?: string | null
+          pool_identifier: string
+          pool_metadata?: Json | null
+          pool_name: string
+          pool_type?: string
+          protocol_id: string
+          quote_token_address?: string | null
+          quote_token_symbol?: string | null
+          tvl_usd?: number | null
+          updated_at?: string
+          volume_24h_usd?: number | null
+        }
+        Update: {
+          apy_base?: number | null
+          apy_reward?: number | null
+          base_token_address?: string | null
+          base_token_symbol?: string | null
+          contract_address?: string
+          created_at?: string
+          fees_24h_usd?: number | null
+          id?: string
+          is_active?: boolean
+          last_updated?: string | null
+          pool_identifier?: string
+          pool_metadata?: Json | null
+          pool_name?: string
+          pool_type?: string
+          protocol_id?: string
+          quote_token_address?: string | null
+          quote_token_symbol?: string | null
+          tvl_usd?: number | null
+          updated_at?: string
+          volume_24h_usd?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "yield_pools_protocol_id_fkey"
+            columns: ["protocol_id"]
+            isOneToOne: false
+            referencedRelation: "protocols"
             referencedColumns: ["id"]
           },
         ]
