@@ -1,7 +1,6 @@
-
 import { ApexDeFiService } from './ApexDeFiService.ts'
 import { PharaohService } from './PharaohService.ts'
-import { LFJService } from './LFJService.ts'
+import { ArenaService } from './ArenaService.ts'
 import { BenqiService } from './BenqiService.ts'
 
 export class MultiProtocolValidationService {
@@ -13,7 +12,7 @@ export class MultiProtocolValidationService {
     this.services = {
       'apex-defi': new ApexDeFiService(supabase),
       'pharaoh': new PharaohService(supabase),
-      'lfj': new LFJService(supabase),
+      'arena': new ArenaService(supabase),
       'benqi': new BenqiService(supabase)
     }
   }

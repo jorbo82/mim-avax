@@ -17,7 +17,7 @@ const DeFiAggregator = () => {
     { name: 'All Protocols', slug: '' },
     { name: 'Apex DeFi', slug: 'apex-defi' },
     { name: 'Pharaoh', slug: 'pharaoh' },
-    { name: 'LFJ', slug: 'lfj' },
+    { name: 'Arena.trade', slug: 'arena' },
     { name: 'BENQI', slug: 'benqi' }
   ];
 
@@ -65,12 +65,12 @@ const DeFiAggregator = () => {
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
                 <Zap className="w-5 h-5 text-blue-400" />
-                <CardTitle className="text-blue-400">Token Discovery</CardTitle>
+                <CardTitle className="text-blue-400">Meme Token Discovery</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
               <CardDescription className="text-blue-200">
-                Discover ERC314 wrapper opportunities for any ERC20 token through Apex DeFi.
+                Discover meme coin opportunities on Arena.trade and ERC314 wrappers through Apex DeFi.
               </CardDescription>
             </CardContent>
           </Card>
@@ -140,7 +140,7 @@ const DeFiAggregator = () => {
           <CardContent>
             <CardDescription className="text-yellow-200">
               This yield farming aggregator is currently in beta. Data is simulated for demonstration purposes. 
-              In production, this would connect to live smart contracts for real-time yield farming data.
+              Arena.trade integration focuses on meme token trading with social features and community-driven yields.
             </CardDescription>
           </CardContent>
         </Card>

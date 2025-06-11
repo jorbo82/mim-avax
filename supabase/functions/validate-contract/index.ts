@@ -14,7 +14,7 @@ serve(async (req) => {
   }
 
   try {
-    const { contractAddress, protocols = ['apex-defi', 'pharaoh', 'lfj', 'benqi'] } = await req.json()
+    const { contractAddress, protocols = ['apex-defi', 'pharaoh', 'arena', 'benqi'] } = await req.json()
     
     if (!contractAddress) {
       return new Response(
