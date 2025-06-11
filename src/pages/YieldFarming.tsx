@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import BackgroundSparkles from "@/components/BackgroundSparkles";
+import Header from "@/components/Header";
 import YieldFarmingHero from "@/components/yield-farming/YieldFarmingHero";
 import ProtocolOverview from "@/components/yield-farming/ProtocolOverview";
 import YieldMetrics from "@/components/yield-farming/YieldMetrics";
@@ -12,8 +12,8 @@ const YieldFarming = () => {
   const [selectedProtocol, setSelectedProtocol] = useState<string | null>(null);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 text-white overflow-hidden relative">
-      <BackgroundSparkles />
+    <div className="min-h-screen bg-background text-foreground">
+      <Header />
       <YieldFarmingHero />
       <ProtocolOverview 
         selectedProtocol={selectedProtocol}

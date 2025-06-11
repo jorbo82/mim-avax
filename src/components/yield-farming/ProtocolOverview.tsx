@@ -43,50 +43,50 @@ const ProtocolOverview = ({ selectedProtocol, onProtocolSelect }: ProtocolOvervi
   ];
 
   return (
-    <section className="relative z-10 container mx-auto px-4 py-20">
+    <section className="relative container mx-auto px-4 py-20">
       <div className="text-center mb-16">
-        <h3 className="text-4xl font-bold mb-6 text-yellow-400 flex items-center justify-center gap-3 leading-tight">
-          <Shield className="w-8 h-8" />
+        <h3 className="text-4xl font-bold mb-6 text-foreground flex items-center justify-center gap-3 leading-tight">
+          <Shield className="w-8 h-8 text-brand-primary" />
           Protocol Overview
-          <TrendingUp className="w-8 h-8" />
+          <TrendingUp className="w-8 h-8 text-brand-accent" />
         </h3>
-        <p className="text-xl text-purple-300 leading-relaxed">Explore the top DeFi protocols on Avalanche</p>
+        <p className="text-xl text-neutral-600 dark:text-neutral-400 leading-relaxed">Explore the top DeFi protocols on Avalanche</p>
       </div>
       
       <div className="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
         {protocols.map((protocol) => (
           <Card 
             key={protocol.id}
-            className={`bg-black/20 backdrop-blur-md border-purple-500/30 hover:border-yellow-400/50 transition-all duration-300 transform hover:scale-105 cursor-pointer ${
-              selectedProtocol === protocol.id ? 'ring-2 ring-yellow-400 border-yellow-400' : ''
+            className={`bg-card border border-neutral-200 dark:border-neutral-800 hover:border-brand-primary/50 transition-all duration-300 transform hover:scale-105 cursor-pointer modern-shadow hover:modern-shadow-lg ${
+              selectedProtocol === protocol.id ? 'ring-2 ring-brand-primary border-brand-primary' : ''
             }`}
             onClick={() => onProtocolSelect(protocol.id)}
           >
             <CardHeader className="text-center pb-4">
               <div className="text-6xl mb-6">{protocol.logo}</div>
-              <CardTitle className="text-yellow-400 text-2xl leading-tight">{protocol.name}</CardTitle>
+              <CardTitle className="text-brand-primary text-2xl leading-tight">{protocol.name}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <p className="text-purple-300 text-sm leading-relaxed">{protocol.description}</p>
+              <p className="text-neutral-600 dark:text-neutral-400 text-sm leading-relaxed">{protocol.description}</p>
               
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-green-500/20 rounded-lg p-4 text-center">
-                  <div className="text-sm text-green-300 mb-1">TVL</div>
-                  <div className="font-bold text-green-400 text-lg">{protocol.tvl}</div>
+                <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4 text-center">
+                  <div className="text-sm text-green-600 dark:text-green-400 mb-1">TVL</div>
+                  <div className="font-bold text-green-600 dark:text-green-400 text-lg">{protocol.tvl}</div>
                 </div>
-                <div className="bg-yellow-500/20 rounded-lg p-4 text-center">
-                  <div className="text-sm text-yellow-300 mb-1">APY Range</div>
-                  <div className="font-bold text-yellow-400 text-lg">{protocol.apy}</div>
+                <div className="bg-brand-accent/10 border border-brand-accent/20 rounded-lg p-4 text-center">
+                  <div className="text-sm text-brand-accent mb-1">APY Range</div>
+                  <div className="font-bold text-brand-accent text-lg">{protocol.apy}</div>
                 </div>
               </div>
 
               <div className="space-y-3">
-                <div className="text-sm font-semibold text-blue-300">Key Features:</div>
+                <div className="text-sm font-semibold text-brand-primary">Key Features:</div>
                 <div className="flex flex-wrap gap-2">
                   {protocol.features.map((feature, index) => (
                     <span 
                       key={index}
-                      className="bg-blue-500/20 text-blue-300 px-3 py-1 rounded-md text-xs"
+                      className="bg-brand-primary/10 text-brand-primary border border-brand-primary/20 px-3 py-1 rounded-md text-xs"
                     >
                       {feature}
                     </span>
@@ -95,7 +95,7 @@ const ProtocolOverview = ({ selectedProtocol, onProtocolSelect }: ProtocolOvervi
               </div>
 
               <Button 
-                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 mt-4"
+                className="w-full bg-brand-primary text-white hover:opacity-90 mt-4 modern-shadow"
                 onClick={(e) => {
                   e.stopPropagation();
                   window.open(protocol.website, '_blank');

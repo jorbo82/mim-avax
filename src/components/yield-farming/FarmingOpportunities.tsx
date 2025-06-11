@@ -75,10 +75,10 @@ const FarmingOpportunities = () => {
 
   const getRiskColor = (risk: string) => {
     switch (risk.toLowerCase()) {
-      case "low": return "bg-green-500/20 text-green-400 border-green-500/30";
-      case "medium": return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30";
-      case "high": return "bg-red-500/20 text-red-400 border-red-500/30";
-      default: return "bg-gray-500/20 text-gray-400 border-gray-500/30";
+      case "low": return "bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20";
+      case "medium": return "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20";
+      case "high": return "bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20";
+      default: return "bg-neutral-500/10 text-neutral-600 dark:text-neutral-400 border-neutral-500/20";
     }
   };
 
@@ -93,19 +93,19 @@ const FarmingOpportunities = () => {
   };
 
   return (
-    <section className="relative z-10 container mx-auto px-4 py-20">
+    <section className="relative container mx-auto px-4 py-20">
       <div className="text-center mb-16">
-        <h3 className="text-4xl font-bold mb-6 text-yellow-400 flex items-center justify-center gap-3 leading-tight">
-          <Sparkles className="w-8 h-8" />
+        <h3 className="text-4xl font-bold mb-6 text-foreground flex items-center justify-center gap-3 leading-tight">
+          <Sparkles className="w-8 h-8 text-brand-primary" />
           Farming Opportunities
-          <TrendingUp className="w-8 h-8" />
+          <TrendingUp className="w-8 h-8 text-brand-accent" />
         </h3>
-        <p className="text-xl text-purple-300 leading-relaxed">Discover the best yield farming opportunities across Avalanche protocols</p>
+        <p className="text-xl text-neutral-600 dark:text-neutral-400 leading-relaxed">Discover the best yield farming opportunities across Avalanche protocols</p>
       </div>
       
       <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-8 max-w-7xl mx-auto">
         {opportunities.map((opportunity, index) => (
-          <Card key={index} className="bg-black/20 backdrop-blur-md border-purple-500/30 hover:border-yellow-400/50 transition-all duration-300 transform hover:scale-105">
+          <Card key={index} className="bg-card border border-neutral-200 dark:border-neutral-800 hover:border-brand-primary/50 transition-all duration-300 transform hover:scale-105 modern-shadow hover:modern-shadow-lg">
             <CardHeader className="pb-4">
               <div className="flex items-center justify-between mb-3">
                 <Badge 
@@ -114,35 +114,35 @@ const FarmingOpportunities = () => {
                 >
                   {opportunity.risk} Risk
                 </Badge>
-                <Badge variant="outline" className="bg-blue-500/20 text-blue-400 border-blue-500/30">
+                <Badge variant="outline" className="bg-brand-primary/10 text-brand-primary border-brand-primary/20">
                   {getCategoryIcon(opportunity.category)}
                   <span className="ml-1">{opportunity.category}</span>
                 </Badge>
               </div>
-              <CardTitle className="text-yellow-400 text-lg leading-tight">{opportunity.protocol}</CardTitle>
-              <div className="text-purple-300 font-medium leading-relaxed">{opportunity.pool}</div>
+              <CardTitle className="text-brand-primary text-lg leading-tight">{opportunity.protocol}</CardTitle>
+              <div className="text-neutral-600 dark:text-neutral-400 font-medium leading-relaxed">{opportunity.pool}</div>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-green-500/20 rounded-lg p-3 text-center">
-                  <div className="text-sm text-green-300 mb-1">APY</div>
-                  <div className="font-bold text-green-400 text-xl">{opportunity.apy}</div>
+                <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3 text-center">
+                  <div className="text-sm text-green-600 dark:text-green-400 mb-1">APY</div>
+                  <div className="font-bold text-green-600 dark:text-green-400 text-xl">{opportunity.apy}</div>
                 </div>
-                <div className="bg-blue-500/20 rounded-lg p-3 text-center">
-                  <div className="text-sm text-blue-300 mb-1">TVL</div>
-                  <div className="font-bold text-blue-400 text-xl">{opportunity.tvl}</div>
+                <div className="bg-brand-primary/10 border border-brand-primary/20 rounded-lg p-3 text-center">
+                  <div className="text-sm text-brand-primary mb-1">TVL</div>
+                  <div className="font-bold text-brand-primary text-xl">{opportunity.tvl}</div>
                 </div>
               </div>
 
-              <p className="text-purple-200 text-sm leading-relaxed">{opportunity.description}</p>
+              <p className="text-neutral-600 dark:text-neutral-400 text-sm leading-relaxed">{opportunity.description}</p>
 
               <div className="space-y-3">
-                <div className="text-sm font-semibold text-yellow-300">Rewards:</div>
+                <div className="text-sm font-semibold text-brand-accent">Rewards:</div>
                 <div className="flex flex-wrap gap-2">
                   {opportunity.rewards.map((reward, idx) => (
                     <span 
                       key={idx}
-                      className="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-md text-xs"
+                      className="bg-brand-accent/10 text-brand-accent border border-brand-accent/20 px-3 py-1 rounded-md text-xs"
                     >
                       {reward}
                     </span>
@@ -152,17 +152,17 @@ const FarmingOpportunities = () => {
 
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <span className="text-purple-300">Min Deposit:</span>
-                  <div className="font-semibold text-white mt-1">{opportunity.minDeposit}</div>
+                  <span className="text-neutral-600 dark:text-neutral-400">Min Deposit:</span>
+                  <div className="font-semibold text-foreground mt-1">{opportunity.minDeposit}</div>
                 </div>
                 <div>
-                  <span className="text-purple-300">Lock Period:</span>
-                  <div className="font-semibold text-white mt-1">{opportunity.lockPeriod}</div>
+                  <span className="text-neutral-600 dark:text-neutral-400">Lock Period:</span>
+                  <div className="font-semibold text-foreground mt-1">{opportunity.lockPeriod}</div>
                 </div>
               </div>
 
               <Button 
-                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 mt-4"
+                className="w-full bg-brand-primary text-white hover:opacity-90 mt-4 modern-shadow"
                 onClick={() => window.open(opportunity.url, '_blank')}
               >
                 <Sparkles className="mr-2 w-4 h-4" />

@@ -55,33 +55,33 @@ const MobileEditorTabs = ({
   onSendBackward
 }: MobileEditorTabsProps) => {
   return (
-    <div className="border-t border-purple-500/30 bg-purple-900/30 shrink-0">
+    <div className="border-t border-neutral-200 dark:border-neutral-800 bg-background shrink-0">
       <Tabs defaultValue="assets" className="w-full">
-        <TabsList className="grid w-full grid-cols-4 bg-transparent border-0 h-12">
+        <TabsList className="grid w-full grid-cols-4 bg-neutral-100 dark:bg-neutral-900 border-0 h-12 rounded-none">
           <TabsTrigger 
             value="canvas" 
-            className="flex flex-col items-center gap-1 data-[state=active]:bg-purple-700/50 text-white"
+            className="flex flex-col items-center gap-1 data-[state=active]:bg-background data-[state=active]:text-brand-primary text-neutral-600 dark:text-neutral-400"
           >
             <Image className="w-4 h-4" />
             <span className="text-xs">Canvas</span>
           </TabsTrigger>
           <TabsTrigger 
             value="text" 
-            className="flex flex-col items-center gap-1 data-[state=active]:bg-purple-700/50 text-white"
+            className="flex flex-col items-center gap-1 data-[state=active]:bg-background data-[state=active]:text-brand-primary text-neutral-600 dark:text-neutral-400"
           >
             <Type className="w-4 h-4" />
             <span className="text-xs">Text</span>
           </TabsTrigger>
           <TabsTrigger 
             value="assets" 
-            className="flex flex-col items-center gap-1 data-[state=active]:bg-purple-700/50 text-white"
+            className="flex flex-col items-center gap-1 data-[state=active]:bg-background data-[state=active]:text-brand-primary text-neutral-600 dark:text-neutral-400"
           >
             <Layers className="w-4 h-4" />
             <span className="text-xs">Assets</span>
           </TabsTrigger>
           <TabsTrigger 
             value="tools" 
-            className="flex flex-col items-center gap-1 data-[state=active]:bg-purple-700/50 text-white"
+            className="flex flex-col items-center gap-1 data-[state=active]:bg-background data-[state=active]:text-brand-primary text-neutral-600 dark:text-neutral-400"
           >
             <Settings className="w-4 h-4" />
             <span className="text-xs">Tools</span>
