@@ -11,10 +11,10 @@ const TokenPriceWidget = () => {
 
   if (error) {
     return (
-      <div className="w-full bg-neutral-100 dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800 py-3">
+      <div className="w-full bg-neutral-50 dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800 py-3">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
-            <p className="text-neutral-500 text-sm">Unable to load live token data</p>
+            <p className="text-neutral-500 dark:text-neutral-400 text-sm">Unable to load live token data</p>
             <div className="hidden md:flex gap-3">
               <MimeMeButton />
               <DeFiAggregatorButton />
@@ -32,17 +32,17 @@ const TokenPriceWidget = () => {
 
   if (isLoading || !tokenData) {
     return (
-      <div className="w-full bg-neutral-100 dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800 py-4">
+      <div className="w-full bg-neutral-50 dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800 py-4">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-8 flex-wrap">
               <div className="flex items-center gap-2">
-                <Skeleton className="h-6 w-16 bg-neutral-300 dark:bg-neutral-700" />
-                <Skeleton className="h-4 w-12 bg-neutral-300 dark:bg-neutral-700" />
+                <Skeleton className="h-6 w-16 bg-neutral-200 dark:bg-neutral-700" />
+                <Skeleton className="h-4 w-12 bg-neutral-200 dark:bg-neutral-700" />
               </div>
-              <Skeleton className="h-4 w-24 bg-neutral-300 dark:bg-neutral-700" />
-              <Skeleton className="h-4 w-20 bg-neutral-300 dark:bg-neutral-700" />
-              <Skeleton className="h-4 w-16 bg-neutral-300 dark:bg-neutral-700" />
+              <Skeleton className="h-4 w-24 bg-neutral-200 dark:bg-neutral-700" />
+              <Skeleton className="h-4 w-20 bg-neutral-200 dark:bg-neutral-700" />
+              <Skeleton className="h-4 w-16 bg-neutral-200 dark:bg-neutral-700" />
             </div>
             <div className="hidden md:flex gap-3">
               <MimeMeButton />
@@ -63,17 +63,17 @@ const TokenPriceWidget = () => {
   const isPositive = priceChange24h >= 0;
 
   return (
-    <div className="w-full bg-neutral-100 dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800 py-4">
+    <div className="w-full bg-neutral-50 dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800 py-4">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-6 md:gap-8 flex-wrap text-sm md:text-base">
             {/* Price */}
             <div className="flex items-center gap-2">
               <DollarSign className="w-4 h-4 text-brand-primary" />
-              <span className="text-xl font-semibold text-foreground">
+              <span className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
                 {formatPrice(tokenData.priceUsd || '0')}
               </span>
-              <div className={`flex items-center gap-1 ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
+              <div className={`flex items-center gap-1 ${isPositive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                 {isPositive ? (
                   <TrendingUp className="w-4 h-4" />
                 ) : (
@@ -89,7 +89,7 @@ const TokenPriceWidget = () => {
             <div className="flex items-center gap-2 text-neutral-600 dark:text-neutral-400">
               <BarChart3 className="w-4 h-4" />
               <span className="text-xs">MCap:</span>
-              <span className="font-medium text-foreground">
+              <span className="font-medium text-neutral-900 dark:text-neutral-100">
                 ${formatLargeNumber(tokenData.marketCap || 0)}
               </span>
             </div>
@@ -98,7 +98,7 @@ const TokenPriceWidget = () => {
             <div className="flex items-center gap-2 text-neutral-600 dark:text-neutral-400">
               <Zap className="w-4 h-4" />
               <span className="text-xs">Vol 24h:</span>
-              <span className="font-medium text-foreground">
+              <span className="font-medium text-neutral-900 dark:text-neutral-100">
                 ${formatLargeNumber(tokenData.volume?.h24 || 0)}
               </span>
             </div>
@@ -107,7 +107,7 @@ const TokenPriceWidget = () => {
             <div className="flex items-center gap-2 text-neutral-600 dark:text-neutral-400">
               <Droplets className="w-4 h-4" />
               <span className="text-xs">Liquidity:</span>
-              <span className="font-medium text-foreground">
+              <span className="font-medium text-neutral-900 dark:text-neutral-100">
                 ${formatLargeNumber(tokenData.liquidity?.usd || 0)}
               </span>
             </div>
@@ -115,7 +115,7 @@ const TokenPriceWidget = () => {
             {/* Live indicator */}
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="text-xs text-green-600 font-medium">LIVE</span>
+              <span className="text-xs text-green-600 dark:text-green-400 font-medium">LIVE</span>
             </div>
           </div>
 
