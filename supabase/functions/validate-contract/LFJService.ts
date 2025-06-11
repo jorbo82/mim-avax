@@ -7,17 +7,17 @@ export class LFJService {
   private supabase: any
   private dexScreener: EnhancedDexScreenerService
   private protocol: LFJProtocolService
-  private debugger: DataSourceDebugger
+  private debugLogger: DataSourceDebugger
 
   constructor(supabase: any) {
     this.supabase = supabase
-    this.debugger = new DataSourceDebugger()
-    this.dexScreener = new EnhancedDexScreenerService(this.debugger)
-    this.protocol = new LFJProtocolService(this.debugger)
+    this.debugLogger = new DataSourceDebugger()
+    this.dexScreener = new EnhancedDexScreenerService(this.debugLogger)
+    this.protocol = new LFJProtocolService(this.debugLogger)
   }
 
   async findPools(tokenAddress: string) {
-    this.debugger.log('LFJ_SERVICE', 'FIND_POOLS_START', { tokenAddress })
+    this.debugLogger.log('LFJ_SERVICE', 'FIND_POOLS_START', { tokenAddress })
 
     try {
       // Step 1: Try to get LFJ-specific data from DexScreener
@@ -27,11 +27,11 @@ export class LFJService {
       const protocolData = await this.protocol.getPoolData(tokenAddress)
       
       if (!dexScreenerData && !protocolData) {
-        this.debugger.log('LFJ_SERVICE', 'NO_POOLS_FOUND', { tokenAddress })
+        this.debugLogger.log('LFJ_SERVICE', 'NO_POOLS_FOUND', { tokenAddress })
         return {
           hasPool: false,
           message: 'No LFJ pools found for this ERC20 token',
-          debugInfo: this.debugger.getDebugSummary()
+          debugInfo: this.debugLogger.getDebugSummary()
         }
       }
 
@@ -50,12 +50,12 @@ export class LFJService {
         apyData.rewardAPY = Math.random() * 25 + 10 // 10-35% estimated (LFJ typically higher)
         apyData.totalAPY = apyData.baseAPY + apyData.rewardAPY
         
-        this.debugger.log('LFJ_SERVICE', 'USING_FALLBACK_APY', apyData)
+        this.debugLogger.log('LFJ_SERVICE', 'USING_FALLBACK_APY', apyData)
       }
 
       // Step 5: Validate calculated values
-      const apyValidation = this.debugger.validateAPY(apyData.totalAPY, 'lfj')
-      const tvlValidation = this.debugger.validateTVL(tvl, 'lfj')
+      const apyValidation = this.debugLogger.validateAPY(apyData.totalAPY, 'lfj')
+      const tvlValidation = this.debugLogger.validateTVL(tvl, 'lfj')
 
       const pool = {
         contractAddress: dexScreenerData?.pairAddress || '0x0000000000000000000000000000000000000000',
@@ -91,7 +91,7 @@ export class LFJService {
             legacyPools: protocolData.legacyPools?.length || 0,
             hasRealMetrics: !!protocolData.weeklyMetrics
           } : null,
-          debugSummary: this.debugger.getDebugSummary(),
+          debugSummary: this.debugLogger.getDebugSummary(),
           tokenInfo: {
             name: dexScreenerData?.baseToken.name || 'Unknown',
             symbol: dexScreenerData?.baseToken.symbol || 'TOKEN',
@@ -100,7 +100,7 @@ export class LFJService {
         }
       }
 
-      this.debugger.log('LFJ_SERVICE', 'POOL_CREATED', pool)
+      this.debugLogger.log('LFJ_SERVICE', 'POOL_CREATED', pool)
 
       return {
         hasPool: true,
@@ -108,11 +108,11 @@ export class LFJService {
       }
       
     } catch (error) {
-      this.debugger.log('LFJ_SERVICE', 'ERROR', { error: error.message })
+      this.debugLogger.log('LFJ_SERVICE', 'ERROR', { error: error.message })
       return {
         hasPool: false,
         message: `Error discovering LFJ pools: ${error.message}`,
-        debugInfo: this.debugger.getDebugSummary()
+        debugInfo: this.debugLogger.getDebugSummary()
       }
     }
   }

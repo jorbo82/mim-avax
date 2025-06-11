@@ -2,7 +2,7 @@
 import { DataSourceDebugger } from './DataSourceDebugger.ts'
 
 export class PharaohProtocolService {
-  private debugger: DataSourceDebugger
+  private debugLogger: DataSourceDebugger
   
   // Pharaoh contract addresses on Avalanche
   private contracts = {
@@ -12,12 +12,12 @@ export class PharaohProtocolService {
     quoterV2: '0xAAA91e283126774b3bb513fD5922976d5212dc49'
   }
 
-  constructor(debugger: DataSourceDebugger) {
-    this.debugger = debugger
+  constructor(debugLogger: DataSourceDebugger) {
+    this.debugLogger = debugLogger
   }
 
   async getPoolData(tokenAddress: string) {
-    this.debugger.log('PHARAOH_PROTOCOL', 'POOL_QUERY_START', { tokenAddress })
+    this.debugLogger.log('PHARAOH_PROTOCOL', 'POOL_QUERY_START', { tokenAddress })
 
     try {
       // For now, we'll simulate the protocol-specific data until we can integrate actual contracts
@@ -48,18 +48,18 @@ export class PharaohProtocolService {
         }
       }
 
-      this.debugger.log('PHARAOH_PROTOCOL', 'POOL_DATA_RETRIEVED', mockPharaohData)
+      this.debugLogger.log('PHARAOH_PROTOCOL', 'POOL_DATA_RETRIEVED', mockPharaohData)
       return mockPharaohData
 
     } catch (error) {
-      this.debugger.log('PHARAOH_PROTOCOL', 'POOL_QUERY_ERROR', { error: error.message })
+      this.debugLogger.log('PHARAOH_PROTOCOL', 'POOL_QUERY_ERROR', { error: error.message })
       return null
     }
   }
 
   calculateRealAPY(poolData: any, tvl: number) {
     if (!poolData || tvl === 0) {
-      this.debugger.log('PHARAOH_PROTOCOL', 'APY_CALC_NO_DATA', { poolData: !!poolData, tvl })
+      this.debugLogger.log('PHARAOH_PROTOCOL', 'APY_CALC_NO_DATA', { poolData: !!poolData, tvl })
       return 0
     }
 
@@ -80,7 +80,7 @@ export class PharaohProtocolService {
 
       const totalAPY = feeAPY + rewardAPY
 
-      this.debugger.log('PHARAOH_PROTOCOL', 'APY_CALCULATED', {
+      this.debugLogger.log('PHARAOH_PROTOCOL', 'APY_CALCULATED', {
         feeAPY,
         rewardAPY,
         totalAPY,
@@ -101,7 +101,7 @@ export class PharaohProtocolService {
       }
 
     } catch (error) {
-      this.debugger.log('PHARAOH_PROTOCOL', 'APY_CALC_ERROR', { error: error.message })
+      this.debugLogger.log('PHARAOH_PROTOCOL', 'APY_CALC_ERROR', { error: error.message })
       return 0
     }
   }

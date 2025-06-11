@@ -7,17 +7,17 @@ export class PharaohService {
   private supabase: any
   private dexScreener: EnhancedDexScreenerService
   private protocol: PharaohProtocolService
-  private debugger: DataSourceDebugger
+  private debugLogger: DataSourceDebugger
 
   constructor(supabase: any) {
     this.supabase = supabase
-    this.debugger = new DataSourceDebugger()
-    this.dexScreener = new EnhancedDexScreenerService(this.debugger)
-    this.protocol = new PharaohProtocolService(this.debugger)
+    this.debugLogger = new DataSourceDebugger()
+    this.dexScreener = new EnhancedDexScreenerService(this.debugLogger)
+    this.protocol = new PharaohProtocolService(this.debugLogger)
   }
 
   async findPools(tokenAddress: string) {
-    this.debugger.log('PHARAOH_SERVICE', 'FIND_POOLS_START', { tokenAddress })
+    this.debugLogger.log('PHARAOH_SERVICE', 'FIND_POOLS_START', { tokenAddress })
 
     try {
       // Step 1: Try to get Pharaoh-specific data from DexScreener
@@ -27,11 +27,11 @@ export class PharaohService {
       const protocolData = await this.protocol.getPoolData(tokenAddress)
       
       if (!dexScreenerData && !protocolData) {
-        this.debugger.log('PHARAOH_SERVICE', 'NO_POOLS_FOUND', { tokenAddress })
+        this.debugLogger.log('PHARAOH_SERVICE', 'NO_POOLS_FOUND', { tokenAddress })
         return {
           hasPool: false,
           message: 'No Pharaoh pools found for this ERC20 token',
-          debugInfo: this.debugger.getDebugSummary()
+          debugInfo: this.debugLogger.getDebugSummary()
         }
       }
 
@@ -50,12 +50,12 @@ export class PharaohService {
         apyData.rewardAPY = Math.random() * 15 + 5 // 5-20% estimated
         apyData.totalAPY = apyData.baseAPY + apyData.rewardAPY
         
-        this.debugger.log('PHARAOH_SERVICE', 'USING_FALLBACK_APY', apyData)
+        this.debugLogger.log('PHARAOH_SERVICE', 'USING_FALLBACK_APY', apyData)
       }
 
       // Step 5: Validate calculated values
-      const apyValidation = this.debugger.validateAPY(apyData.totalAPY, 'pharaoh')
-      const tvlValidation = this.debugger.validateTVL(tvl, 'pharaoh')
+      const apyValidation = this.debugLogger.validateAPY(apyData.totalAPY, 'pharaoh')
+      const tvlValidation = this.debugLogger.validateTVL(tvl, 'pharaoh')
 
       const pool = {
         contractAddress: dexScreenerData?.pairAddress || '0x0000000000000000000000000000000000000000',
@@ -91,7 +91,7 @@ export class PharaohService {
             hasCLPool: protocolData.hasCLPool,
             realFeeData: !!protocolData.weeklyFees
           } : null,
-          debugSummary: this.debugger.getDebugSummary(),
+          debugSummary: this.debugLogger.getDebugSummary(),
           tokenInfo: {
             name: dexScreenerData?.baseToken.name || 'Unknown',
             symbol: dexScreenerData?.baseToken.symbol || 'TOKEN',
@@ -100,7 +100,7 @@ export class PharaohService {
         }
       }
 
-      this.debugger.log('PHARAOH_SERVICE', 'POOL_CREATED', pool)
+      this.debugLogger.log('PHARAOH_SERVICE', 'POOL_CREATED', pool)
 
       return {
         hasPool: true,
@@ -108,11 +108,11 @@ export class PharaohService {
       }
       
     } catch (error) {
-      this.debugger.log('PHARAOH_SERVICE', 'ERROR', { error: error.message })
+      this.debugLogger.log('PHARAOH_SERVICE', 'ERROR', { error: error.message })
       return {
         hasPool: false,
         message: `Error discovering Pharaoh pools: ${error.message}`,
-        debugInfo: this.debugger.getDebugSummary()
+        debugInfo: this.debugLogger.getDebugSummary()
       }
     }
   }

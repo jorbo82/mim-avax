@@ -2,15 +2,15 @@
 import { DataSourceDebugger } from './DataSourceDebugger.ts'
 
 export class LFJProtocolService {
-  private debugger: DataSourceDebugger
+  private debugLogger: DataSourceDebugger
   private apiBase = 'https://lfj.dev'
 
-  constructor(debugger: DataSourceDebugger) {
-    this.debugger = debugger
+  constructor(debugLogger: DataSourceDebugger) {
+    this.debugLogger = debugLogger
   }
 
   async getPoolData(tokenAddress: string) {
-    this.debugger.log('LFJ_PROTOCOL', 'API_QUERY_START', { tokenAddress })
+    this.debugLogger.log('LFJ_PROTOCOL', 'API_QUERY_START', { tokenAddress })
 
     try {
       // Try to use LFJ's actual API (this is a simplified version)
@@ -44,14 +44,14 @@ export class LFJProtocolService {
         }
       }
 
-      this.debugger.log('LFJ_PROTOCOL', 'POOL_DATA_RETRIEVED', mockLFJData)
+      this.debugLogger.log('LFJ_PROTOCOL', 'POOL_DATA_RETRIEVED', mockLFJData)
       return mockLFJData
 
     } catch (error) {
-      this.debugger.log('LFJ_PROTOCOL', 'API_ERROR', { error: error.message })
+      this.debugLogger.log('LFJ_PROTOCOL', 'API_ERROR', { error: error.message })
       
       // Fallback to mock data
-      this.debugger.log('LFJ_PROTOCOL', 'USING_FALLBACK_DATA', {})
+      this.debugLogger.log('LFJ_PROTOCOL', 'USING_FALLBACK_DATA', {})
       return this.getFallbackData()
     }
   }
@@ -71,7 +71,7 @@ export class LFJProtocolService {
 
   calculateRealAPY(poolData: any, tvl: number) {
     if (!poolData || tvl === 0) {
-      this.debugger.log('LFJ_PROTOCOL', 'APY_CALC_NO_DATA', { poolData: !!poolData, tvl })
+      this.debugLogger.log('LFJ_PROTOCOL', 'APY_CALC_NO_DATA', { poolData: !!poolData, tvl })
       return 0
     }
 
@@ -96,7 +96,7 @@ export class LFJProtocolService {
 
       const totalAPY = feeAPY + adjustedRewardAPY
 
-      this.debugger.log('LFJ_PROTOCOL', 'APY_CALCULATED', {
+      this.debugLogger.log('LFJ_PROTOCOL', 'APY_CALCULATED', {
         feeAPY,
         rewardAPY: adjustedRewardAPY,
         totalAPY,
@@ -118,7 +118,7 @@ export class LFJProtocolService {
       }
 
     } catch (error) {
-      this.debugger.log('LFJ_PROTOCOL', 'APY_CALC_ERROR', { error: error.message })
+      this.debugLogger.log('LFJ_PROTOCOL', 'APY_CALC_ERROR', { error: error.message })
       return 0
     }
   }
