@@ -9,6 +9,247 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      defi_exchanges: {
+        Row: {
+          api_endpoint: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          logo_url: string | null
+          name: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          api_endpoint?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          logo_url?: string | null
+          name: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          api_endpoint?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          logo_url?: string | null
+          name?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      defi_prices: {
+        Row: {
+          created_at: string
+          id: string
+          price: number
+          price_change_24h: number | null
+          price_usd: number | null
+          timestamp: string
+          trading_pair_id: string
+          volume_24h: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          price: number
+          price_change_24h?: number | null
+          price_usd?: number | null
+          timestamp?: string
+          trading_pair_id: string
+          volume_24h?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          price?: number
+          price_change_24h?: number | null
+          price_usd?: number | null
+          timestamp?: string
+          trading_pair_id?: string
+          volume_24h?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "defi_prices_trading_pair_id_fkey"
+            columns: ["trading_pair_id"]
+            isOneToOne: false
+            referencedRelation: "defi_trading_pairs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      defi_swap_history: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          exchange_id: string
+          exchange_rate: number
+          from_amount: number
+          from_token_id: string
+          gas_fee: number | null
+          id: string
+          status: string
+          to_amount: number
+          to_token_id: string
+          transaction_hash: string | null
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          exchange_id: string
+          exchange_rate: number
+          from_amount: number
+          from_token_id: string
+          gas_fee?: number | null
+          id?: string
+          status?: string
+          to_amount: number
+          to_token_id: string
+          transaction_hash?: string | null
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          exchange_id?: string
+          exchange_rate?: number
+          from_amount?: number
+          from_token_id?: string
+          gas_fee?: number | null
+          id?: string
+          status?: string
+          to_amount?: number
+          to_token_id?: string
+          transaction_hash?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "defi_swap_history_exchange_id_fkey"
+            columns: ["exchange_id"]
+            isOneToOne: false
+            referencedRelation: "defi_exchanges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "defi_swap_history_from_token_id_fkey"
+            columns: ["from_token_id"]
+            isOneToOne: false
+            referencedRelation: "defi_tokens"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "defi_swap_history_to_token_id_fkey"
+            columns: ["to_token_id"]
+            isOneToOne: false
+            referencedRelation: "defi_tokens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      defi_tokens: {
+        Row: {
+          contract_address: string | null
+          created_at: string
+          decimals: number
+          id: string
+          is_active: boolean
+          logo_url: string | null
+          name: string
+          symbol: string
+          updated_at: string
+        }
+        Insert: {
+          contract_address?: string | null
+          created_at?: string
+          decimals?: number
+          id?: string
+          is_active?: boolean
+          logo_url?: string | null
+          name: string
+          symbol: string
+          updated_at?: string
+        }
+        Update: {
+          contract_address?: string | null
+          created_at?: string
+          decimals?: number
+          id?: string
+          is_active?: boolean
+          logo_url?: string | null
+          name?: string
+          symbol?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      defi_trading_pairs: {
+        Row: {
+          base_token_id: string
+          created_at: string
+          exchange_id: string
+          id: string
+          is_active: boolean
+          liquidity_usd: number | null
+          pair_address: string | null
+          quote_token_id: string
+          updated_at: string
+          volume_24h_usd: number | null
+        }
+        Insert: {
+          base_token_id: string
+          created_at?: string
+          exchange_id: string
+          id?: string
+          is_active?: boolean
+          liquidity_usd?: number | null
+          pair_address?: string | null
+          quote_token_id: string
+          updated_at?: string
+          volume_24h_usd?: number | null
+        }
+        Update: {
+          base_token_id?: string
+          created_at?: string
+          exchange_id?: string
+          id?: string
+          is_active?: boolean
+          liquidity_usd?: number | null
+          pair_address?: string | null
+          quote_token_id?: string
+          updated_at?: string
+          volume_24h_usd?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "defi_trading_pairs_base_token_id_fkey"
+            columns: ["base_token_id"]
+            isOneToOne: false
+            referencedRelation: "defi_tokens"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "defi_trading_pairs_exchange_id_fkey"
+            columns: ["exchange_id"]
+            isOneToOne: false
+            referencedRelation: "defi_exchanges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "defi_trading_pairs_quote_token_id_fkey"
+            columns: ["quote_token_id"]
+            isOneToOne: false
+            referencedRelation: "defi_tokens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       image_generation_jobs: {
         Row: {
           completed_at: string | null
@@ -193,6 +434,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_best_rates: {
+        Args: { base_token_symbol: string; quote_token_symbol: string }
+        Returns: {
+          exchange_name: string
+          exchange_slug: string
+          price: number
+          liquidity_usd: number
+          volume_24h_usd: number
+          price_change_24h: number
+        }[]
+      }
       get_user_storage_stats: {
         Args: { user_uuid: string }
         Returns: {
