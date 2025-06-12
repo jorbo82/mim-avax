@@ -1,6 +1,4 @@
 
-import JorboAIButton from "./JorboAIButton";
-import TokenAnalysisButton from "./TokenAnalysisButton";
 import DarkModeToggle from "./DarkModeToggle";
 import TokenPriceWidget from "./TokenPriceWidget";
 
@@ -28,22 +26,10 @@ const Header = () => {
               </h1>
             </div>
 
-            {/* Center Navigation */}
-            <div className="hidden md:flex items-center gap-4">
-              <JorboAIButton />
-              <TokenAnalysisButton />
-            </div>
-
             {/* Right Section */}
             <div className="flex items-center gap-2">
               <DarkModeToggle />
             </div>
-          </div>
-
-          {/* Mobile Navigation */}
-          <div className="md:hidden mt-4 flex justify-center gap-2">
-            <JorboAIButton />
-            <TokenAnalysisButton />
           </div>
         </div>
       </div>
