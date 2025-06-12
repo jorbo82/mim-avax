@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Search, AlertCircle, CheckCircle, Loader2, TrendingUp, ExternalLink, DollarSign, Star, Zap, Shield, AlertTriangle, UserCheck, Globe, FileCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -86,11 +85,6 @@ const TokenDiscovery = () => {
     // 2. From DexScreener data in metadata
     else if (pool.metadata?.dexScreenerData?.baseToken?.symbol) {
       tokenSymbol = pool.metadata.dexScreenerData.baseToken.symbol;
-    }
-    // 3. From Arena result if available
-    else if (arenaResult && protocol.protocol === 'apex-defi') {
-      // Try to extract symbol from contract validation or other sources
-      tokenSymbol = arenaResult.tokenSymbol || '';
     }
     
     // Format the pool name based on available information
