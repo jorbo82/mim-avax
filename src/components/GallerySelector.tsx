@@ -173,24 +173,35 @@ export const GallerySelector = ({
           )}
         </div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={resetAndClose}>
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSelectImages}
-            disabled={selectedUrls.length === 0 || isConverting}
-            className="bg-mim-teal hover:bg-mim-teal-dark"
-          >
-            {isConverting ? (
-              <>
-                <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2" />
-                Converting...
-              </>
-            ) : (
-              `Use ${selectedUrls.length} Image${selectedUrls.length !== 1 ? 's' : ''}`
-            )}
-          </Button>
+        <DialogFooter className="flex flex-col gap-2">
+          {selectedUrls.length === 0 && !isConverting && (
+            <p className="text-sm text-muted-foreground text-center">
+              💡 Select images above to enable the use button
+            </p>
+          )}
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={resetAndClose}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSelectImages}
+              disabled={selectedUrls.length === 0 || isConverting}
+              className={`${
+                selectedUrls.length === 0 
+                  ? 'bg-muted text-muted-foreground border border-border hover:bg-muted cursor-not-allowed' 
+                  : 'bg-mim-teal hover:bg-mim-teal-dark text-white'
+              } min-w-[140px]`}
+            >
+              {isConverting ? (
+                <>
+                  <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2" />
+                  Converting...
+                </>
+              ) : (
+                `Use ${selectedUrls.length} Image${selectedUrls.length !== 1 ? 's' : ''}`
+              )}
+            </Button>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>
