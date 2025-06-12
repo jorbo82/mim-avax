@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Search, AlertCircle, CheckCircle, Loader2, TrendingUp, DollarSign, Zap } from 'lucide-react';
+import { Search, AlertCircle, CheckCircle, Loader2, TrendingUp, DollarSign, Zap, Coins, Banknote } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -83,7 +83,7 @@ const TokenDiscovery = () => {
         {/* Example addresses */}
         <div className="space-y-2">
           <p className="text-sm text-muted-foreground">Try these enhanced examples:</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
             <Button
               variant="outline"
               size="sm"
@@ -101,6 +101,24 @@ const TokenDiscovery = () => {
             >
               <DollarSign className="w-3 h-3 mr-2 text-blue-500" />
               MIM Token
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleExampleClick('0xFFFF003a6BAD9b743d658048742935fFFE2b6ED7')}
+              className="text-xs border-border/30 hover:bg-accent/50 justify-start"
+            >
+              <Coins className="w-3 h-3 mr-2 text-purple-500" />
+              KET Token
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleExampleClick('0x34a528Da3b2EA5c6Ad1796Eba756445D1299a577')}
+              className="text-xs border-border/30 hover:bg-accent/50 justify-start"
+            >
+              <Banknote className="w-3 h-3 mr-2 text-orange-500" />
+              ID Token
             </Button>
           </div>
         </div>
