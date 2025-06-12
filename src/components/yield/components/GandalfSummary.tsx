@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Sparkles, Loader2, RefreshCw } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -16,6 +16,14 @@ const GandalfSummary = ({ tokenAddress, discoveryResult, arenaResult }: GandalfS
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasGenerated, setHasGenerated] = useState(false);
+
+  // Reset state when token address changes
+  useEffect(() => {
+    setSummary('');
+    setError(null);
+    setHasGenerated(false);
+    setLoading(false);
+  }, [tokenAddress]);
 
   const generateSummary = async () => {
     setLoading(true);

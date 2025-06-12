@@ -40,10 +40,16 @@ export const useTokenChecker = () => {
     }
   };
 
+  const clearResult = () => {
+    setResult(null);
+    setError(null);
+  };
+
   return {
     checkToken,
     loading,
     error,
-    result
+    result,
+    clearResult
   };
 };

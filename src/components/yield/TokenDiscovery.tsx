@@ -17,7 +17,18 @@ const TokenDiscovery = () => {
   const [contractAddress, setContractAddress] = useState('');
   const [discoveryResult, setDiscoveryResult] = useState<any>(null);
   const { discoverPools, loading, error } = useContractValidation();
-  const { checkToken, loading: arenaCheckLoading, result: arenaResult } = useTokenChecker();
+  const { checkToken, loading: arenaCheckLoading, result: arenaResult, clearResult } = useTokenChecker();
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newAddress = e.target.value;
+    setContractAddress(newAddress);
+    
+    // Clear previous results when user types a new address
+    if (newAddress !== contractAddress) {
+      setDiscoveryResult(null);
+      clearResult();
+    }
+  };
 
   const handleDiscover = async () => {
     if (!contractAddress.trim()) return;
@@ -38,6 +49,7 @@ const TokenDiscovery = () => {
   const handleExampleClick = (address: string) => {
     setContractAddress(address);
     setDiscoveryResult(null);
+    clearResult();
   };
 
   const isEnhancedDiscovery = discoveryResult?.enhancedDiscovery;
@@ -64,7 +76,7 @@ const TokenDiscovery = () => {
           <Input
             placeholder="Enter token contract address (0x...)"
             value={contractAddress}
-            onChange={(e) => setContractAddress(e.target.value)}
+            onChange={handleInputChange}
             className="bg-background/50 border-border/50"
           />
           <Button 
