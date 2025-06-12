@@ -188,8 +188,8 @@ export const GallerySelector = ({
               disabled={selectedUrls.length === 0 || isConverting}
               className={`min-w-[140px] ${
                 selectedUrls.length === 0 
-                  ? 'bg-neutral-200 text-neutral-500 border-neutral-300 hover:bg-neutral-200' 
-                  : 'bg-mim-teal hover:bg-mim-teal/90 text-white border-mim-teal'
+                  ? 'bg-gray-600 text-white border-gray-500 hover:bg-gray-600 opacity-60' 
+                  : 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600'
               }`}
             >
               {isConverting ? (
