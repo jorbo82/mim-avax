@@ -1,5 +1,5 @@
 
-import { Wand2, Search, ExternalLink, ArrowLeft, Sparkles } from "lucide-react";
+import { Wand2, Search, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
@@ -37,19 +37,6 @@ const TokenAnalysisHero = () => {
           Cast the ultimate token analysis spell! Discover if tokens were forged in the Arena trenches, 
           find yield opportunities, and uncover the magical secrets of Avalanche tokens! 🔮⚡
         </p>
-        
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-          <Button 
-            variant="outline" 
-            size="lg"
-            className="border-brand-accent text-brand-accent hover:bg-brand-accent hover:text-white font-medium py-4 px-8 rounded-md transition-all duration-200 modern-shadow hover:modern-shadow-lg active:scale-95"
-            onClick={() => window.open('https://apexdefi.xyz', '_blank')}
-          >
-            <Wand2 className="mr-2" />
-            Explore Apex DeFi
-            <ExternalLink className="ml-2 w-4 h-4" />
-          </Button>
-        </div>
 
         <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
           <div className="bg-card border border-neutral-200 dark:border-neutral-800 rounded-lg p-6 modern-shadow">
