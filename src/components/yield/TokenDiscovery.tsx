@@ -75,6 +75,44 @@ const TokenDiscovery = () => {
     return `$${price.toFixed(4)}`;
   };
 
+  const getEnhancedPoolName = (pool: any, protocol: any) => {
+    // Try to get token symbol from various sources
+    let tokenSymbol = '';
+    
+    // 1. From pool metadata tokenInfo
+    if (pool.metadata?.tokenInfo?.symbol) {
+      tokenSymbol = pool.metadata.tokenInfo.symbol;
+    }
+    // 2. From DexScreener data in metadata
+    else if (pool.metadata?.dexScreenerData?.baseToken?.symbol) {
+      tokenSymbol = pool.metadata.dexScreenerData.baseToken.symbol;
+    }
+    // 3. From Arena result if available
+    else if (arenaResult && protocol.protocol === 'apex-defi') {
+      // Try to extract symbol from contract validation or other sources
+      tokenSymbol = arenaResult.tokenSymbol || '';
+    }
+    
+    // Format the pool name based on available information
+    if (tokenSymbol) {
+      // For different pool types, format appropriately
+      if (pool.type === 'liquidity_pool' || pool.type === 'amm') {
+        // If we have pair information, show as TOKEN/PAIR
+        const quoteSymbol = pool.metadata?.dexScreenerData?.quoteToken?.symbol || 'AVAX';
+        return `${tokenSymbol}/${quoteSymbol} Pool`;
+      } else if (pool.type === 'native_token' || pool.type === 'erc314') {
+        return `${tokenSymbol} Native Pool`;
+      } else if (pool.type === 'wrapped_token') {
+        return `${tokenSymbol} Wrapped Pool`;
+      } else {
+        return `${tokenSymbol} ${pool.type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}`;
+      }
+    }
+    
+    // Fallback to original pool name
+    return pool.name || 'Unknown Pool';
+  };
+
   const openExternalLink = (url: string) => {
     try {
       // Try to open in a new window first
@@ -393,7 +431,9 @@ const TokenDiscovery = () => {
                                 {pool.metadata?.tokenInfo?.logoURI && 
                                   renderTokenLogo(pool.metadata.tokenInfo.logoURI, pool.metadata.tokenInfo.symbol || pool.name)
                                 }
-                                <span className="text-sm font-medium text-foreground">{pool.name}</span>
+                                <span className="text-sm font-medium text-foreground">
+                                  {getEnhancedPoolName(pool, protocol)}
+                                </span>
                                 {pool.metadata?.tokenInfo?.tags?.includes('bluechip') && (
                                   <Star className="w-3 h-3 text-yellow-500" />
                                 )}
