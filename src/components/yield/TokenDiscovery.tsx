@@ -1,23 +1,31 @@
+
 import { useState } from 'react';
-import { Search, AlertCircle, CheckCircle, Loader2, TrendingUp, ExternalLink, DollarSign, Star, Zap } from 'lucide-react';
+import { Search, AlertCircle, CheckCircle, Loader2, TrendingUp, ExternalLink, DollarSign, Star, Zap, Shield, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { useContractValidation } from '@/hooks/useContractValidation';
+import { useTokenChecker } from '@/hooks/useTokenChecker';
 
 const TokenDiscovery = () => {
   const [contractAddress, setContractAddress] = useState('');
   const [discoveryResult, setDiscoveryResult] = useState<any>(null);
   const { discoverPools, loading, error } = useContractValidation();
+  const { checkToken, loading: arenaCheckLoading, result: arenaResult } = useTokenChecker();
 
   const handleDiscover = async () => {
     if (!contractAddress.trim()) return;
 
     try {
-      const result = await discoverPools(contractAddress.trim());
-      setDiscoveryResult(result);
+      // Run both discovery and Arena check in parallel
+      const [poolResult] = await Promise.all([
+        discoverPools(contractAddress.trim()),
+        checkToken(contractAddress.trim())
+      ]);
+      
+      setDiscoveryResult(poolResult);
     } catch (err) {
       console.error('Pool discovery failed:', err);
     }
@@ -98,10 +106,10 @@ const TokenDiscovery = () => {
           />
           <Button 
             onClick={handleDiscover}
-            disabled={loading || !contractAddress.trim()}
+            disabled={loading || arenaCheckLoading || !contractAddress.trim()}
             className="bg-primary hover:bg-primary/90"
           >
-            {loading ? (
+            {(loading || arenaCheckLoading) ? (
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
               <Search className="w-4 h-4" />
@@ -141,6 +149,39 @@ const TokenDiscovery = () => {
               {error}
             </AlertDescription>
           </Alert>
+        )}
+
+        {/* Arena Validation Results */}
+        {arenaResult && (
+          <div className="space-y-2">
+            {arenaResult.isArenaToken ? (
+              <Alert className="border-green-500/30 bg-green-500/10">
+                <Shield className="h-4 w-4 text-green-400" />
+                <AlertDescription className="text-green-300">
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">✅</span>
+                    <span className="font-semibold">Forged in the Arena Trenches</span>
+                  </div>
+                  <div className="mt-1 text-xs">
+                    This token was created by the verified Arena deployer address.
+                  </div>
+                </AlertDescription>
+              </Alert>
+            ) : (
+              <Alert className="border-yellow-500/30 bg-yellow-500/10">
+                <AlertTriangle className="h-4 w-4 text-yellow-400" />
+                <AlertDescription className="text-yellow-300">
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">⚠️</span>
+                    <span className="font-semibold">DYOR - Not an Arena Token</span>
+                  </div>
+                  <div className="mt-1 text-xs">
+                    This token was not created by the Arena deployer. Please do your own research.
+                  </div>
+                </AlertDescription>
+              </Alert>
+            )}
+          </div>
         )}
 
         {discoveryResult && (
@@ -314,6 +355,12 @@ const TokenDiscovery = () => {
                     <span className="text-muted-foreground">Discovery Method:</span>
                     <span className="text-primary">
                       {isEnhancedDiscovery ? 'Enhanced Registry + RPC' : 'Standard RPC'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Arena Status:</span>
+                    <span className={arenaResult?.isArenaToken ? 'text-green-400' : 'text-yellow-400'}>
+                      {arenaResult?.isArenaToken ? '✅ Arena Token' : '⚠️ Not Arena'}
                     </span>
                   </div>
                   <div className="flex justify-between">
