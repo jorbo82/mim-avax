@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
-import YieldFarming from "./pages/YieldFarming";
+import TokenAnalysis from "./pages/TokenAnalysis";
 import JorboAI from "./pages/JorboAI";
 import DeFiAggregator from "./pages/DeFiAggregator";
 import Auth from "./pages/Auth";
@@ -23,7 +23,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/yield-farming" element={<YieldFarming />} />
+            <Route path="/token-analysis" element={<TokenAnalysis />} />
             <Route path="/jorbo-ai" element={<JorboAI />} />
             <Route path="/defi-aggregator" element={<DeFiAggregator />} />
             <Route path="/auth" element={<Auth />} />
