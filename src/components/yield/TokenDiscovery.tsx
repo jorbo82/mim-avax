@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Search, AlertCircle, CheckCircle, Loader2, TrendingUp, ExternalLink, DollarSign, Star, Zap, Shield, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -58,7 +57,24 @@ const TokenDiscovery = () => {
   };
 
   const openExternalLink = (url: string) => {
-    window.open(url, '_blank', 'noopener,noreferrer');
+    try {
+      // Try to open in a new window first
+      const newWindow = window.open(url, '_blank', 'noopener,noreferrer');
+      
+      // If popup is blocked, fallback to location.href
+      if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+        // In sandboxed iframe, use parent window if available
+        if (window.parent && window.parent !== window) {
+          window.parent.location.href = url;
+        } else {
+          window.location.href = url;
+        }
+      }
+    } catch (error) {
+      console.error('Failed to open external link:', error);
+      // Final fallback
+      window.location.href = url;
+    }
   };
 
   const renderTokenLogo = (logoURI: string, symbol: string) => {
