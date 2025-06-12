@@ -20,9 +20,34 @@ serve(async (req) => {
       throw new Error('Token address is required');
     }
 
+    // Extract token symbol/name from discovery results
+    let tokenSymbol = 'this token';
+    let tokenName = 'this token';
+    
+    // Try to get token info from pool data
+    if (discoveryResult?.protocols?.length > 0) {
+      for (const protocol of discoveryResult.protocols) {
+        if (protocol.pools?.length > 0) {
+          const pool = protocol.pools[0];
+          if (pool.baseToken?.symbol) {
+            tokenSymbol = pool.baseToken.symbol;
+            tokenName = pool.baseToken.name || tokenSymbol;
+            break;
+          }
+          if (pool.quoteToken?.symbol) {
+            tokenSymbol = pool.quoteToken.symbol;
+            tokenName = pool.quoteToken.name || tokenSymbol;
+            break;
+          }
+        }
+      }
+    }
+
     // Compile the token data for analysis
     const tokenData = {
       address: tokenAddress,
+      symbol: tokenSymbol,
+      name: tokenName,
       totalPools: discoveryResult?.totalPoolsFound || 0,
       protocols: discoveryResult?.protocols?.length || 0,
       activeProtocols: discoveryResult?.protocols?.filter((p: any) => p.hasPool)?.length || 0,
@@ -45,11 +70,11 @@ Your response should:
 6. Keep it mystical but informative
 7. Use appropriate Middle-earth references
 8. Be around 200-300 words
+9. IMPORTANT: When referring to the token, use its symbol/name (${tokenSymbol}) rather than the contract address
 
 CRITICAL: Always end with a disclaimer that this is not financial advice and users must do their own research to keep their "Magic Internet Money" safe.`;
 
-    const userPrompt = `Analyze this token data:
-- Token Address: ${tokenData.address}
+    const userPrompt = `Analyze this token data for ${tokenName} (${tokenSymbol}):
 - Total Pools Found: ${tokenData.totalPools}
 - Active Protocols: ${tokenData.activeProtocols} out of ${tokenData.protocols}
 - Arena Token: ${tokenData.isArenaToken ? 'Yes' : 'No'}
@@ -58,7 +83,7 @@ CRITICAL: Always end with a disclaimer that this is not financial advice and use
 - Enhanced Discovery: ${tokenData.enhancedDiscovery ? 'Yes' : 'No'}
 - Warnings: ${tokenData.warnings.join(', ') || 'None'}
 
-Provide your wise counsel about this token and its yield opportunities.`;
+Provide your wise counsel about ${tokenSymbol} and its yield opportunities.`;
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
