@@ -1,4 +1,4 @@
-import { ApexDeFiService } from './ApexDeFiService.ts'
+import { EnhancedApexDeFiService } from './EnhancedApexDeFiService.ts'
 import { PharaohService } from './PharaohService.ts'
 import { ArenaService } from './ArenaService.ts'
 import { BenqiService } from './BenqiService.ts'
@@ -10,7 +10,7 @@ export class MultiProtocolValidationService {
   constructor(supabase: any) {
     this.supabase = supabase
     this.services = {
-      'apex-defi': new ApexDeFiService(supabase),
+      'apex-defi': new EnhancedApexDeFiService(supabase),
       'pharaoh': new PharaohService(supabase),
       'arena': new ArenaService(supabase),
       'benqi': new BenqiService(supabase)
@@ -18,7 +18,7 @@ export class MultiProtocolValidationService {
   }
 
   async discoverPools(tokenAddress: string, protocolSlugs: string[]) {
-    console.log(`Discovering pools for token: ${tokenAddress} across protocols: ${protocolSlugs.join(', ')}`)
+    console.log(`Enhanced discovery for token: ${tokenAddress} across protocols: ${protocolSlugs.join(', ')}`)
 
     // Record discovery request
     await this.recordDiscoveryRequest(tokenAddress, protocolSlugs)
@@ -40,7 +40,7 @@ export class MultiProtocolValidationService {
         if (protocolResult.pools && protocolResult.pools.length > 0) {
           totalPoolsFound += protocolResult.pools.length
           
-          // Store pools in database
+          // Store pools in database with enhanced metadata
           for (const pool of protocolResult.pools) {
             await this.storePoolData(protocolSlug, pool)
           }
@@ -66,7 +66,8 @@ export class MultiProtocolValidationService {
     return {
       tokenAddress,
       totalPoolsFound,
-      protocols: results
+      protocols: results,
+      enhancedDiscovery: true
     }
   }
 
@@ -99,7 +100,11 @@ export class MultiProtocolValidationService {
       apy_reward: poolData.apyReward || 0,
       volume_24h_usd: poolData.volume24h || 0,
       fees_24h_usd: poolData.fees24h || 0,
-      pool_metadata: poolData.metadata || {},
+      pool_metadata: {
+        ...poolData.metadata,
+        enhancedDiscovery: true,
+        lastUpdated: new Date().toISOString()
+      },
       last_updated: new Date().toISOString()
     }
 
@@ -110,26 +115,26 @@ export class MultiProtocolValidationService {
       })
 
     if (error) {
-      console.error('Error storing pool data:', error)
+      console.error('Error storing enhanced pool data:', error)
       throw error
     }
 
-    console.log(`Pool data stored for ${poolIdentifier}`)
+    console.log(`Enhanced pool data stored for ${poolIdentifier}`)
   }
 
   private async recordDiscoveryRequest(tokenAddress: string, protocols: string[]) {
     const { error } = await this.supabase
       .from('pool_discovery_requests')
       .insert({
-        user_id: null, // Server-side discovery
+        user_id: null,
         contract_address: tokenAddress,
-        discovery_method: 'multi_protocol_scan',
+        discovery_method: 'enhanced_multi_protocol_scan',
         validation_status: 'pending',
-        validation_data: { protocols }
+        validation_data: { protocols, enhancedRegistry: true }
       })
 
     if (error) {
-      console.error('Error recording discovery request:', error)
+      console.error('Error recording enhanced discovery request:', error)
     }
   }
 
@@ -138,14 +143,43 @@ export class MultiProtocolValidationService {
       .from('pool_discovery_requests')
       .update({
         validation_status: status,
-        validation_data: { results },
+        validation_data: { 
+          results, 
+          enhancedDiscovery: true,
+          performanceImprovement: true
+        },
         pools_discovered: poolsFound
       })
       .eq('contract_address', tokenAddress)
       .eq('validation_status', 'pending')
 
     if (error) {
-      console.error('Error updating discovery request:', error)
+      console.error('Error updating enhanced discovery request:', error)
     }
+  }
+
+  // New methods for enhanced functionality
+  async getApexBluechipPools() {
+    const apexService = this.services['apex-defi'] as EnhancedApexDeFiService
+    const bluechipTokens = apexService.getBluechipTokens()
+    
+    const pools = []
+    for (const token of bluechipTokens) {
+      try {
+        const result = await apexService.findPools(token.address)
+        if (result.hasPool && result.pools) {
+          pools.push(...result.pools)
+        }
+      } catch (error) {
+        console.error(`Error getting bluechip pool for ${token.symbol}:`, error)
+      }
+    }
+    
+    return pools
+  }
+
+  async searchApexTokens(symbol: string) {
+    const apexService = this.services['apex-defi'] as EnhancedApexDeFiService
+    return apexService.searchTokensBySymbol(symbol)
   }
 }
