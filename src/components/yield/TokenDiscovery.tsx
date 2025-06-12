@@ -227,6 +227,26 @@ const TokenDiscovery = () => {
                         </Button>
                       </div>
                     )}
+                    {/* Add Apex DeFi trade link when ERC314 address is available */}
+                    {protocol.protocol === 'apex-defi' && protocol.hasPool && protocol.pools && 
+                     protocol.pools.some((pool: any) => pool.metadata?.erc314Address) && (
+                      <div className="pt-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            const erc314Address = protocol.pools.find((pool: any) => pool.metadata?.erc314Address)?.metadata?.erc314Address;
+                            if (erc314Address) {
+                              openExternalLink(`https://apexdefi.xyz/trade/${erc314Address}`);
+                            }
+                          }}
+                          className="text-xs border-purple-500/30 text-purple-400 hover:bg-purple-500/10 w-full"
+                        >
+                          <ExternalLink className="w-3 h-3 mr-1" />
+                          Trade on Apex DeFi
+                        </Button>
+                      </div>
+                    )}
                   </CardHeader>
                   <CardContent>
                     {protocol.hasPool && protocol.pools ? (
