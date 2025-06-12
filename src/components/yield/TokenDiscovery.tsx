@@ -213,6 +213,20 @@ const TokenDiscovery = () => {
                         {protocol.hasPool ? 'Available' : 'Not Found'}
                       </Badge>
                     </div>
+                    {/* Add Pharaoh Exchange link when pools are found */}
+                    {protocol.protocol === 'pharaoh' && protocol.hasPool && (
+                      <div className="pt-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => openExternalLink('https://pharaoh.exchange/liquidity')}
+                          className="text-xs border-yellow-500/30 text-yellow-400 hover:bg-yellow-500/10 w-full"
+                        >
+                          <ExternalLink className="w-3 h-3 mr-1" />
+                          Add Liquidity on Pharaoh
+                        </Button>
+                      </div>
+                    )}
                   </CardHeader>
                   <CardContent>
                     {protocol.hasPool && protocol.pools ? (
