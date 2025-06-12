@@ -186,11 +186,11 @@ export const GallerySelector = ({
             <Button
               onClick={handleSelectImages}
               disabled={selectedUrls.length === 0 || isConverting}
-              className={`${
+              className={`min-w-[140px] ${
                 selectedUrls.length === 0 
-                  ? 'bg-muted text-muted-foreground border border-border hover:bg-muted cursor-not-allowed' 
-                  : 'bg-mim-teal hover:bg-mim-teal-dark text-white'
-              } min-w-[140px]`}
+                  ? 'bg-neutral-200 text-neutral-500 border-neutral-300 hover:bg-neutral-200' 
+                  : 'bg-mim-teal hover:bg-mim-teal/90 text-white border-mim-teal'
+              }`}
             >
               {isConverting ? (
                 <>
@@ -198,7 +198,7 @@ export const GallerySelector = ({
                   Converting...
                 </>
               ) : (
-                `Use ${selectedUrls.length} Image${selectedUrls.length !== 1 ? 's' : ''}`
+                `Use ${selectedUrls.length} Asset${selectedUrls.length !== 1 ? 's' : ''}`
               )}
             </Button>
           </div>
