@@ -40,16 +40,6 @@ const TokenAnalysisHero = () => {
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
           <Button 
-            size="lg" 
-            className="bg-brand-primary text-white hover:opacity-90 font-medium py-4 px-8 rounded-md transition-all duration-200 modern-shadow hover:modern-shadow-lg active:scale-95"
-            onClick={() => window.open('https://arena.trade', '_blank')}
-          >
-            <Sparkles className="mr-2" />
-            Visit Arena.trade
-            <ExternalLink className="ml-2 w-4 h-4" />
-          </Button>
-          
-          <Button 
             variant="outline" 
             size="lg"
             className="border-brand-accent text-brand-accent hover:bg-brand-accent hover:text-white font-medium py-4 px-8 rounded-md transition-all duration-200 modern-shadow hover:modern-shadow-lg active:scale-95"
