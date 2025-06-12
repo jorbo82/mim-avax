@@ -200,7 +200,11 @@ export const MimAssetSelector = ({
           <Button
             onClick={handleSelectAssets}
             disabled={selectedAssetIds.length === 0 || isConverting}
-            className="bg-mim-teal hover:bg-mim-teal-dark"
+            className={`min-w-[140px] ${
+              selectedAssetIds.length === 0 
+                ? 'bg-muted text-muted-foreground border-muted hover:bg-muted' 
+                : 'bg-primary hover:bg-primary/90 text-primary-foreground border-primary'
+            }`}
           >
             {isConverting ? (
               <>
