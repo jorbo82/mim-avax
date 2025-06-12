@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Search, AlertCircle, CheckCircle, Loader2, TrendingUp, ExternalLink, DollarSign, Star, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -110,27 +109,27 @@ const TokenDiscovery = () => {
           </Button>
         </div>
 
-        {/* Enhanced example addresses with token info */}
+        {/* Updated example addresses with LAMBO and MIM */}
         <div className="space-y-2">
           <p className="text-sm text-muted-foreground">Try these enhanced examples:</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             <Button
               variant="outline"
               size="sm"
-              onClick={() => handleExampleClick('0x65FCc099643919184946E844cA484F6988E053f0')}
+              onClick={() => handleExampleClick('0x6F43fF77A9C0Cf552b5b653268fBFe26A052429b')}
               className="text-xs border-border/30 hover:bg-accent/50 justify-start"
             >
-              <Star className="w-3 h-3 mr-2 text-yellow-500" />
-              PHAR (Bluechip)
+              <TrendingUp className="w-3 h-3 mr-2 text-green-500" />
+              LAMBO Token
             </Button>
             <Button
               variant="outline"
               size="sm"
-              onClick={() => handleExampleClick('0x4DF08C8f17fB7BC1261CD308b049DfCe59F5dC9a')}
+              onClick={() => handleExampleClick('0x8D8B084269f4b2Ad111b60793e9f3577A7795605')}
               className="text-xs border-border/30 hover:bg-accent/50 justify-start"
             >
-              <Star className="w-3 h-3 mr-2 text-yellow-500" />
-              USDC (Bluechip)
+              <DollarSign className="w-3 h-3 mr-2 text-blue-500" />
+              MIM Token
             </Button>
           </div>
         </div>
