@@ -11,6 +11,7 @@ import { useTokenChecker } from '@/hooks/useTokenChecker';
 import TokenSecurityAnalysis from './components/TokenSecurityAnalysis';
 import PoolCard from './components/PoolCard';
 import DiscoverySummary from './components/DiscoverySummary';
+import GandalfSummary from './components/GandalfSummary';
 
 const TokenDiscovery = () => {
   const [contractAddress, setContractAddress] = useState('');
@@ -139,6 +140,13 @@ const TokenDiscovery = () => {
                 />
               ))}
             </div>
+
+            {/* Gandalf's Wisdom */}
+            <GandalfSummary
+              tokenAddress={contractAddress}
+              discoveryResult={discoveryResult}
+              arenaResult={arenaResult}
+            />
 
             {/* Discovery Summary */}
             <DiscoverySummary 

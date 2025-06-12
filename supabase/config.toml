@@ -56,6 +56,9 @@ verify_jwt = false
 [functions.token-checker]
 verify_jwt = false
 
+[functions.gandalf-token-summary]
+verify_jwt = false
+
 [edge-runtime]
 policy = "per-function"
 inspector_port = 8083
