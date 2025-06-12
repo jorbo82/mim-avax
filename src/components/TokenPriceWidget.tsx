@@ -3,7 +3,7 @@ import { TrendingUp, TrendingDown, DollarSign, BarChart3, Droplets, Zap } from "
 import { useTokenData } from "@/hooks/useTokenData";
 import { formatPrice, formatLargeNumber, formatPercentage } from "@/utils/formatters";
 import { Skeleton } from "@/components/ui/skeleton";
-import DeFiAggregatorButton from "./DeFiAggregatorButton";
+import TokenAnalysisButton from "./TokenAnalysisButton";
 import MimeMeButton from "./MimeMeButton";
 
 const TokenPriceWidget = () => {
@@ -17,13 +17,13 @@ const TokenPriceWidget = () => {
             <p className="text-neutral-500 dark:text-neutral-400 text-sm">Unable to load live token data</p>
             <div className="hidden md:flex gap-3">
               <MimeMeButton />
-              <DeFiAggregatorButton />
+              <TokenAnalysisButton />
             </div>
           </div>
           {/* Mobile Action Buttons - Stacked */}
           <div className="md:hidden mt-3 flex flex-col gap-2">
             <MimeMeButton />
-            <DeFiAggregatorButton />
+            <TokenAnalysisButton />
           </div>
         </div>
       </div>
@@ -46,13 +46,13 @@ const TokenPriceWidget = () => {
             </div>
             <div className="hidden md:flex gap-3">
               <MimeMeButton />
-              <DeFiAggregatorButton />
+              <TokenAnalysisButton />
             </div>
           </div>
           {/* Mobile Action Buttons - Stacked */}
           <div className="md:hidden mt-4 flex flex-col gap-2">
             <MimeMeButton />
-            <DeFiAggregatorButton />
+            <TokenAnalysisButton />
           </div>
         </div>
       </div>
@@ -122,14 +122,14 @@ const TokenPriceWidget = () => {
           {/* Action Buttons - Desktop */}
           <div className="hidden md:flex gap-3">
             <MimeMeButton />
-            <DeFiAggregatorButton />
+            <TokenAnalysisButton />
           </div>
         </div>
 
         {/* Mobile Action Buttons - Stacked */}
         <div className="md:hidden mt-4 flex flex-col gap-2">
           <MimeMeButton />
-          <DeFiAggregatorButton />
+          <TokenAnalysisButton />
         </div>
       </div>
     </div>

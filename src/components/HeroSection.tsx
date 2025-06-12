@@ -1,6 +1,6 @@
 
 import MimeMeButton from "./MimeMeButton";
-import DeFiAggregatorButton from "./DeFiAggregatorButton";
+import TokenAnalysisButton from "./TokenAnalysisButton";
 
 const HeroSection = () => {
   return (
@@ -28,7 +28,7 @@ const HeroSection = () => {
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
             <MimeMeButton />
-            <DeFiAggregatorButton />
+            <TokenAnalysisButton />
           </div>
         </div>
       </div>
