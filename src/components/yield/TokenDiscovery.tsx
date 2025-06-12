@@ -12,6 +12,7 @@ import TokenSecurityAnalysis from './components/TokenSecurityAnalysis';
 import PoolCard from './components/PoolCard';
 import DiscoverySummary from './components/DiscoverySummary';
 import GandalfSummary from './components/GandalfSummary';
+import TokenAnalysisLoader from './components/TokenAnalysisLoader';
 
 const TokenDiscovery = () => {
   const [contractAddress, setContractAddress] = useState('');
@@ -53,6 +54,15 @@ const TokenDiscovery = () => {
   };
 
   const isEnhancedDiscovery = discoveryResult?.enhancedDiscovery;
+  const isLoading = loading || arenaCheckLoading;
+
+  // Determine loading phase for magical animation
+  const getLoadingPhase = () => {
+    if (loading && arenaCheckLoading) return 'discovering';
+    if (loading) return 'connecting';
+    if (arenaCheckLoading) return 'analyzing';
+    return 'finalizing';
+  };
 
   return (
     <Card className="bg-background/50 backdrop-blur-sm border-border/50">
@@ -78,13 +88,14 @@ const TokenDiscovery = () => {
             value={contractAddress}
             onChange={handleInputChange}
             className="bg-background/50 border-border/50"
+            disabled={isLoading}
           />
           <Button 
             onClick={handleDiscover}
-            disabled={loading || arenaCheckLoading || !contractAddress.trim()}
+            disabled={isLoading || !contractAddress.trim()}
             className="bg-primary hover:bg-primary/90"
           >
-            {(loading || arenaCheckLoading) ? (
+            {isLoading ? (
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
               <Search className="w-4 h-4" />
@@ -101,6 +112,7 @@ const TokenDiscovery = () => {
               size="sm"
               onClick={() => handleExampleClick('0x6F43fF77A9C0Cf552b5b653268fBFe26A052429b')}
               className="text-xs border-border/30 hover:bg-accent/50 justify-start"
+              disabled={isLoading}
             >
               <TrendingUp className="w-3 h-3 mr-2 text-green-500" />
               LAMBO Token
@@ -110,6 +122,7 @@ const TokenDiscovery = () => {
               size="sm"
               onClick={() => handleExampleClick('0x8D8B084269f4b2Ad111b60793e9f3577A7795605')}
               className="text-xs border-border/30 hover:bg-accent/50 justify-start"
+              disabled={isLoading}
             >
               <DollarSign className="w-3 h-3 mr-2 text-blue-500" />
               MIM Token
@@ -119,6 +132,7 @@ const TokenDiscovery = () => {
               size="sm"
               onClick={() => handleExampleClick('0xFFFF003a6BAD9b743d658048742935fFFE2b6ED7')}
               className="text-xs border-border/30 hover:bg-accent/50 justify-start"
+              disabled={isLoading}
             >
               <Coins className="w-3 h-3 mr-2 text-purple-500" />
               KET Token
@@ -128,6 +142,7 @@ const TokenDiscovery = () => {
               size="sm"
               onClick={() => handleExampleClick('0x34a528Da3b2EA5c6Ad1796Eba756445D1299a577')}
               className="text-xs border-border/30 hover:bg-accent/50 justify-start"
+              disabled={isLoading}
             >
               <Banknote className="w-3 h-3 mr-2 text-orange-500" />
               ID Token
@@ -135,7 +150,12 @@ const TokenDiscovery = () => {
           </div>
         </div>
 
-        {error && (
+        {/* Magical Loading Animation */}
+        {isLoading && (
+          <TokenAnalysisLoader phase={getLoadingPhase()} />
+        )}
+
+        {error && !isLoading && (
           <Alert className="border-destructive/30 bg-destructive/10">
             <AlertCircle className="h-4 w-4 text-destructive" />
             <AlertDescription className="text-destructive">
@@ -145,9 +165,9 @@ const TokenDiscovery = () => {
         )}
 
         {/* Token Security Analysis */}
-        <TokenSecurityAnalysis arenaResult={arenaResult} />
+        {!isLoading && <TokenSecurityAnalysis arenaResult={arenaResult} />}
 
-        {discoveryResult && (
+        {discoveryResult && !isLoading && (
           <div className="space-y-4">
             <Alert className={discoveryResult.totalPoolsFound > 0 ? "border-green-500/30 bg-green-500/10" : "border-yellow-500/30 bg-yellow-500/10"}>
               <CheckCircle className={`h-4 w-4 ${discoveryResult.totalPoolsFound > 0 ? 'text-green-400' : 'text-yellow-400'}`} />
