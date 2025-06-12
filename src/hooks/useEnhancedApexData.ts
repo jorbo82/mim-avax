@@ -15,6 +15,15 @@ export interface EnhancedApexPool {
   isEnhanced: boolean;
 }
 
+interface PoolMetadata {
+  tokenType?: string;
+  tokenInfo?: {
+    logoURI?: string;
+    tags?: string[];
+  };
+  registrySource?: boolean;
+}
+
 export const useEnhancedApexData = () => {
   const [bluechipPools, setBluechipPools] = useState<EnhancedApexPool[]>([]);
   const [allApexPools, setAllApexPools] = useState<EnhancedApexPool[]>([]);
@@ -35,18 +44,22 @@ export const useEnhancedApexData = () => {
 
       if (error) throw error;
 
-      const enhancedPools = data?.map(pool => ({
-        id: pool.id,
-        name: pool.pool_name,
-        symbol: pool.quote_token_symbol || pool.base_token_symbol || 'Unknown',
-        type: pool.pool_metadata?.tokenType || 'wrapper',
-        tvl: Number(pool.tvl_usd || 0),
-        apy: Number(pool.apy_base || 0) + Number(pool.apy_reward || 0),
-        volume24h: Number(pool.volume_24h_usd || 0),
-        logoURI: pool.pool_metadata?.tokenInfo?.logoURI,
-        tags: pool.pool_metadata?.tokenInfo?.tags || [],
-        isEnhanced: Boolean(pool.pool_metadata?.registrySource)
-      })) || [];
+      const enhancedPools = data?.map(pool => {
+        const metadata = (pool.pool_metadata as PoolMetadata) || {};
+        
+        return {
+          id: pool.id,
+          name: pool.pool_name,
+          symbol: pool.quote_token_symbol || pool.base_token_symbol || 'Unknown',
+          type: metadata.tokenType === 'native' ? 'native' : 'wrapped' as 'native' | 'wrapped',
+          tvl: Number(pool.tvl_usd || 0),
+          apy: Number(pool.apy_base || 0) + Number(pool.apy_reward || 0),
+          volume24h: Number(pool.volume_24h_usd || 0),
+          logoURI: metadata.tokenInfo?.logoURI,
+          tags: metadata.tokenInfo?.tags || [],
+          isEnhanced: Boolean(metadata.registrySource)
+        };
+      }) || [];
 
       setAllApexPools(enhancedPools);
       setBluechipPools(enhancedPools.filter(pool => pool.tags.includes('bluechip')));
