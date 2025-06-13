@@ -1,7 +1,10 @@
 
 import { Link } from "react-router-dom";
+import { Activity, Wand2, TrendingUp, Sparkles } from "lucide-react";
 import DarkModeToggle from "./DarkModeToggle";
 import TokenPriceWidget from "./TokenPriceWidget";
+import MobileNavigation from "./navigation/MobileNavigation";
+import UnifiedButton from "./ui/unified-button";
 
 const Header = () => {
   return (
@@ -29,18 +32,30 @@ const Header = () => {
               </Link>
             </div>
 
-            {/* Navigation */}
-            <nav className="hidden md:flex items-center gap-6">
-              <Link 
-                to="/arbitratum-magnifiicum" 
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-              >
-                DeFi Test Lab
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex items-center gap-4">
+              <Link to="/token-analysis">
+                <UnifiedButton icon={TrendingUp} variant="outline">
+                  Token Analysis
+                </UnifiedButton>
+              </Link>
+              
+              <Link to="/arbitratum-magnifiicum">
+                <UnifiedButton icon={Activity} variant="outline">
+                  DeFi Test Lab
+                </UnifiedButton>
+              </Link>
+              
+              <Link to="/jorbo-ai">
+                <UnifiedButton icon={Sparkles} variant="primary">
+                  AI Magic
+                </UnifiedButton>
               </Link>
             </nav>
 
             {/* Right Section */}
             <div className="flex items-center gap-2">
+              <MobileNavigation />
               <DarkModeToggle />
             </div>
           </div>
