@@ -11,13 +11,13 @@ const TokenAnalysis = () => {
       <TokenAnalysisHero />
       
       {/* Enhanced Token Analysis Section */}
-      <section className="py-8 md:py-12 bg-background/30">
+      <section className="py-12 bg-background/30">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-6 md:mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-foreground mb-4">
               🧙‍♂️ Cast Your Ultimate Analysis Spell
             </h2>
-            <p className="text-neutral-600 dark:text-neutral-400 max-w-3xl mx-auto text-sm md:text-base">
+            <p className="text-neutral-600 dark:text-neutral-400 max-w-3xl mx-auto">
               Enter any token address to discover yield opportunities across multiple protocols AND verify if it was forged in the Arena trenches - all in one magical interface!
             </p>
           </div>
