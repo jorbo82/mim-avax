@@ -7,6 +7,8 @@ import { cn } from "@/lib/utils";
 interface UnifiedButtonProps {
   children: React.ReactNode;
   onClick?: () => void;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
   icon?: LucideIcon;
   variant?: "primary" | "outline" | "ghost";
   size?: "sm" | "default" | "lg";
@@ -16,7 +18,7 @@ interface UnifiedButtonProps {
 }
 
 const UnifiedButton = React.forwardRef<HTMLButtonElement, UnifiedButtonProps>(
-  ({ children, onClick, icon: Icon, variant = "outline", size = "default", className, disabled, type = "button" }, ref) => {
+  ({ children, onClick, onMouseEnter, onMouseLeave, icon: Icon, variant = "outline", size = "default", className, disabled, type = "button" }, ref) => {
     const baseClasses = "font-medium transition-all duration-200 modern-shadow hover:modern-shadow-lg active:scale-95";
     
     const variantClasses = {
@@ -29,6 +31,8 @@ const UnifiedButton = React.forwardRef<HTMLButtonElement, UnifiedButtonProps>(
       <Button
         ref={ref}
         onClick={onClick}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
         variant={variant === "primary" ? "default" : variant}
         size={size}
         disabled={disabled}
