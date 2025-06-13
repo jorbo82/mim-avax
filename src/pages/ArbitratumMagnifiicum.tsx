@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,12 +9,9 @@ import { TokenLookupSection } from '@/components/arbitratum/TokenLookupSection';
 import { PoolAnalysisSection } from '@/components/arbitratum/PoolAnalysisSection';
 import { ArbitrageOpportunitiesSection } from '@/components/arbitratum/ArbitrageOpportunitiesSection';
 import { ProtocolOverviewSection } from '@/components/arbitratum/ProtocolOverviewSection';
-
 const ArbitratumMagnifiicum = () => {
   const [activeTab, setActiveTab] = useState('tokens');
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-purple-900 dark:to-blue-900">
+  return <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-purple-900 dark:to-blue-900">
       {/* Header */}
       <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b">
         <div className="container mx-auto px-4 py-6">
@@ -25,9 +21,7 @@ const ArbitratumMagnifiicum = () => {
                 <Activity className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                  Arbitratum Magnifiicum
-                </h1>
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">Arbitratum Magnificum</h1>
                 <p className="text-muted-foreground">
                   DeFiLlama API Testing Ground for Avalanche DeFi
                 </p>
@@ -79,8 +73,6 @@ const ArbitratumMagnifiicum = () => {
           </TabsContent>
         </Tabs>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default ArbitratumMagnifiicum;
