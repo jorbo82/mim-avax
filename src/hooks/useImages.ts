@@ -13,6 +13,7 @@ export const useImages = () => {
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(0);
+  const [error, setError] = useState<string | null>(null);
 
   const saveGeneratedImage = async (params: SaveImageParams) => {
     if (!user) return null;
@@ -135,12 +136,20 @@ export const useImages = () => {
   };
 
   const fetchUserImages = async (pageNum: number = 0, append: boolean = false) => {
-    if (!user) return;
+    if (!user) {
+      console.log('useImages: No user found, skipping fetch');
+      return;
+    }
 
+    console.log(`useImages: Fetching images for user ${user.id}, page ${pageNum}, append: ${append}`);
     setLoading(true);
+    setError(null);
+    
     try {
       const from = pageNum * IMAGES_PER_PAGE;
       const to = from + IMAGES_PER_PAGE - 1;
+
+      console.log(`useImages: Querying range ${from}-${to}`);
 
       const { data, error } = await supabase
         .from('user_images')
@@ -149,9 +158,14 @@ export const useImages = () => {
         .order('created_at', { ascending: false })
         .range(from, to);
 
-      if (error) throw error;
+      if (error) {
+        console.error('useImages: Database error:', error);
+        throw error;
+      }
 
       const newImages = data || [];
+      console.log(`useImages: Retrieved ${newImages.length} images`);
+      console.log('useImages: Sample image URLs:', newImages.slice(0, 3).map(img => img.image_url));
       
       if (append) {
         setUserImages(prev => [...prev, ...newImages]);
@@ -162,7 +176,9 @@ export const useImages = () => {
       setHasMore(newImages.length === IMAGES_PER_PAGE);
       setPage(pageNum);
     } catch (error: any) {
-      console.error('Error fetching user images:', error);
+      console.error('useImages: Error fetching user images:', error);
+      setError(error.message || 'Failed to load images');
+      setUserImages([]);
     } finally {
       setLoading(false);
     }
@@ -175,12 +191,15 @@ export const useImages = () => {
   };
 
   useEffect(() => {
+    console.log('useImages: useEffect triggered, user:', user?.id);
     if (user) {
       fetchUserImages(0, false);
     } else {
+      console.log('useImages: No user, resetting state');
       setUserImages([]);
       setPage(0);
       setHasMore(true);
+      setError(null);
     }
   }, [user]);
 
@@ -188,6 +207,7 @@ export const useImages = () => {
     userImages,
     loading,
     hasMore,
+    error,
     saveGeneratedImage,
     toggleFavorite,
     deleteImage,

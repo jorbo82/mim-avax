@@ -5,8 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Search, Check } from 'lucide-react';
+import { Search, Check, AlertCircle, RefreshCw } from 'lucide-react';
 import { useJobTracking } from '@/hooks/useJobTracking';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface GallerySelectorProps {
   isOpen: boolean;
@@ -21,10 +22,20 @@ export const GallerySelector = ({
   onSelectImages, 
   maxSelections = 10 
 }: GallerySelectorProps) => {
-  const { userImages, loading } = useJobTracking();
+  const { userImages, loading, error } = useJobTracking();
   const [selectedUrls, setSelectedUrls] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isConverting, setIsConverting] = useState(false);
+
+  // Debug logging
+  useEffect(() => {
+    if (isOpen) {
+      console.log('GallerySelector: Dialog opened');
+      console.log('GallerySelector: userImages count:', userImages.length);
+      console.log('GallerySelector: loading state:', loading);
+      console.log('GallerySelector: error state:', error);
+    }
+  }, [isOpen, userImages.length, loading, error]);
 
   // Filter images based on search
   const filteredImages = userImages.filter(image => 
@@ -44,17 +55,25 @@ export const GallerySelector = ({
 
   const convertUrlToFile = async (imageUrl: string, filename: string): Promise<File | null> => {
     try {
+      console.log('GallerySelector: Converting URL to file:', imageUrl);
       const response = await fetch(imageUrl);
+      
+      if (!response.ok) {
+        console.error('GallerySelector: Failed to fetch image:', response.status, response.statusText);
+        throw new Error(`Failed to fetch image: ${response.status}`);
+      }
+      
       const blob = await response.blob();
+      console.log('GallerySelector: Image blob size:', blob.size);
       
       if (blob.size > 10 * 1024 * 1024) {
-        console.warn(`Image ${filename} is too large`);
+        console.warn(`GallerySelector: Image ${filename} is too large (${blob.size} bytes)`);
         return null;
       }
       
       return new File([blob], filename, { type: blob.type || 'image/png' });
     } catch (error) {
-      console.error(`Failed to convert ${filename}:`, error);
+      console.error(`GallerySelector: Failed to convert ${filename}:`, error);
       return null;
     }
   };
@@ -63,6 +82,7 @@ export const GallerySelector = ({
     if (selectedUrls.length === 0) return;
 
     setIsConverting(true);
+    console.log('GallerySelector: Converting selected images:', selectedUrls);
     
     try {
       const imageFiles: File[] = [];
@@ -74,15 +94,18 @@ export const GallerySelector = ({
           const file = await convertUrlToFile(url, filename);
           if (file) {
             imageFiles.push(file);
+          } else {
+            console.warn('GallerySelector: Failed to convert image:', url);
           }
         }
       }
 
+      console.log('GallerySelector: Successfully converted files:', imageFiles.length);
       onSelectImages(imageFiles);
       setSelectedUrls([]);
       onClose();
     } catch (error) {
-      console.error('Error converting gallery images:', error);
+      console.error('GallerySelector: Error converting gallery images:', error);
     } finally {
       setIsConverting(false);
     }
@@ -92,6 +115,12 @@ export const GallerySelector = ({
     setSelectedUrls([]);
     setSearchTerm('');
     onClose();
+  };
+
+  const handleRetry = () => {
+    console.log('GallerySelector: Retrying image fetch');
+    // This will trigger a refetch through the useJobTracking hook
+    window.location.reload();
   };
 
   return (
@@ -120,13 +149,30 @@ export const GallerySelector = ({
             />
           </div>
 
+          {error && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription className="flex items-center justify-between">
+                <span>Failed to load images: {error}</span>
+                <Button variant="outline" size="sm" onClick={handleRetry}>
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Retry
+                </Button>
+              </AlertDescription>
+            </Alert>
+          )}
+
           {loading ? (
             <div className="flex items-center justify-center py-8">
               <div className="animate-spin w-8 h-8 border-2 border-mim-teal border-t-transparent rounded-full" />
+              <span className="ml-3 text-muted-foreground">Loading your images...</span>
             </div>
-          ) : filteredImages.length === 0 ? (
+          ) : filteredImages.length === 0 && !error ? (
             <div className="text-center py-8 text-muted-foreground">
               {searchTerm ? 'No images match your search' : 'No images in gallery yet'}
+              {!searchTerm && (
+                <p className="text-sm mt-2">Generate some images with JORBO AI first!</p>
+              )}
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -146,6 +192,14 @@ export const GallerySelector = ({
                         src={image.image_url}
                         alt="Gallery"
                         className="w-full h-full object-cover rounded-t-lg"
+                        onError={(e) => {
+                          console.error('GallerySelector: Image failed to load:', image.image_url);
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                        }}
+                        onLoad={() => {
+                          console.log('GallerySelector: Image loaded successfully:', image.image_url);
+                        }}
                       />
                       {selectedUrls.includes(image.image_url) && (
                         <div className="absolute top-2 right-2 bg-mim-teal text-white rounded-full w-6 h-6 flex items-center justify-center">
@@ -174,7 +228,7 @@ export const GallerySelector = ({
         </div>
 
         <DialogFooter className="flex flex-col gap-2">
-          {selectedUrls.length === 0 && !isConverting && (
+          {selectedUrls.length === 0 && !isConverting && !loading && (
             <p className="text-sm text-muted-foreground text-center">
               💡 Select images above to enable the use button
             </p>
@@ -185,7 +239,7 @@ export const GallerySelector = ({
             </Button>
             <Button
               onClick={handleSelectImages}
-              disabled={selectedUrls.length === 0 || isConverting}
+              disabled={selectedUrls.length === 0 || isConverting || loading}
               className={`min-w-[140px] ${
                 selectedUrls.length === 0 
                   ? 'bg-muted text-muted-foreground border-muted hover:bg-muted' 
