@@ -2,6 +2,7 @@
 import MimeMeButton from "./MimeMeButton";
 import TokenAnalysisButton from "./TokenAnalysisButton";
 import JorboAIButton from "./JorboAIButton";
+import ArbitratumButton from "./ArbitratumButton";
 
 const HeroSection = () => {
   return (
@@ -27,10 +28,11 @@ const HeroSection = () => {
             </p>
           </div>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
+          <div className="flex flex-col sm:flex-row lg:flex-row gap-4 justify-center items-center pt-4 flex-wrap">
             <MimeMeButton />
             <TokenAnalysisButton />
             <JorboAIButton />
+            <ArbitratumButton />
           </div>
         </div>
       </div>
