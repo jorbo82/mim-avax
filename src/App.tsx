@@ -10,6 +10,7 @@ import TokenAnalysis from "./pages/TokenAnalysis";
 import JorboAI from "./pages/JorboAI";
 import DeFiAggregator from "./pages/DeFiAggregator";
 import Auth from "./pages/Auth";
+import ArbitratumMagnifiicum from "./pages/ArbitratumMagnifiicum";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="/jorbo-ai" element={<JorboAI />} />
             <Route path="/defi-aggregator" element={<DeFiAggregator />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/arbitratum-magnifiicum" element={<ArbitratumMagnifiicum />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
