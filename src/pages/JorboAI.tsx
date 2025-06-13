@@ -8,12 +8,14 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Wand2, Sparkles, Zap, Image, Download, Share2, Upload, Palette } from "lucide-react";
+import { Wand2, Sparkles, Zap, Image, Download, Share2, Upload, Palette, ImagePlus, Gallery } from "lucide-react";
 import { useEnhancedImageGeneration } from "@/hooks/useEnhancedImageGeneration";
 import { useJobTracking } from "@/hooks/useJobTracking";
 import { MultiImageUpload } from "@/components/MultiImageUpload";
 import UserGallery from "@/components/UserGallery";
 import MimeMeModal from "@/components/MimeMeModal";
+import { GallerySelector } from "@/components/GallerySelector";
+import { MimAssetSelector } from "@/components/MimAssetSelector";
 import { toast } from "sonner";
 
 const JorboAI = () => {
@@ -25,6 +27,8 @@ const JorboAI = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [generationMode, setGenerationMode] = useState<'text_to_image' | 'image_edit'>('text_to_image');
   const [referenceImages, setReferenceImages] = useState<File[]>([]);
+  const [showGallerySelector, setShowGallerySelector] = useState(false);
+  const [showMimAssetSelector, setShowMimAssetSelector] = useState(false);
 
   const { 
     isGenerating, 
@@ -115,6 +119,74 @@ const JorboAI = () => {
     }
   };
 
+  const convertUrlToFile = async (imageUrl: string, filename: string): Promise<File | null> => {
+    try {
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      
+      if (blob.size > 10 * 1024 * 1024) {
+        toast.error(`Image ${filename} is too large (max 10MB)`);
+        return null;
+      }
+      
+      const file = new File([blob], filename, { type: blob.type || 'image/png' });
+      Object.defineProperty(file, 'source', { value: 'gallery', writable: false });
+      return file;
+    } catch (error) {
+      console.error(`Failed to convert ${filename}:`, error);
+      toast.error(`Failed to add ${filename} as reference image`);
+      return null;
+    }
+  };
+
+  const handleGallerySelect = async (selectedImageUrls: string[]) => {
+    const maxImages = 10;
+    const availableSlots = maxImages - referenceImages.length;
+    
+    if (selectedImageUrls.length > availableSlots) {
+      toast.error(`Can only add ${availableSlots} more images (max ${maxImages} total)`);
+      return;
+    }
+
+    const newFiles: File[] = [];
+    for (const imageUrl of selectedImageUrls) {
+      const filename = `gallery_image_${Date.now()}_${Math.random().toString(36).substr(2, 9)}.png`;
+      const file = await convertUrlToFile(imageUrl, filename);
+      if (file) {
+        newFiles.push(file);
+      }
+    }
+
+    setReferenceImages(prev => [...prev, ...newFiles]);
+    setShowGallerySelector(false);
+    
+    if (newFiles.length > 0) {
+      toast.success(`Added ${newFiles.length} image${newFiles.length !== 1 ? 's' : ''} from gallery`);
+    }
+  };
+
+  const handleMimAssetSelect = (assetFiles: File[]) => {
+    const maxImages = 10;
+    const availableSlots = maxImages - referenceImages.length;
+    
+    if (assetFiles.length > availableSlots) {
+      toast.error(`Can only add ${availableSlots} more images (max ${maxImages} total)`);
+      return;
+    }
+
+    // Mark files as coming from MIM assets
+    const markedFiles = assetFiles.map(file => {
+      Object.defineProperty(file, 'source', { value: 'mim-asset', writable: false });
+      return file;
+    });
+
+    setReferenceImages(prev => [...prev, ...markedFiles]);
+    
+    if (assetFiles.length > 0) {
+      toast.success(`Added ${assetFiles.length} MIM asset${assetFiles.length !== 1 ? 's' : ''} as reference`);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Header />
@@ -186,13 +258,41 @@ const JorboAI = () => {
                       </p>
                     </div>
                     
-                    {/* Reference Images Upload */}
-                    <MultiImageUpload
-                      images={referenceImages}
-                      onImagesChange={setReferenceImages}
-                      maxImages={5}
-                      disabled={isGenerating}
-                    />
+                    {/* Reference Images Upload with Browse Options */}
+                    <div className="space-y-4">
+                      <div className="flex flex-wrap gap-2 justify-between items-center">
+                        <h3 className="text-lg font-semibold">Reference Images (up to 10)</h3>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setShowGallerySelector(true)}
+                            disabled={isGenerating || referenceImages.length >= 10}
+                            className="flex items-center gap-2"
+                          >
+                            <Gallery className="w-4 h-4" />
+                            Browse Gallery
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setShowMimAssetSelector(true)}
+                            disabled={isGenerating || referenceImages.length >= 10}
+                            className="flex items-center gap-2"
+                          >
+                            <ImagePlus className="w-4 h-4" />
+                            MIM Assets
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      <MultiImageUpload
+                        images={referenceImages}
+                        onImagesChange={setReferenceImages}
+                        maxImages={10}
+                        disabled={isGenerating}
+                      />
+                    </div>
                   </TabsContent>
                 </Tabs>
 
@@ -389,6 +489,22 @@ const JorboAI = () => {
           </div>
         </div>
       </section>
+
+      {/* Gallery Selector Modal */}
+      <GallerySelector
+        isOpen={showGallerySelector}
+        onClose={() => setShowGallerySelector(false)}
+        onSelect={handleGallerySelect}
+        maxSelections={10 - referenceImages.length}
+      />
+
+      {/* MIM Asset Selector Modal */}
+      <MimAssetSelector
+        isOpen={showMimAssetSelector}
+        onClose={() => setShowMimAssetSelector(false)}
+        onSelectAssets={handleMimAssetSelect}
+        maxSelections={10 - referenceImages.length}
+      />
 
       {/* Meme Editor Modal */}
       <MimeMeModal 
