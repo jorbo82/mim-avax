@@ -7,10 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Wand2, Sparkles, Zap, Image, Download, Share2 } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Wand2, Sparkles, Zap, Image, Download, Share2, Upload, Palette } from "lucide-react";
 import { useEnhancedImageGeneration } from "@/hooks/useEnhancedImageGeneration";
 import { useJobTracking } from "@/hooks/useJobTracking";
-import { GenerationStatus } from "@/components/GenerationStatus";
+import { MultiImageUpload } from "@/components/MultiImageUpload";
 import UserGallery from "@/components/UserGallery";
 import MimeMeModal from "@/components/MimeMeModal";
 import { toast } from "sonner";
@@ -22,6 +23,8 @@ const JorboAI = () => {
   const [showGallery, setShowGallery] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [generationMode, setGenerationMode] = useState<'text_to_image' | 'image_edit'>('text_to_image');
+  const [referenceImages, setReferenceImages] = useState<File[]>([]);
 
   const { 
     isGenerating, 
@@ -34,7 +37,7 @@ const JorboAI = () => {
 
   const { userImages, jobs } = useJobTracking();
 
-  const examplePrompts = [
+  const textToImagePrompts = [
     "A magical wizard casting spells with glowing money coins floating around",
     "Digital art of a cryptocurrency token transforming into a mystical creature",
     "Futuristic DeFi trading interface with magical elements and floating charts",
@@ -42,9 +45,24 @@ const JorboAI = () => {
     "Magical internet money flowing through cyberspace like golden streams"
   ];
 
+  const imageEditPrompts = [
+    "Transform this into a magical fantasy scene with sparkles and ethereal lighting",
+    "Add cyberpunk neon effects and futuristic elements to this image",
+    "Convert this to a dreamy watercolor painting style",
+    "Add magical creatures and mystical elements around the main subject",
+    "Transform the background into a cosmic space scene with stars and galaxies"
+  ];
+
+  const currentPrompts = generationMode === 'text_to_image' ? textToImagePrompts : imageEditPrompts;
+
   const handleGenerate = async () => {
     if (!prompt.trim()) {
       toast.error("Please enter a prompt to generate an image");
+      return;
+    }
+
+    if (generationMode === 'image_edit' && referenceImages.length === 0) {
+      toast.error("Please upload reference images for image editing mode");
       return;
     }
 
@@ -52,7 +70,8 @@ const JorboAI = () => {
       prompt,
       size,
       quality,
-      jobType: 'text_to_image'
+      jobType: generationMode,
+      inputImages: generationMode === 'image_edit' ? referenceImages : undefined
     });
   };
 
@@ -88,6 +107,14 @@ const JorboAI = () => {
     }
   };
 
+  const handleModeChange = (mode: string) => {
+    setGenerationMode(mode as 'text_to_image' | 'image_edit');
+    setPrompt(""); // Clear prompt when switching modes
+    if (mode === 'text_to_image') {
+      setReferenceImages([]); // Clear reference images for text-to-image mode
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Header />
@@ -107,10 +134,10 @@ const JorboAI = () => {
                 🪄 JORBO AI Magic
               </h1>
               <h2 className="text-lg md:text-xl lg:text-2xl font-medium text-neutral-600 dark:text-neutral-400 max-w-3xl mx-auto">
-                Create stunning images with cutting-edge AI technology
+                Create and edit stunning images with cutting-edge AI technology
               </h2>
               <p className="text-sm md:text-base lg:text-lg text-neutral-500 dark:text-neutral-500 max-w-2xl mx-auto leading-relaxed">
-                Transform your ideas into beautiful artwork using our advanced AI image generation powered by GPT-Image-1.
+                Transform your ideas into beautiful artwork or edit existing images using our advanced AI powered by GPT-Image-1.
               </p>
             </div>
           </div>
@@ -129,15 +156,59 @@ const JorboAI = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
+                {/* Generation Mode Tabs */}
+                <Tabs value={generationMode} onValueChange={handleModeChange}>
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="text_to_image" className="flex items-center gap-2">
+                      <Wand2 className="w-4 h-4" />
+                      Text to Image
+                    </TabsTrigger>
+                    <TabsTrigger value="image_edit" className="flex items-center gap-2">
+                      <Palette className="w-4 h-4" />
+                      Image Editing
+                    </TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="text_to_image" className="space-y-4 mt-6">
+                    <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
+                      <h3 className="font-medium text-blue-800 dark:text-blue-200 mb-2">✨ Text to Image Mode</h3>
+                      <p className="text-sm text-blue-700 dark:text-blue-300">
+                        Describe your vision and JORBO AI will create an entirely new image from your imagination.
+                      </p>
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="image_edit" className="space-y-4 mt-6">
+                    <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4">
+                      <h3 className="font-medium text-purple-800 dark:text-purple-200 mb-2">🎨 Image Editing Mode</h3>
+                      <p className="text-sm text-purple-700 dark:text-purple-300">
+                        Upload reference images and describe how you want to transform or edit them with AI magic.
+                      </p>
+                    </div>
+                    
+                    {/* Reference Images Upload */}
+                    <MultiImageUpload
+                      images={referenceImages}
+                      onImagesChange={setReferenceImages}
+                      maxImages={5}
+                      disabled={isGenerating}
+                    />
+                  </TabsContent>
+                </Tabs>
+
                 {/* Prompt Input */}
                 <div>
                   <label className="block text-sm font-medium mb-2">
-                    Describe your image
+                    {generationMode === 'text_to_image' ? 'Describe your image' : 'Describe how to edit your images'}
                   </label>
                   <Textarea
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
-                    placeholder="Enter a detailed description of the image you want to create..."
+                    placeholder={
+                      generationMode === 'text_to_image' 
+                        ? "Enter a detailed description of the image you want to create..."
+                        : "Describe how you want to transform or edit the uploaded images..."
+                    }
                     className="min-h-[100px]"
                     disabled={isGenerating}
                   />
@@ -180,19 +251,19 @@ const JorboAI = () => {
                 {/* Generate Button */}
                 <Button 
                   onClick={handleGenerate}
-                  disabled={isGenerating || !prompt.trim()}
+                  disabled={isGenerating || !prompt.trim() || (generationMode === 'image_edit' && referenceImages.length === 0)}
                   className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
                   size="lg"
                 >
                   {isGenerating ? (
                     <>
                       <Zap className="mr-2 w-4 h-4 animate-spin" />
-                      Generating Magic...
+                      {generationMode === 'text_to_image' ? 'Generating Magic...' : 'Editing Images...'}
                     </>
                   ) : (
                     <>
                       <Wand2 className="mr-2 w-4 h-4" />
-                      Generate Image
+                      {generationMode === 'text_to_image' ? 'Generate Image' : 'Edit Images'}
                     </>
                   )}
                 </Button>
@@ -200,7 +271,9 @@ const JorboAI = () => {
                 {/* Generation Status */}
                 {isGenerating && (
                   <div className="mt-6">
-                    <h3 className="text-lg font-semibold mb-4">✨ Casting Your Spell...</h3>
+                    <h3 className="text-lg font-semibold mb-4">
+                      ✨ {generationMode === 'text_to_image' ? 'Casting Your Spell...' : 'Weaving Image Magic...'}
+                    </h3>
                     <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-lg p-4">
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-sm font-medium">Generation Phase:</span>
@@ -269,11 +342,13 @@ const JorboAI = () => {
             {/* Example Prompts */}
             <Card className="mb-8">
               <CardHeader>
-                <CardTitle className="text-xl">✨ Example Prompts</CardTitle>
+                <CardTitle className="text-xl">
+                  ✨ Example Prompts {generationMode === 'text_to_image' ? '(Text to Image)' : '(Image Editing)'}
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 gap-3">
-                  {examplePrompts.map((example, index) => (
+                  {currentPrompts.map((example, index) => (
                     <Button
                       key={index}
                       variant="outline"
