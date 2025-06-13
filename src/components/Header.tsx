@@ -5,6 +5,7 @@ import DarkModeToggle from "./DarkModeToggle";
 import TokenPriceWidget from "./TokenPriceWidget";
 import MobileNavigation from "./navigation/MobileNavigation";
 import UnifiedButton from "./ui/unified-button";
+import MimeMeButton from "./MimeMeButton";
 
 const Header = () => {
   return (
@@ -34,6 +35,8 @@ const Header = () => {
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-4">
+              <MimeMeButton />
+              
               <Link to="/token-analysis">
                 <UnifiedButton icon={TrendingUp} variant="outline">
                   Token Analysis

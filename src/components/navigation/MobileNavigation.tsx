@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Menu, X, Wand2, Sparkles, Activity, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import MimeMeButton from "../MimeMeButton";
 
 const MobileNavigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -62,6 +63,12 @@ const MobileNavigation = () => {
           
           <nav className="flex-1 py-6">
             <div className="space-y-2">
+              {/* Create Meme Button */}
+              <div className="px-3 py-2">
+                <MimeMeButton />
+              </div>
+              
+              {/* Navigation Items */}
               {navigationItems.map((item) => (
                 <Link
                   key={item.href}
