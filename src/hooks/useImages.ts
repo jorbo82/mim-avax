@@ -142,7 +142,11 @@ export const useImages = () => {
     }
 
     console.log(`useImages: Fetching images for user ${user.id}, page ${pageNum}, append: ${append}`);
-    setLoading(true);
+    
+    // Only show loading for initial fetch, not for pagination
+    if (!append) {
+      setLoading(true);
+    }
     setError(null);
     
     try {
@@ -178,7 +182,9 @@ export const useImages = () => {
     } catch (error: any) {
       console.error('useImages: Error fetching user images:', error);
       setError(error.message || 'Failed to load images');
-      setUserImages([]);
+      if (!append) {
+        setUserImages([]);
+      }
     } finally {
       setLoading(false);
     }
@@ -186,6 +192,7 @@ export const useImages = () => {
 
   const loadMoreImages = async () => {
     if (!loading && hasMore) {
+      console.log('useImages: Loading more images, current page:', page);
       await fetchUserImages(page + 1, true);
     }
   };

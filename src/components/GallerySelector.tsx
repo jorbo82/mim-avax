@@ -2,12 +2,13 @@
 import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Search, Check, AlertCircle, RefreshCw } from 'lucide-react';
+import { Search, AlertCircle, RefreshCw } from 'lucide-react';
 import { useJobTracking } from '@/hooks/useJobTracking';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { GalleryGridSkeleton } from '@/components/gallery/GalleryGridSkeleton';
+import { LazyGalleryImage } from '@/components/gallery/LazyGalleryImage';
 
 interface GallerySelectorProps {
   isOpen: boolean;
@@ -22,10 +23,11 @@ export const GallerySelector = ({
   onSelectImages, 
   maxSelections = 10 
 }: GallerySelectorProps) => {
-  const { userImages, loading, error } = useJobTracking();
+  const { userImages, loading, error, loadMoreImages, hasMoreImages } = useJobTracking();
   const [selectedUrls, setSelectedUrls] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isConverting, setIsConverting] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   // Debug logging
   useEffect(() => {
@@ -111,6 +113,14 @@ export const GallerySelector = ({
     }
   };
 
+  const handleLoadMore = async () => {
+    if (!isLoadingMore && hasMoreImages) {
+      setIsLoadingMore(true);
+      await loadMoreImages();
+      setIsLoadingMore(false);
+    }
+  };
+
   const resetAndClose = () => {
     setSelectedUrls([]);
     setSearchTerm('');
@@ -119,7 +129,6 @@ export const GallerySelector = ({
 
   const handleRetry = () => {
     console.log('GallerySelector: Retrying image fetch');
-    // This will trigger a refetch through the useJobTracking hook
     window.location.reload();
   };
 
@@ -162,10 +171,13 @@ export const GallerySelector = ({
             </Alert>
           )}
 
-          {loading ? (
-            <div className="flex items-center justify-center py-8">
-              <div className="animate-spin w-8 h-8 border-2 border-mim-teal border-t-transparent rounded-full" />
-              <span className="ml-3 text-muted-foreground">Loading your images...</span>
+          {loading && userImages.length === 0 ? (
+            <div className="space-y-4">
+              <div className="flex items-center justify-center py-4">
+                <div className="animate-spin w-6 h-6 border-2 border-mim-teal border-t-transparent rounded-full" />
+                <span className="ml-3 text-muted-foreground">Loading your images...</span>
+              </div>
+              <GalleryGridSkeleton count={8} />
             </div>
           ) : filteredImages.length === 0 && !error ? (
             <div className="text-center py-8 text-muted-foreground">
@@ -175,54 +187,45 @@ export const GallerySelector = ({
               )}
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {filteredImages.map((image) => (
-                <Card
-                  key={image.id}
-                  className={`cursor-pointer transition-all ${
-                    selectedUrls.includes(image.image_url)
-                      ? 'ring-2 ring-mim-teal shadow-lg'
-                      : 'hover:shadow-md'
-                  }`}
-                  onClick={() => toggleSelection(image.image_url)}
-                >
-                  <CardContent className="p-0">
-                    <div className="aspect-square relative">
-                      <img
-                        src={image.image_url}
-                        alt="Gallery"
-                        className="w-full h-full object-cover rounded-t-lg"
-                        onError={(e) => {
-                          console.error('GallerySelector: Image failed to load:', image.image_url);
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                        }}
-                        onLoad={() => {
-                          console.log('GallerySelector: Image loaded successfully:', image.image_url);
-                        }}
-                      />
-                      {selectedUrls.includes(image.image_url) && (
-                        <div className="absolute top-2 right-2 bg-mim-teal text-white rounded-full w-6 h-6 flex items-center justify-center">
-                          <Check className="w-4 h-4" />
-                        </div>
-                      )}
-                    </div>
-                    <div className="p-3">
-                      <p className="text-xs text-muted-foreground line-clamp-2">
-                        {image.prompt}
-                      </p>
-                      <div className="flex items-center gap-2 mt-2">
-                        <Badge variant="outline" className="text-xs">
-                          {image.size}
-                        </Badge>
-                        <Badge variant="outline" className="text-xs">
-                          {image.quality}
-                        </Badge>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {filteredImages.map((image) => (
+                  <LazyGalleryImage
+                    key={image.id}
+                    image={image}
+                    isSelected={selectedUrls.includes(image.image_url)}
+                    onToggleSelection={toggleSelection}
+                  />
+                ))}
+              </div>
+
+              {/* Load More Button */}
+              {hasMoreImages && !searchTerm && (
+                <div className="flex justify-center pt-4">
+                  <Button
+                    variant="outline"
+                    onClick={handleLoadMore}
+                    disabled={isLoadingMore}
+                    className="min-w-[120px]"
+                  >
+                    {isLoadingMore ? (
+                      <>
+                        <div className="animate-spin w-4 h-4 border-2 border-mim-teal border-t-transparent rounded-full mr-2" />
+                        Loading...
+                      </>
+                    ) : (
+                      'Load More'
+                    )}
+                  </Button>
+                </div>
+              )}
+
+              {/* Loading More Skeletons */}
+              {isLoadingMore && (
+                <div className="pt-4">
+                  <GalleryGridSkeleton count={4} />
+                </div>
+              )}
             </div>
           )}
         </div>
