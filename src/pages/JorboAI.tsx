@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -198,10 +199,29 @@ const JorboAI = () => {
 
                 {/* Generation Status */}
                 {isGenerating && (
-                  <GenerationStatus
-                    phase={generationPhase}
-                    limitExceeded={limitExceeded}
-                  />
+                  <div className="mt-6">
+                    <h3 className="text-lg font-semibold mb-4">✨ Casting Your Spell...</h3>
+                    <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium">Generation Phase:</span>
+                        <span className="text-sm text-purple-600 capitalize">{generationPhase}</span>
+                      </div>
+                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                        <div 
+                          className="bg-gradient-to-r from-purple-600 to-blue-600 h-2 rounded-full transition-all duration-500"
+                          style={{ 
+                            width: generationPhase === 'connecting' ? '25%' : 
+                                   generationPhase === 'generating' ? '75%' : '100%' 
+                          }}
+                        />
+                      </div>
+                      {limitExceeded && (
+                        <p className="text-sm text-amber-600 mt-2">
+                          ⚠️ Daily limit reached - this may be your last generation today
+                        </p>
+                      )}
+                    </div>
+                  </div>
                 )}
 
                 {/* Generated Image Display */}
