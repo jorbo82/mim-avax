@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -10,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Wand2, Sparkles, Zap, Image, Download, Share2 } from "lucide-react";
 import { useEnhancedImageGeneration } from "@/hooks/useEnhancedImageGeneration";
 import { useJobTracking } from "@/hooks/useJobTracking";
-import GenerationStatus from "@/components/GenerationStatus";
+import { GenerationStatus } from "@/components/GenerationStatus";
 import UserGallery from "@/components/UserGallery";
 import MimeMeModal from "@/components/MimeMeModal";
 import { toast } from "sonner";
@@ -32,7 +31,7 @@ const JorboAI = () => {
     resetGeneration 
   } = useEnhancedImageGeneration();
 
-  const { images, jobs } = useJobTracking();
+  const { userImages, jobs } = useJobTracking();
 
   const examplePrompts = [
     "A magical wizard casting spells with glowing money coins floating around",
