@@ -22,6 +22,7 @@ export const useEnhancedImageGeneration = () => {
   const [currentJobId, setCurrentJobId] = useState<string | null>(null);
   const [generationPhase, setGenerationPhase] = useState<'connecting' | 'generating' | 'finalizing'>('connecting');
   const [limitExceeded, setLimitExceeded] = useState(false);
+  const [onImageGenerated, setOnImageGenerated] = useState<(() => void) | null>(null);
 
   const convertFileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -125,6 +126,10 @@ export const useEnhancedImageGeneration = () => {
         setTimeout(() => {
           refetchJobs();
           refetchImages();
+          // Trigger gallery refresh callback if set
+          if (onImageGenerated) {
+            onImageGenerated();
+          }
         }, 1000);
         
         console.log('JORBO AI generation successful:', {
@@ -157,6 +162,10 @@ export const useEnhancedImageGeneration = () => {
     setLimitExceeded(false);
   };
 
+  const setGalleryRefreshCallback = (callback: (() => void) | null) => {
+    setOnImageGenerated(callback);
+  };
+
   return {
     isGenerating,
     generatedImageUrl,
@@ -164,6 +173,7 @@ export const useEnhancedImageGeneration = () => {
     generationPhase,
     limitExceeded,
     generateImage,
-    resetGeneration
+    resetGeneration,
+    setGalleryRefreshCallback
   };
 };

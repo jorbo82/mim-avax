@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Sparkles, Image, Wand2, Download, LogOut, History, ImageIcon, Palette, Brush } from "lucide-react";
@@ -37,8 +36,18 @@ const JorboAI = () => {
   const [showGallerySelector, setShowGallerySelector] = useState(false);
   const [showMimAssetSelector, setShowMimAssetSelector] = useState(false);
   const [showLimitModal, setShowLimitModal] = useState(false);
+  const [galleryRefreshTrigger, setGalleryRefreshTrigger] = useState(0);
   
-  const { isGenerating, generatedImageUrl, generationPhase, limitExceeded, generateImage, resetGeneration } = useEnhancedImageGeneration();
+  const { 
+    isGenerating, 
+    generatedImageUrl, 
+    generationPhase, 
+    limitExceeded, 
+    generateImage, 
+    resetGeneration,
+    setGalleryRefreshCallback
+  } = useEnhancedImageGeneration();
+  
   const { 
     remainingGenerations, 
     canGenerate, 
@@ -63,6 +72,15 @@ const JorboAI = () => {
       setShowLimitModal(true);
     }
   }, [limitExceeded]);
+
+  // Set up gallery refresh callback
+  useEffect(() => {
+    setGalleryRefreshCallback(() => {
+      setGalleryRefreshTrigger(prev => prev + 1);
+    });
+    
+    return () => setGalleryRefreshCallback(null);
+  }, [setGalleryRefreshCallback]);
 
   const handleGeneration = async () => {
     // Check limits before generating
@@ -172,7 +190,7 @@ const JorboAI = () => {
                   JORBO AI
                 </h1>
                 <p className="text-muted-foreground">Advanced AI Image Generator</p>
-                <p className="text-sm text-muted-foreground">Welcome back, {user.email}</p>
+                <p className="text-sm text-muted-foreground">Welcome back, {user?.email}</p>
               </div>
             </div>
           </div>
@@ -341,7 +359,6 @@ const JorboAI = () => {
                 )}
               </div>
 
-              {/* Results Panel */}
               <div className="space-y-6">
                 <Card className="cute-border cute-shadow">
                   <CardHeader>
@@ -441,6 +458,7 @@ const JorboAI = () => {
         onClose={() => setShowGallerySelector(false)}
         onSelectImages={handleGalleryImagesSelected}
         maxSelections={10}
+        refreshTrigger={galleryRefreshTrigger}
       />
 
       <MimAssetSelector

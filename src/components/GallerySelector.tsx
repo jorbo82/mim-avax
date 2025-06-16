@@ -15,19 +15,22 @@ interface GallerySelectorProps {
   onClose: () => void;
   onSelectImages: (imageFiles: File[]) => void;
   maxSelections?: number;
+  refreshTrigger?: number; // Add refresh trigger prop
 }
 
 export const GallerySelector = ({ 
   isOpen, 
   onClose, 
   onSelectImages, 
-  maxSelections = 10 
+  maxSelections = 10,
+  refreshTrigger = 0
 }: GallerySelectorProps) => {
-  const { userImages, loading, error, loadMoreImages, hasMoreImages } = useJobTracking();
+  const { userImages, loading, error, loadMoreImages, hasMoreImages, refetchImages } = useJobTracking();
   const [selectedUrls, setSelectedUrls] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isConverting, setIsConverting] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Debug logging
   useEffect(() => {
@@ -38,6 +41,14 @@ export const GallerySelector = ({
       console.log('GallerySelector: error state:', error);
     }
   }, [isOpen, userImages.length, loading, error]);
+
+  // Auto-refresh when refreshTrigger changes and dialog is open
+  useEffect(() => {
+    if (isOpen && refreshTrigger > 0) {
+      console.log('GallerySelector: Auto-refreshing due to new image generation');
+      handleRefresh();
+    }
+  }, [refreshTrigger, isOpen]);
 
   // Filter images based on search
   const filteredImages = userImages.filter(image => 
@@ -121,6 +132,18 @@ export const GallerySelector = ({
     }
   };
 
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      await refetchImages();
+      console.log('GallerySelector: Gallery refreshed successfully');
+    } catch (error) {
+      console.error('GallerySelector: Error refreshing gallery:', error);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
   const resetAndClose = () => {
     setSelectedUrls([]);
     setSearchTerm('');
@@ -129,7 +152,7 @@ export const GallerySelector = ({
 
   const handleRetry = () => {
     console.log('GallerySelector: Retrying image fetch');
-    window.location.reload();
+    handleRefresh();
   };
 
   return (
@@ -138,12 +161,27 @@ export const GallerySelector = ({
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
             Select Images from Gallery
-            <Badge variant="secondary">
-              {selectedUrls.length}/{maxSelections} selected
-            </Badge>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleRefresh}
+                disabled={isRefreshing}
+                className="h-8"
+              >
+                <RefreshCw className={`w-4 h-4 mr-1 ${isRefreshing ? 'animate-spin' : ''}`} />
+                Refresh
+              </Button>
+              <Badge variant="secondary">
+                {selectedUrls.length}/{maxSelections} selected
+              </Badge>
+            </div>
           </DialogTitle>
           <DialogDescription>
             Choose up to {maxSelections} images from your gallery to use as reference images for AI generation.
+            {isRefreshing && (
+              <span className="text-mim-teal ml-2">🔄 Refreshing gallery...</span>
+            )}
           </DialogDescription>
         </DialogHeader>
 
@@ -171,11 +209,13 @@ export const GallerySelector = ({
             </Alert>
           )}
 
-          {loading && userImages.length === 0 ? (
+          {(loading || isRefreshing) && userImages.length === 0 ? (
             <div className="space-y-4">
               <div className="flex items-center justify-center py-4">
                 <div className="animate-spin w-6 h-6 border-2 border-mim-teal border-t-transparent rounded-full" />
-                <span className="ml-3 text-muted-foreground">Loading your images...</span>
+                <span className="ml-3 text-muted-foreground">
+                  {isRefreshing ? 'Refreshing your images...' : 'Loading your images...'}
+                </span>
               </div>
               <GalleryGridSkeleton count={8} />
             </div>
