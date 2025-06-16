@@ -1,155 +1,54 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Sparkles, Image, Wand2, Download, LogOut, History, ImageIcon, Palette, Brush } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
+
+import { Wand2, Image, History } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { toast } from "sonner";
-import { useAuth } from "@/contexts/AuthContext";
-import { useEnhancedImageGeneration } from "@/hooks/useEnhancedImageGeneration";
-import { useGenerationLimits } from "@/hooks/useGenerationLimits";
-import { downloadImage } from "@/utils/imageUtils";
 import UserGallery from "@/components/UserGallery";
 import JobStatus from "@/components/JobStatus";
-import { MultiImageUpload } from "@/components/MultiImageUpload";
 import { GallerySelector } from "@/components/GallerySelector";
 import { MimAssetSelector } from "@/components/MimAssetSelector";
 import { GenerationLimitModal } from "@/components/GenerationLimitModal";
 import { GenerationStatus } from "@/components/GenerationStatus";
-import MagicalImageSkeleton from "@/components/MagicalImageSkeleton";
 import DarkModeToggle from "@/components/DarkModeToggle";
-
-interface ImageWithSource extends File {
-  source?: 'upload' | 'gallery' | 'mim-asset';
-}
+import { JorboAIHeader } from "@/components/jorbo-ai/JorboAIHeader";
+import { GenerationControls } from "@/components/jorbo-ai/GenerationControls";
+import { GeneratedImageDisplay } from "@/components/jorbo-ai/GeneratedImageDisplay";
+import { JorboAIFeatures } from "@/components/jorbo-ai/JorboAIFeatures";
+import { useJorboAIState } from "@/hooks/useJorboAIState";
 
 const JorboAI = () => {
-  const navigate = useNavigate();
-  const { user, loading: authLoading, signOut } = useAuth();
-  const [prompt, setPrompt] = useState("");
-  const [selectedImages, setSelectedImages] = useState<ImageWithSource[]>([]);
-  const [selectedSize, setSelectedSize] = useState("1024x1024");
-  const [selectedQuality, setSelectedQuality] = useState("high");
-  const [showGallerySelector, setShowGallerySelector] = useState(false);
-  const [showMimAssetSelector, setShowMimAssetSelector] = useState(false);
-  const [showLimitModal, setShowLimitModal] = useState(false);
-  const [galleryRefreshTrigger, setGalleryRefreshTrigger] = useState(0);
-  
-  const { 
-    isGenerating, 
-    generatedImageUrl, 
-    generationPhase, 
-    limitExceeded, 
-    generateImage, 
+  const {
+    user,
+    authLoading,
+    prompt,
+    setPrompt,
+    selectedImages,
+    setSelectedImages,
+    selectedSize,
+    setSelectedSize,
+    selectedQuality,
+    setSelectedQuality,
+    showGallerySelector,
+    setShowGallerySelector,
+    showMimAssetSelector,
+    setShowMimAssetSelector,
+    showLimitModal,
+    setShowLimitModal,
+    galleryRefreshTrigger,
+    isGenerating,
+    generatedImageUrl,
+    generationPhase,
+    remainingGenerations,
+    canGenerate,
+    isOverrideUsed,
+    limitsLoading,
+    DAILY_LIMIT,
+    handleGeneration,
+    handleOverride,
+    handleDownload,
+    handleSignOut,
+    handleGalleryImagesSelected,
+    handleMimAssetsSelected,
     resetGeneration,
-    setGalleryRefreshCallback
-  } = useEnhancedImageGeneration();
-  
-  const { 
-    remainingGenerations, 
-    canGenerate, 
-    isOverrideUsed, 
-    incrementGenerationCount, 
-    useOverride, 
-    refetch: refetchLimits,
-    loading: limitsLoading,
-    DAILY_LIMIT 
-  } = useGenerationLimits();
-
-  // Redirect to auth if not logged in
-  useEffect(() => {
-    if (!authLoading && !user) {
-      navigate("/auth?redirect=/jorbo-ai");
-    }
-  }, [user, authLoading, navigate]);
-
-  // Show limit modal when limit is exceeded
-  useEffect(() => {
-    if (limitExceeded) {
-      setShowLimitModal(true);
-    }
-  }, [limitExceeded]);
-
-  // Set up gallery refresh callback
-  useEffect(() => {
-    setGalleryRefreshCallback(() => {
-      setGalleryRefreshTrigger(prev => prev + 1);
-    });
-    
-    return () => setGalleryRefreshCallback(null);
-  }, [setGalleryRefreshCallback]);
-
-  const handleGeneration = async () => {
-    // Check limits before generating
-    if (!canGenerate()) {
-      setShowLimitModal(true);
-      return;
-    }
-
-    const jobType = selectedImages.length > 0 ? 'image_edit' : 'text_to_image';
-    
-    // Increment count if not using override (the edge function will also check)
-    if (!isOverrideUsed()) {
-      const success = await incrementGenerationCount();
-      if (!success) {
-        toast.error('Failed to update generation count');
-        return;
-      }
-    }
-    
-    await generateImage({
-      prompt,
-      size: selectedSize,
-      quality: selectedQuality,
-      jobType,
-      inputImages: selectedImages,
-    });
-
-    // Refetch limits after successful generation
-    refetchLimits();
-  };
-
-  const handleOverride = async (password: string) => {
-    const success = await useOverride(password);
-    if (success) {
-      refetchLimits();
-    }
-    return success;
-  };
-
-  const handleDownload = () => {
-    if (generatedImageUrl) {
-      downloadImage(generatedImageUrl, `jorbo-ai-${Date.now()}.png`);
-    }
-  };
-
-  const handleSignOut = async () => {
-    await signOut();
-    navigate("/");
-  };
-
-  const handleGalleryImagesSelected = (imageFiles: File[]) => {
-    const filesWithSource: ImageWithSource[] = imageFiles.map(file => {
-      const fileWithSource = file as ImageWithSource;
-      fileWithSource.source = 'gallery';
-      return fileWithSource;
-    });
-    setSelectedImages(prev => [...prev, ...filesWithSource].slice(0, 10));
-    toast.success(`Added ${imageFiles.length} image${imageFiles.length !== 1 ? 's' : ''} from gallery`);
-  };
-
-  const handleMimAssetsSelected = (assetFiles: File[]) => {
-    const filesWithSource: ImageWithSource[] = assetFiles.map(file => {
-      const fileWithSource = file as ImageWithSource;
-      fileWithSource.source = 'mim-asset';
-      return fileWithSource;
-    });
-    setSelectedImages(prev => [...prev, ...filesWithSource].slice(0, 10));
-    toast.success(`Added ${assetFiles.length} MIM-ME asset${assetFiles.length !== 1 ? 's' : ''}`);
-  };
+  } = useJorboAIState();
 
   if (authLoading) {
     return (
@@ -165,45 +64,10 @@ const JorboAI = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-mim-cream via-mim-pink-light/30 to-mim-teal/20 dark:from-gray-900 dark:via-mim-pink-dark/20 dark:to-mim-teal-dark/10">
-      {/* Dark Mode Toggle */}
       <DarkModeToggle />
       
       <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => navigate("/")}
-              className="text-mim-teal hover:text-mim-teal-dark dark:text-mim-teal-light dark:hover:text-mim-teal"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Home
-            </Button>
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-gradient-to-r from-mim-teal to-mim-gold rounded-full">
-                <Sparkles className="w-8 h-8 text-white" />
-              </div>
-              <div>
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-mim-teal to-mim-gold bg-clip-text text-transparent">
-                  JORBO AI
-                </h1>
-                <p className="text-muted-foreground">Advanced AI Image Generator</p>
-                <p className="text-sm text-muted-foreground">Welcome back, {user?.email}</p>
-              </div>
-            </div>
-          </div>
-          
-          <Button 
-            variant="outline" 
-            onClick={handleSignOut}
-            className="border-mim-teal text-mim-teal hover:bg-mim-teal hover:text-white dark:border-mim-teal-light dark:text-mim-teal-light dark:hover:bg-mim-teal-light dark:hover:text-gray-900"
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            Sign Out
-          </Button>
-        </div>
+        <JorboAIHeader userEmail={user?.email} onSignOut={handleSignOut} />
 
         <Tabs defaultValue="generate" className="space-y-6">
           <TabsList className="grid w-full grid-cols-3">
@@ -223,9 +87,7 @@ const JorboAI = () => {
 
           <TabsContent value="generate">
             <div className="grid lg:grid-cols-2 gap-8">
-              {/* Controls Panel */}
               <div className="space-y-6">
-                {/* Generation Status */}
                 <GenerationStatus
                   remainingGenerations={remainingGenerations}
                   dailyLimit={DAILY_LIMIT}
@@ -233,212 +95,35 @@ const JorboAI = () => {
                   loading={limitsLoading}
                 />
 
-                <Card className="cute-border cute-shadow">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-mim-teal">
-                      <Wand2 className="w-5 h-5" />
-                      Describe Your Image
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <Textarea
-                      placeholder="Describe the image you want to create or edit... e.g., 'A majestic dragon flying over a medieval castle at sunset'"
-                      value={prompt}
-                      onChange={(e) => setPrompt(e.target.value)}
-                      className="min-h-[120px] resize-none border-mim-teal/30 focus:border-mim-teal dark:border-mim-teal-light/30 dark:focus:border-mim-teal-light"
-                    />
-                  </CardContent>
-                </Card>
-
-                <Card className="cute-border cute-shadow">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-mim-teal">
-                      <ImageIcon className="w-5 h-5" />
-                      Reference Images
-                      <Badge variant="secondary">{selectedImages.length}/10</Badge>
-                    </CardTitle>
-                    <div className="flex gap-2 flex-wrap">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setShowGallerySelector(true)}
-                        className="flex items-center gap-2"
-                      >
-                        <Palette className="w-4 h-4" />
-                        From Gallery
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setShowMimAssetSelector(true)}
-                        className="flex items-center gap-2"
-                      >
-                        <Brush className="w-4 h-4" />
-                        From MIM-ME
-                      </Button>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <MultiImageUpload
-                      images={selectedImages}
-                      onImagesChange={setSelectedImages}
-                      maxImages={10}
-                      disabled={isGenerating}
-                    />
-                  </CardContent>
-                </Card>
-
-                <Card className="cute-border cute-shadow">
-                  <CardHeader>
-                    <CardTitle className="text-mim-teal">Generation Settings</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div>
-                      <label className="text-sm font-medium text-muted-foreground">Image Size</label>
-                      <Select value={selectedSize} onValueChange={setSelectedSize}>
-                        <SelectTrigger className="border-mim-teal/30 dark:border-mim-teal-light/30">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="1024x1024">Square (1024×1024)</SelectItem>
-                          <SelectItem value="1536x1024">Landscape (1536×1024)</SelectItem>
-                          <SelectItem value="1024x1536">Portrait (1024×1536)</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div>
-                      <label className="text-sm font-medium text-muted-foreground">Quality</label>
-                      <Select value={selectedQuality} onValueChange={setSelectedQuality}>
-                        <SelectTrigger className="border-mim-teal/30 dark:border-mim-teal-light/30">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="low">Low (Fastest)</SelectItem>
-                          <SelectItem value="medium">Medium (Balanced)</SelectItem>
-                          <SelectItem value="high">High (Best Quality)</SelectItem>
-                          <SelectItem value="auto">Auto (AI Optimized)</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Button
-                  onClick={handleGeneration}
-                  disabled={isGenerating || !prompt.trim() || (!canGenerate() && !isOverrideUsed())}
-                  className="w-full bg-gradient-to-r from-mim-teal to-mim-gold hover:from-mim-teal-dark hover:to-mim-orange text-white font-semibold py-6 text-lg"
-                >
-                  {isGenerating ? (
-                    <>
-                      <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full mr-3" />
-                      JORBO AI is Creating...
-                    </>
-                  ) : !canGenerate() && !isOverrideUsed() ? (
-                    <>
-                      <Sparkles className="w-5 h-5 mr-2" />
-                      Daily Limit Reached
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="w-5 h-5 mr-2" />
-                      Generate Image
-                    </>
-                  )}
-                </Button>
-
-                {selectedImages.length > 0 && (
-                  <div className="text-center space-y-2">
-                    <p className="text-sm text-muted-foreground">
-                      🎨 Using {selectedImages.length} reference image{selectedImages.length !== 1 ? 's' : ''} for image-to-image editing
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      JORBO AI will intelligently blend and edit your reference images
-                    </p>
-                  </div>
-                )}
+                <GenerationControls
+                  prompt={prompt}
+                  onPromptChange={setPrompt}
+                  selectedImages={selectedImages}
+                  onImagesChange={setSelectedImages}
+                  selectedSize={selectedSize}
+                  onSizeChange={setSelectedSize}
+                  selectedQuality={selectedQuality}
+                  onQualityChange={setSelectedQuality}
+                  isGenerating={isGenerating}
+                  canGenerate={canGenerate()}
+                  isOverrideUsed={isOverrideUsed()}
+                  onGenerate={handleGeneration}
+                  onShowGallerySelector={() => setShowGallerySelector(true)}
+                  onShowMimAssetSelector={() => setShowMimAssetSelector(true)}
+                />
               </div>
 
               <div className="space-y-6">
-                <Card className="cute-border cute-shadow">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-mim-teal">
-                      <Image className="w-5 h-5" />
-                      Generated Image
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {isGenerating ? (
-                      <MagicalImageSkeleton phase={generationPhase} />
-                    ) : generatedImageUrl ? (
-                      <div className="space-y-4">
-                        <img
-                          src={generatedImageUrl}
-                          alt="Generated by JORBO AI"
-                          className="w-full rounded-lg border border-mim-teal/30 shadow-lg dark:border-mim-teal-light/30"
-                        />
-                        <div className="flex gap-2">
-                          <Button 
-                            onClick={handleDownload}
-                            variant="outline" 
-                            className="flex-1 border-mim-teal text-mim-teal hover:bg-mim-teal hover:text-white dark:border-mim-teal-light dark:text-mim-teal-light dark:hover:bg-mim-teal-light dark:hover:text-gray-900"
-                          >
-                            <Download className="w-4 h-4 mr-2" />
-                            Download
-                          </Button>
-                          <Button 
-                            onClick={resetGeneration}
-                            variant="outline"
-                            className="px-4"
-                          >
-                            New
-                          </Button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="h-64 border-2 border-dashed border-mim-teal/30 rounded-lg flex items-center justify-center dark:border-mim-teal-light/30">
-                        <div className="text-center text-muted-foreground">
-                          <Sparkles className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                          <p className="font-medium">Your AI masterpiece will appear here</p>
-                          <p className="text-sm mt-1">
-                            {selectedImages.length > 0 
-                              ? "🎨 Image-to-image editing mode" 
-                              : "✨ Text-to-image generation mode"}
-                          </p>
-                          <p className="text-xs mt-2 opacity-75">
-                            Powered by JORBO AI Engine
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
+                <GeneratedImageDisplay
+                  isGenerating={isGenerating}
+                  generationPhase={generationPhase}
+                  generatedImageUrl={generatedImageUrl}
+                  selectedImagesCount={selectedImages.length}
+                  onDownload={handleDownload}
+                  onReset={resetGeneration}
+                />
 
-                <Card className="cute-border bg-gradient-to-r from-mim-cream/50 to-mim-pink-light/30 dark:from-mim-brown/30 dark:to-mim-pink-dark/20">
-                  <CardContent className="pt-6">
-                    <div className="text-center space-y-3">
-                      <h3 className="font-semibold text-mim-teal">🚀 JORBO AI Features</h3>
-                      <div className="grid grid-cols-2 gap-2 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-2">
-                          <span>✨</span>
-                          <span>Advanced AI Engine</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span>🖼️</span>
-                          <span>Multi-Image Editing</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span>📊</span>
-                          <span>Job Tracking</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span>💾</span>
-                          <span>Smart Gallery</span>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                <JorboAIFeatures />
               </div>
             </div>
           </TabsContent>
