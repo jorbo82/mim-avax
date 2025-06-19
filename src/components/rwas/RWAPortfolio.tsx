@@ -2,7 +2,7 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { BarChart, Bar, ResponsiveContainer, XAxis, YAxis } from "recharts";
+import { BarChart, Bar, XAxis, YAxis } from "recharts";
 import { PieChart } from "lucide-react";
 
 const portfolioData = [
@@ -36,27 +36,25 @@ export const RWAPortfolio = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
               <ChartContainer config={chartConfig} className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={portfolioData}>
-                    <XAxis 
-                      dataKey="name" 
-                      axisLine={false}
-                      tickLine={false}
-                      className="text-muted-foreground"
-                    />
-                    <YAxis 
-                      axisLine={false}
-                      tickLine={false}
-                      className="text-muted-foreground"
-                    />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <Bar 
-                      dataKey="value" 
-                      fill="hsl(var(--primary))"
-                      radius={[4, 4, 0, 0]}
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
+                <BarChart data={portfolioData}>
+                  <XAxis 
+                    dataKey="name" 
+                    axisLine={false}
+                    tickLine={false}
+                    className="text-muted-foreground"
+                  />
+                  <YAxis 
+                    axisLine={false}
+                    tickLine={false}
+                    className="text-muted-foreground"
+                  />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Bar 
+                    dataKey="value" 
+                    fill="hsl(var(--primary))"
+                    radius={[4, 4, 0, 0]}
+                  />
+                </BarChart>
               </ChartContainer>
             </div>
             <div className="space-y-4">
