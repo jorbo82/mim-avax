@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom";
-import { Activity, Wand2, TrendingUp, Sparkles } from "lucide-react";
+import { Activity, Wand2, TrendingUp, Sparkles, Building } from "lucide-react";
 import DarkModeToggle from "./DarkModeToggle";
 import TokenPriceWidget from "./TokenPriceWidget";
 import MobileNavigation from "./navigation/MobileNavigation";
@@ -40,6 +40,12 @@ const Header = () => {
               <Link to="/token-analysis">
                 <UnifiedButton icon={TrendingUp} variant="outline">
                   Token Analysis
+                </UnifiedButton>
+              </Link>
+              
+              <Link to="/rwas">
+                <UnifiedButton icon={Building} variant="outline">
+                  RWA Tracker
                 </UnifiedButton>
               </Link>
               

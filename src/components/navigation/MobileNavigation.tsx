@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X, Wand2, Sparkles, Activity, TrendingUp } from "lucide-react";
+import { Menu, X, Wand2, Sparkles, Activity, TrendingUp, Building } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import MimeMeButton from "../MimeMeButton";
@@ -21,6 +21,12 @@ const MobileNavigation = () => {
       label: "Token Analysis",
       icon: TrendingUp,
       description: "Analyze any token"
+    },
+    {
+      href: "/rwas",
+      label: "RWA Tracker",
+      icon: Building,
+      description: "Track Real World Assets"
     },
     {
       href: "/arbitratum-magnifiicum",
